@@ -1,0 +1,328 @@
+/* ==========================================================================
+   E-PAPER PAGE — MOBILE-FIRST RESPONSIVE MODULE
+   ========================================================================== */
+
+.page { background: var(--bg); min-height: 100vh; padding-bottom: 60px; transition: var(--transition); }
+
+.inner { max-width: 1280px; margin: 0 auto; padding: 0 14px; }
+
+/* Ad */
+.adTop { width: 100%; height: 80px; border-radius: 8px; overflow: hidden; margin: 14px 0 20px; }
+.adTop img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+/* Breadcrumb */
+.breadcrumb { font-size: 12px; color: var(--gray); margin-bottom: 10px; }
+.breadcrumbLink { color: var(--primary); font-weight: 700; text-decoration: none; }
+.breadcrumbLink:hover { text-decoration: underline; }
+
+/* Page title */
+.pageTitle {
+  font-family: var(--font-deva);
+  font-size: clamp(22px, 6vw, 36px);
+  font-weight: 900;
+  color: var(--dark);
+  margin-bottom: 20px;
+}
+[data-theme="dark"] .pageTitle { color: #f0f0f0; }
+
+/* ==========================================================================
+   CONTROL TOOLBAR
+   ========================================================================== */
+.toolbar {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 16px;
+  margin-bottom: 24px;
+  box-shadow: var(--shadow-sm);
+}
+[data-theme="dark"] .toolbar { background: #1a1a1a; border-color: #2a2a2a; }
+
+.dateLabel { font-size: 11px; font-weight: 700; color: var(--gray); margin-bottom: 5px; text-transform: uppercase; letter-spacing: 1px; }
+
+.dateInput {
+  padding: 10px 14px;
+  border-radius: 8px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  color: var(--dark);
+  font-weight: 700;
+  font-size: 14px;
+  width: 100%;
+  max-width: 220px;
+  outline: none;
+  transition: var(--transition);
+}
+.dateInput:focus { border-color: var(--primary); }
+[data-theme="dark"] .dateInput { background: #111; color: #f0f0f0; border-color: #333; }
+
+.toolbarActions { display: flex; gap: 10px; flex-wrap: wrap; }
+
+.btnDownload {
+  display: flex; align-items: center; gap: 8px;
+  padding: 10px 18px; border-radius: 8px; font-size: 13px; font-weight: 700;
+  border: 2px solid var(--primary); background: transparent; color: var(--primary);
+  cursor: pointer; transition: var(--transition); white-space: nowrap;
+}
+.btnDownload:hover:not(:disabled), .btnDownload:not(:disabled):focus { background: var(--primary); color: #fff; }
+.btnDownload:disabled { opacity: 0.6; cursor: not-allowed; }
+
+.btnShare {
+  display: flex; align-items: center; gap: 8px;
+  padding: 10px 18px; border-radius: 8px; font-size: 13px; font-weight: 700;
+  background: var(--primary); color: #fff; border: none;
+  cursor: pointer; transition: var(--transition); white-space: nowrap;
+  box-shadow: 0 4px 14px rgba(204,34,0,0.28);
+}
+.btnShare:hover:not(:disabled) { opacity: 0.88; transform: translateY(-1px); }
+.btnShare:disabled { opacity: 0.6; cursor: not-allowed; }
+
+/* ==========================================================================
+   MAIN LAYOUT
+   ========================================================================== */
+.layout {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  transition: opacity 0.4s ease, filter 0.4s ease;
+}
+.layoutSwitching { opacity: 0.4; filter: blur(4px); pointer-events: none; }
+
+/* ==========================================================================
+   EPAPER VIEWER
+   ========================================================================== */
+.viewer { flex: 1; min-width: 0; }
+
+/* Front page */
+.frontPageCard {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px;
+  text-align: center;
+  margin-bottom: 16px;
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition);
+}
+[data-theme="dark"] .frontPageCard { background: #1a1a1a; border-color: #2a2a2a; }
+.frontPageCard:hover { box-shadow: 0 8px 24px rgba(0,0,0,0.15); }
+
+.frontPageImgWrap {
+  background: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid #e0e0e0;
+  cursor: zoom-in;
+  margin-bottom: 10px;
+}
+.frontPageImgWrap img { width: 100%; height: auto; display: block; }
+
+.frontPageLabel {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--dark);
+  font-family: var(--font-deva);
+}
+[data-theme="dark"] .frontPageLabel { color: #e0e0e0; }
+
+/* Pages grid */
+.pagesGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.pageThumbCard {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 10px;
+  text-align: center;
+  cursor: pointer;
+  transition: var(--transition);
+}
+[data-theme="dark"] .pageThumbCard { background: #1a1a1a; border-color: #2a2a2a; }
+.pageThumbCard:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.1); border-color: var(--primary); }
+
+.pageThumbImgWrap {
+  position: relative;
+  background: #fff;
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid #e0e0e0;
+  margin-bottom: 8px;
+}
+.pageThumbImgWrap img { width: 100%; height: auto; display: block; }
+
+.pageNumBadge {
+  position: absolute;
+  top: 6px; right: 6px;
+  background: rgba(0,0,0,0.6);
+  color: #fff;
+  padding: 2px 7px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.pageLabel { font-size: 12px; font-weight: 700; color: var(--gray-dark); }
+[data-theme="dark"] .pageLabel { color: #aaa; }
+
+/* Mid ad */
+.adMid { width: 100%; height: 65px; border-radius: 8px; overflow: hidden; margin-top: 16px; }
+.adMid img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+/* ==========================================================================
+   SIDEBAR
+   ========================================================================== */
+.sidebar { display: flex; flex-direction: column; gap: 18px; }
+
+.adSide { width: 100%; height: 220px; border-radius: 12px; overflow: hidden; }
+.adSide img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+.archiveBox {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 18px;
+  box-shadow: var(--shadow-sm);
+}
+[data-theme="dark"] .archiveBox { background: #1a1a1a; border-color: #2a2a2a; }
+
+.archiveBoxTitle {
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--dark);
+  border-bottom: 3px solid var(--primary);
+  display: inline-block;
+  margin-bottom: 16px;
+  font-family: var(--font-deva);
+}
+[data-theme="dark"] .archiveBoxTitle { color: #f0f0f0; }
+
+.archiveItem {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  padding-bottom: 12px;
+  margin-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  transition: var(--transition);
+}
+[data-theme="dark"] .archiveItem { border-bottom-color: #2a2a2a; }
+.archiveItem:last-child { border-bottom: none; padding-bottom: 0; margin-bottom: 0; }
+.archiveItem:hover .archiveItemDate { color: var(--primary); }
+
+.archiveThumb {
+  width: 44px; height: 60px;
+  background: #fff;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.archiveThumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+.archiveItemDate {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--dark);
+  margin-bottom: 2px;
+  transition: var(--transition);
+  font-family: var(--font-deva);
+}
+[data-theme="dark"] .archiveItemDate { color: #e0e0e0; }
+.archiveItemDateActive { color: var(--primary) !important; }
+
+.archiveItemSub { font-size: 11px; color: var(--gray); }
+
+.btnArchiveAll {
+  width: 100%;
+  margin-top: 12px;
+  padding: 10px;
+  border: 1px solid var(--border);
+  background: transparent;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--gray-dark);
+  cursor: pointer;
+  transition: var(--transition);
+  font-family: var(--font-deva);
+}
+[data-theme="dark"] .btnArchiveAll { color: #aaa; border-color: #2a2a2a; }
+.btnArchiveAll:hover { border-color: var(--primary); color: var(--primary); }
+
+/* ==========================================================================
+   TABLET ≥ 600px
+   ========================================================================== */
+@media (min-width: 600px) {
+  .inner { padding: 0 20px; }
+  .adTop { height: 110px; margin: 18px 0 24px; }
+  .toolbar { flex-direction: row; align-items: flex-end; justify-content: space-between; padding: 18px 22px; }
+  .dateInput { width: auto; }
+  .pagesGrid { grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  .adMid { height: 80px; }
+  .adSide { height: 260px; }
+}
+
+/* ==========================================================================
+   DESKTOP ≥ 960px
+   ========================================================================== */
+@media (min-width: 960px) {
+  .inner { padding: 0 24px; }
+  .adTop { height: 160px; border-radius: 12px; margin: 22px 0 28px; }
+  .toolbar { padding: 20px 28px; border-radius: 16px; }
+  .layout { flex-direction: row; align-items: flex-start; gap: 28px; }
+  .viewer { flex: 1; }
+  .sidebar { width: 320px; flex-shrink: 0; position: sticky; top: 100px; }
+  .pagesGrid { grid-template-columns: repeat(2, 1fr); gap: 16px; }
+  .adMid { height: 90px; }
+  .adSide { height: 300px; }
+}
+
+/* ==========================================================================
+   RESPONSIVE PDF CONTEXT VIEWER & CARD LAYOUTS
+   ========================================================================== */
+.pdfEmbedContainer {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+.pdfMobileCard {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 40px 24px;
+  box-shadow: var(--shadow-sm);
+  width: 100%;
+  margin-bottom: 20px;
+  transition: var(--transition);
+}
+[data-theme="dark"] .pdfMobileCard {
+  background: #1a1a1a;
+  border-color: #2a2a2a;
+}
+.pdfMobileCard:hover {
+  box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+}
+
+@media (min-width: 768px) {
+  .pdfEmbedContainer {
+    display: flex;
+  }
+  .pdfMobileCard {
+    display: none;
+  }
+}
+

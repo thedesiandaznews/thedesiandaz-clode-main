@@ -1,0 +1,140 @@
+/* ==========================================================================
+   LOCATION BAR — MOBILE-FIRST RESPONSIVE MODULE
+   ========================================================================== */
+
+.locationBar {
+  background: var(--white);
+  border-bottom: 1px solid var(--border);
+  padding: 10px 0;
+  transition: var(--transition);
+}
+
+[data-theme="dark"] .locationBar {
+  background: #111;
+  border-bottom-color: #222;
+}
+
+.inner {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 14px;
+}
+
+/* ── Row (label + chips) ── */
+.row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.row + .row {
+  margin-top: 8px;
+}
+
+.rowLabel {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--gray);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* ── Scroll track ── */
+.scroll {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding-bottom: 2px;
+  -webkit-overflow-scrolling: touch;
+}
+
+.scroll::-webkit-scrollbar { display: none; }
+
+/* ── State chip ── */
+.stateChip {
+  border: 1px solid #ddd;
+  padding: 4px 14px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 13px;
+  white-space: nowrap;
+  background: var(--white);
+  color: #333;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+[data-theme="dark"] .stateChip {
+  background: #1a1a1a;
+  border-color: #2e2e2e;
+  color: #ccc;
+}
+
+.stateChip:hover {
+  border-color: #CC2200;
+  color: #CC2200;
+}
+
+.stateChipActive {
+  background: #CC2200 !important;
+  border-color: #CC2200 !important;
+  color: #fff !important;
+}
+
+/* ── District chip ── */
+.districtChip {
+  border: 1px solid #e0e0e0;
+  padding: 3px 12px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 12px;
+  white-space: nowrap;
+  background: #f0f0f0;
+  color: #555;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+[data-theme="dark"] .districtChip {
+  background: #222;
+  border-color: #333;
+  color: #aaa;
+}
+
+.districtChip:hover {
+  background: #CC2200;
+  border-color: #CC2200;
+  color: #fff;
+}
+
+.districtChipActive {
+  background: #111 !important;
+  border-color: #111 !important;
+  color: #fff !important;
+}
+
+[data-theme="dark"] .districtChipActive {
+  background: #CC2200 !important;
+  border-color: #CC2200 !important;
+}
+
+/* ==========================================================================
+   TABLET ≥ 600px
+   ========================================================================== */
+@media (min-width: 600px) {
+  .inner { padding: 0 20px; }
+  .stateChip { font-size: 13px; padding: 5px 15px; }
+  .districtChip { font-size: 12px; padding: 4px 13px; }
+  .rowLabel { font-size: 12px; }
+}
+
+/* ==========================================================================
+   DESKTOP ≥ 960px
+   ========================================================================== */
+@media (min-width: 960px) {
+  .inner { padding: 0 24px; }
+  .locationBar { padding: 12px 0; }
+}

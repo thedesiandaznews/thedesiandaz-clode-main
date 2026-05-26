@@ -1,0 +1,61 @@
+.bannerContainer {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 16px 0;
+  overflow: hidden;
+}
+
+.desktopWrapper,
+.mobileWrapper {
+  display: none;
+  width: 100%;
+  text-align: center;
+}
+
+.desktopWrapper img {
+  width: 100%;
+  max-width: 970px;
+  height: auto;
+  object-fit: contain;
+  display: block;
+  margin: 0 auto;
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.mobileWrapper img {
+  width: 100%;
+  max-width: 320px;
+  height: auto;
+  object-fit: contain;
+  display: block;
+  margin: 0 auto;
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.desktopWrapper img:hover,
+.mobileWrapper img:hover {
+  transform: translateY(-2px) scale(1.005);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+/* 
+ * By default, assume mobile up to 768px.
+ * Adjust breakpoint if needed based on the site's main CSS.
+ */
+@media (max-width: 767px) {
+  .mobileWrapper {
+    display: block;
+  }
+}
+
+@media (min-width: 768px) {
+  .desktopWrapper {
+    display: block;
+  }
+}

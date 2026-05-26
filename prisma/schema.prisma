@@ -1,0 +1,221 @@
+generator client {
+  provider = "prisma-client-js"
+  engineType = "library"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Category {
+  id        String    @id @default(cuid())
+  name      String    @unique
+  articles           Article[]
+  additionalArticles Article[] @relation("ArticleAdditionalCategories")
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model Article {
+  id         String   @id @default(cuid())
+  title      String
+  slug       String?  @unique
+  categoryId           String
+  category             Category   @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  additionalCategories Category[] @relation("ArticleAdditionalCategories")
+  state      String
+  district   String
+  reporter   String   // Backward compatible raw name string
+  reporterId String?  // Optional relation to verified Reporter model
+  reporterRel Reporter? @relation(fields: [reporterId], references: [id], onDelete: SetNull)
+  status     String   @default("Draft") // Draft, Pending, Published
+  content    String
+  imageUrl   String?
+  views      Int      @default(0)
+  editCount  Int      @default(0) // Track number of edits on published articles (max 3)
+  
+  // SEO fields
+  seoTitle   String?
+  seoDesc    String?
+  seoKeys    String?
+  
+  // Citizen Journalism fields
+  contributorId String?
+  contributor   Contributor? @relation(fields: [contributorId], references: [id], onDelete: SetNull)
+  
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model Reporter {
+  id            String    @id @default(cuid())
+  reporterCode  String?   @unique
+  email         String    @unique
+  password      String
+  fullName      String
+  mobile        String
+  bloodGroup    String?
+  state         String
+  district      String
+  poPs          String
+  block         String
+  fullAddress   String
+  aadhaarNumber String?
+  aadhaarUrl    String?
+  panUrl        String?
+  voterIdUrl    String?
+  photoUrl      String?
+  educationUrl  String?
+  videoUrl      String?
+  status        String    @default("Pending") // Pending, Approved, Rejected
+  joiningLetter String?   // PDF Joining Letter URL
+  rejectionReason String?
+  articles      Article[]
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model AdCategory {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  banners   Banner[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Banner {
+  id          String   @id @default(cuid())
+  category    AdCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  categoryId  String
+  type        String   // "desktop" or "mobile"
+  position    Int      // 1‑4
+  imageUrl    String
+  linkUrl     String?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([categoryId, type, position])
+}
+
+model Epaper {
+  id          String   @id @default(cuid())
+  title       String?
+  date        DateTime @unique
+  pdfUrl      String?
+  thumbnailUrl String?
+  pages       String? // JSON string of page image URLs
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Contributor {
+  id            String    @id @default(cuid())
+  contributorId String?   @unique // Format: TDA/NEWS/IN/JH/PKR/HP/001
+  fullName      String
+  mobile        String    @unique
+  password      String
+  selfieUrl     String?   // Optional profile photo
+  state         String
+  district      String
+  block         String?
+  area          String?
+  fullAddress   String?   // Make optional, we rely more on block/area now
+  locationLat   Float?
+  locationLng   Float?
+  status        String    @default("Active") // Active, Suspended, Rejected
+  points        Int       @default(0)
+  trustScore    Int       @default(50) // 0-100 score for spam detection and reliability
+  rank          String    @default("Beginner")
+  articles      Article[]
+  submissions   Submission[]
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model Submission {
+  id            String    @id @default(cuid())
+  contributor   Contributor @relation(fields: [contributorId], references: [id], onDelete: Cascade)
+  contributorId String
+  title         String
+  description   String
+  category      String
+  address       String?
+  lat           Float?
+  lng           Float?
+  mediaUrls     String?   // JSON string array of images/videos
+  status        String    @default("Pending") // Pending, Approved (Published), Rejected, GroundAlert
+  isGroundAlert Boolean   @default(false)
+  adminNotes    String?
+  articleId     String?   // If converted to Article
+  messages      SubmissionMessage[]
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model SubmissionMessage {
+  id           String     @id @default(cuid())
+  submissionId String
+  submission   Submission @relation(fields: [submissionId], references: [id], onDelete: Cascade)
+  sender       String     // "Admin" or "Contributor"
+  message      String
+  isRead       Boolean    @default(false)
+  createdAt    DateTime   @default(now())
+}
+
+model SiteSetting {
+  id    String @id @default(cuid())
+  key   String @unique
+  value String
+}
+
+model PageContent {
+  id        String   @id @default(cuid())
+  pageSlug  String   @unique
+  content   String
+  seoTitle  String?
+  seoDesc   String?
+  seoKeys   String?
+  seoImage  String?
+  updatedAt DateTime @updatedAt
+}
+
+model AdClient {
+  id        String     @id @default(cuid())
+  name      String
+  email     String?
+  phone     String?
+  notes     String?
+  ads       ClientAd[]
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+}
+
+model ClientAd {
+  id            String    @id @default(cuid())
+  client        AdClient  @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  clientId      String
+  title         String
+  categoryName  String    // e.g. "Home", "Global", "LiveTV"
+  position      Int       // 1-4
+  desktopImgUrl String?   // Base64 desktop image
+  mobileImgUrl  String?   // Base64 mobile image
+  linkUrl       String?   // Target redirect website
+  isActive      Boolean   @default(true)
+  startDate     DateTime? // Campaign schedule start
+  endDate       DateTime? // Campaign schedule end
+  impressions   Int       @default(0)
+  clicks        Int       @default(0)
+  
+  // Geotargeting Fields
+  targetType      String    @default("All") // "All", "State", "District", "Radius"
+  targetStates    String?   // JSON stringified array e.g. '["Jharkhand", "Delhi"]'
+  targetDistricts String?   // JSON stringified array e.g. '["Ranchi", "Patna"]'
+  targetLat       Float?    // Center Latitude for geofence
+  targetLng       Float?    // Center Longitude for geofence
+  targetRadius    Float?    // Geofence Radius in kilometers
+  
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}

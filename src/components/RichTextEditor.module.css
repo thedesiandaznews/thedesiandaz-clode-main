@@ -1,0 +1,319 @@
+.editorWrapper {
+  border: 1px solid #cbd5e1;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.editorWrapper:focus-within {
+  border-color: #ea580c;
+  box-shadow: 0 0 0 3px rgba(234, 88, 12, 0.15), 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
+
+/* Toolbar Styling */
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+  padding: 8px;
+  background: #f8fafc;
+  border-bottom: 1px solid #e2e8f0;
+  user-select: none;
+}
+
+.toolbarBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: transparent;
+  color: #475569;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  transition: all 0.15s;
+}
+
+.toolbarBtn:hover:not(:disabled) {
+  background: #f1f5f9;
+  color: #0f172a;
+}
+
+.toolbarBtn:active:not(:disabled) {
+  background: #e2e8f0;
+}
+
+.toolbarBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.toolbarBtnLoading {
+  background: #f1f5f9;
+}
+
+.btnSpinner {
+  width: 14px;
+  height: 14px;
+  border: 2px solid #ea580c;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.divider {
+  width: 1px;
+  height: 20px;
+  background: #cbd5e1;
+  margin: 0 6px;
+}
+
+/* Color indicator square */
+.colorIndicator {
+  width: 10px;
+  height: 2px;
+  position: absolute;
+  bottom: 4px;
+}
+
+/* Dropdown Container */
+.dropdownContainer {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdownMenu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 50;
+  margin-top: 4px;
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  min-width: 140px;
+  padding: 4px;
+  animation: fadeIn 0.15s ease-out;
+}
+
+.dropdownMenu button {
+  width: 100%;
+  text-align: left;
+  border: none;
+  background: transparent;
+  padding: 8px 12px;
+  font-size: 13px;
+  color: #334155;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: background 0.15s;
+}
+
+.dropdownMenu button:hover {
+  background: #f1f5f9;
+  color: #ea580c;
+}
+
+/* Dropdown Grid for Colors */
+.dropdownGrid {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 50;
+  margin-top: 4px;
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+  padding: 8px;
+  width: 140px;
+  animation: fadeIn 0.15s ease-out;
+}
+
+.colorPaletteBtn {
+  width: 24px;
+  height: 24px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.colorPaletteBtn:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 0 2px rgba(234, 88, 12, 0.2);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Workspace Area */
+.workspace {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.workspaceDragging {
+  background: #fff8f5;
+}
+
+.editorWorkspace {
+  padding: 16px 20px;
+  overflow-y: auto;
+  color: #1e293b;
+  font-size: 15px;
+  line-height: 1.6;
+  outline: none;
+  background: transparent;
+}
+
+/* Headings in workspace */
+.editorWorkspace h1 {
+  font-size: 26px;
+  font-weight: 800;
+  margin-top: 20px;
+  margin-bottom: 12px;
+  color: #0f172a;
+}
+
+.editorWorkspace h2 {
+  font-size: 20px;
+  font-weight: 700;
+  margin-top: 16px;
+  margin-bottom: 10px;
+  color: #1e293b;
+}
+
+.editorWorkspace h3 {
+  font-size: 16px;
+  font-weight: 700;
+  margin-top: 12px;
+  margin-bottom: 8px;
+  color: #334155;
+}
+
+.editorWorkspace p {
+  margin-bottom: 12px;
+}
+
+.editorWorkspace blockquote {
+  border-left: 4px solid #ea580c;
+  background: #ffedd5;
+  padding: 10px 16px;
+  margin: 16px 0;
+  font-style: italic;
+  border-radius: 0 8px 8px 0;
+}
+
+.editorWorkspace a {
+  color: #ea580c;
+  text-decoration: underline;
+  font-weight: 600;
+}
+
+.editorWorkspace ul, .editorWorkspace ol {
+  padding-left: 20px;
+  margin-bottom: 12px;
+}
+
+.editorWorkspace li {
+  margin-bottom: 4px;
+}
+
+/* Placeholder text */
+.placeholder {
+  position: absolute;
+  top: 16px;
+  left: 20px;
+  color: #94a3b8;
+  pointer-events: none;
+  font-size: 15px;
+  max-width: 90%;
+  line-height: 1.6;
+}
+
+/* Drag overlay styling */
+.dragOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  border: 2px dashed #ea580c;
+  border-radius: 0 0 12px 12px;
+  animation: fadeIn 0.2s;
+}
+
+.dragBox {
+  text-align: center;
+  padding: 24px;
+  color: #ea580c;
+  font-weight: 600;
+}
+
+/* Footer tips info */
+.editorFooter {
+  padding: 8px 16px;
+  font-size: 11px;
+  color: #64748b;
+  background: #f8fafc;
+  border-top: 1px solid #e2e8f0;
+  font-weight: 500;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 640px) {
+  .toolbar {
+    padding: 6px;
+  }
+  
+  .toolbarBtn {
+    width: 28px;
+    height: 28px;
+    font-size: 12px;
+  }
+  
+  .divider {
+    height: 16px;
+    margin: 0 4px;
+  }
+  
+  .editorWorkspace {
+    padding: 12px 16px;
+    font-size: 14px;
+  }
+  
+  .placeholder {
+    top: 12px;
+    left: 16px;
+    font-size: 14px;
+  }
+}

@@ -1,0 +1,125 @@
+/* ==========================================================================
+   FOOTER — MOBILE-FIRST RESPONSIVE MODULE
+   ========================================================================== */
+
+.footer {
+  background: #0a0a0a;
+  color: #fff;
+  padding-top: 44px;
+  margin-top: auto;
+}
+
+.inner {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 14px;
+}
+
+/* ── Grid ── */
+.grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 32px;
+  margin-bottom: 36px;
+}
+
+/* ── Brand column ── */
+.brand {}
+
+.brandName {
+  font-size: 22px;
+  font-weight: 900;
+  color: #CC2200;
+  margin-bottom: 12px;
+  letter-spacing: -0.5px;
+}
+
+.brandDesc {
+  color: #aaa;
+  font-size: 13px;
+  line-height: 1.65;
+  font-family: var(--font-deva);
+  max-width: 280px;
+  margin-bottom: 18px;
+}
+
+.socials {
+  display: flex;
+  gap: 14px;
+}
+
+.socialIcon {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(255,255,255,0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255,255,255,0.75);
+  font-size: 15px;
+  text-decoration: none;
+  transition: all 0.25s ease;
+}
+
+.socialIcon:hover { background: #CC2200; border-color: #CC2200; color: #fff; transform: translateY(-2px); }
+
+/* ── Link columns ── */
+.col {}
+
+.colTitle {
+  font-size: 15px;
+  font-weight: 800;
+  margin-bottom: 16px;
+  padding-bottom: 6px;
+  border-bottom: 2px solid #CC2200;
+  display: inline-block;
+  color: #fff;
+}
+
+.links {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.link {
+  color: #aaa;
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+
+.link:hover { color: #fff; }
+
+/* ── Bottom bar ── */
+.bottomBar {
+  background: #000;
+  padding: 16px 0;
+  text-align: center;
+  color: #555;
+  font-size: 12px;
+  border-top: 1px solid #1a1a1a;
+}
+
+/* ==========================================================================
+   TABLET ≥ 600px
+   ========================================================================== */
+@media (min-width: 600px) {
+  .inner { padding: 0 20px; }
+  .grid { grid-template-columns: 1fr 1fr; gap: 28px; }
+  .brand { grid-column: span 2; }
+}
+
+/* ==========================================================================
+   DESKTOP ≥ 960px
+   ========================================================================== */
+@media (min-width: 960px) {
+  .inner { padding: 0 24px; }
+  .footer { padding-top: 56px; }
+  .grid { grid-template-columns: 2fr 1fr 1fr; gap: 40px; }
+  .brand { grid-column: span 1; }
+  .brandName { font-size: 26px; }
+}
