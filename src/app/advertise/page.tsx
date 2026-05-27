@@ -619,22 +619,29 @@ export default function AdvertisePage() {
           </div>
           
           <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-            <button 
-              onClick={() => setCurrentStep('welcome')}
+            <a 
+              href="/pricing"
+              onClick={(e) => {
+                e.preventDefault();
+                window.location.href = '/pricing';
+              }}
               style={{ 
-                background: currentStep === 'welcome' ? 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)' : 'rgba(255, 255, 255, 0.03)',
+                background: 'rgba(255, 255, 255, 0.03)',
                 border: '1px solid rgba(255, 255, 255, 0.05)',
-                color: currentStep === 'welcome' ? '#fff' : '#94a3b8',
+                color: '#94a3b8',
                 padding: '8px 16px',
                 borderRadius: '20px',
                 fontSize: '12px',
                 fontWeight: 700,
                 cursor: 'pointer',
-                transition: 'all 0.2s'
+                transition: 'all 0.2s',
+                textDecoration: 'none',
+                display: 'inline-flex',
+                alignItems: 'center'
               }}
             >
-              🏠 B2B Home
-            </button>
+              🏷️ Pricing
+            </a>
             <button 
               onClick={() => {
                 setAuthMode('login');

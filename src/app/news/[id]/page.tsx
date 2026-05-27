@@ -45,10 +45,6 @@ export default async function NewsDetailPage({ params }: { params: Promise<{ id:
     notFound();
   }
 
-  // Increment views in background (optional, might want to do this in a Client Component for more accuracy, 
-  // but for a simple mock-up this works if we re-trigger on visit)
-  // Note: in a real production app, use a route handler or client-side fetch to avoid re-rendering issues.
-  
   const latestNews = await getNewsArticles({ status: 'Published' });
   const relatedNews = latestNews
     .filter(n => n.id !== article.id && n.categoryId === article.categoryId)
@@ -58,7 +54,6 @@ export default async function NewsDetailPage({ params }: { params: Promise<{ id:
     .filter(n => n.id !== article.id)
     .slice(0, 4);
 
-  // Fetch local news (same state/district, backfilled with other local articles to ensure a full grid)
   const localFilter = (n: any) => n.id !== article.id && (n.state === article.state || n.district === article.district);
   const primaryLocal = latestNews.filter(localFilter);
   const otherLocal = latestNews.filter(n => n.id !== article.id && !localFilter(n) && n.state);
@@ -68,11 +63,11 @@ export default async function NewsDetailPage({ params }: { params: Promise<{ id:
     <article className={styles.page}>
       <ViewCounter id={article.id} />
       <div className={styles.inner}>
-        <div style={{ margin: '20px 0' }}>
+        
+        {/* ── TOP AD PLACEMENT (Position 1) ── */}
+        <div className={styles.adPlacementTop}>
           <ResponsiveBanner categoryName="News" position={1} />
         </div>
-
-
 
         {/* ── MAIN LAYOUT ── */}
         <div className={styles.layout}>
@@ -104,10 +99,10 @@ export default async function NewsDetailPage({ params }: { params: Promise<{ id:
                   />
                   <div>
                     <div className={styles.authorName}>
-                      रिपोर्टर: {article.reporter}
+                      रिपोर्टर: <span className={styles.authorHighlight}>{article.reporter}</span>
                       {article.reporterRel?.reporterCode && (
-                        <span style={{ fontSize: '12px', color: '#64748b', marginLeft: '8px', fontWeight: 500, fontFamily: 'monospace' }}>
-                          ({article.reporterRel.reporterCode})
+                        <span className={styles.reporterBadge}>
+                          ✓ Verified ({article.reporterRel.reporterCode})
                         </span>
                       )}
                     </div>
@@ -133,21 +128,21 @@ export default async function NewsDetailPage({ params }: { params: Promise<{ id:
             <div className={styles.articleBody}>
 
               {/* Hero Image */}
-              <img
-                src={article.imageUrl || `https://picsum.photos/1200/600?random=${article.id}`}
-                alt={article.title}
-                className={styles.articleHeroImg}
-              />
+              <div className={styles.heroImgWrapper}>
+                <img
+                  src={article.imageUrl || `https://picsum.photos/1200/600?random=${article.id}`}
+                  alt={article.title}
+                  className={styles.articleHeroImg}
+                />
+              </div>
 
               {/* Content */}
               <div 
                 className={styles.articlePara} 
-                style={{ fontSize: '18px', lineHeight: '1.8' }}
                 dangerouslySetInnerHTML={{ __html: article.content }}
               />
-              <div style={{ margin: '20px auto', width: '250px', height: '90px', overflow: 'hidden', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                <ResponsiveBanner categoryName="News" position={2} />
-              </div>
+
+
 
               {/* Tags */}
               <div className={styles.tagsRow}>
@@ -159,13 +154,15 @@ export default async function NewsDetailPage({ params }: { params: Promise<{ id:
             </div>
           </main>
 
-            {/* ── SIDEBAR ── */}
-            <aside className={styles.sidebar}>
-              <div style={{ marginBottom: '20px' }}>
-                <ResponsiveBanner categoryName="News" position={3} />
-              </div>
+          {/* ── SIDEBAR ── */}
+          <aside className={styles.sidebar}>
+            
+            {/* ── SIDEBAR AD PLACEMENT (Position 3) ── */}
+            <div className={styles.adPlacementSidebar}>
+              <ResponsiveBanner categoryName="News" position={3} />
+            </div>
 
-              {/* Top headlines box */}
+            {/* Top headlines box */}
             <div className={styles.headlinesBox}>
               <h3 className={styles.headlinesTitle}>
                 <i className="fas fa-bolt" style={{ color: 'var(--primary)' }} />
@@ -193,12 +190,14 @@ export default async function NewsDetailPage({ params }: { params: Promise<{ id:
             <div className={styles.relatedGrid}>
               {relatedNews.map(news => (
                 <Link key={news.id} href={`/news/${news.slug || news.id}`} className={styles.relatedCard} id={`related-${news.id}`}>
-                  <img
-                    src={news.imageUrl || `https://picsum.photos/400/250?random=${news.id}`}
-                    alt={news.title}
-                    className={styles.relatedImg}
-                    loading="lazy"
-                  />
+                  <div className={styles.relatedImgWrapper}>
+                    <img
+                      src={news.imageUrl || `https://picsum.photos/400/250?random=${news.id}`}
+                      alt={news.title}
+                      className={styles.relatedImg}
+                      loading="lazy"
+                    />
+                  </div>
                   <div className={styles.relatedBody}>
                     <div className={styles.relatedCat}>{news.category?.name}</div>
                     <h4 className={styles.relatedHeadline}>{news.title}</h4>
@@ -212,8 +211,8 @@ export default async function NewsDetailPage({ params }: { params: Promise<{ id:
           </div>
         )}
 
-        {/* ── SECTION AD (between related news and local news) ── */}
-        <div style={{ margin: '32px 0 24px', display: 'flex', justifyContent: 'center', width: '100%' }}>
+        {/* ── BOTTOM AD PLACEMENT (Position 4) ── */}
+        <div className={styles.adPlacementBottom}>
           <ResponsiveBanner categoryName="News" position={4} />
         </div>
 
@@ -227,12 +226,14 @@ export default async function NewsDetailPage({ params }: { params: Promise<{ id:
             <div className={styles.relatedGrid}>
               {localNews.map(news => (
                 <Link key={news.id} href={`/news/${news.slug || news.id}`} className={styles.relatedCard} id={`local-${news.id}`}>
-                  <img
-                    src={news.imageUrl || `https://picsum.photos/400/250?random=${news.id}`}
-                    alt={news.title}
-                    className={styles.relatedImg}
-                    loading="lazy"
-                  />
+                  <div className={styles.relatedImgWrapper}>
+                    <img
+                      src={news.imageUrl || `https://picsum.photos/400/250?random=${news.id}`}
+                      alt={news.title}
+                      className={styles.relatedImg}
+                      loading="lazy"
+                    />
+                  </div>
                   <div className={styles.relatedBody}>
                     <div className={styles.relatedCat} style={{ color: '#16a34a', display: 'flex', alignItems: 'center', gap: '4px', fontWeight: 'bold' }}>
                       <i className="fas fa-location-arrow" style={{ fontSize: '10px' }} />
