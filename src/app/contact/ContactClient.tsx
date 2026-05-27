@@ -21,7 +21,7 @@ const contactDetails = [
 const deptEmails = [
   { label: 'News Desk',      email: 'news@thedesiandaz.com' },
   { label: 'Ads & Media',   email: 'ads@thedesiandaz.com' },
-  { label: 'Certificate Inquiry', email: 'contact@thedesiandaz.com' },
+  { label: 'Certificate Inquiry', email: 'business@thedesiandaz.com' },
   { label: 'Legal & Rights', email: 'legal@thedesiandaz.com' },
 ];
 
