@@ -2,9 +2,16 @@
 import { PrismaClient } from '@prisma/client';
 import path from 'path';
 
-// Force the database URL to point to the absolute path of dev.db in the project root.
-// This prevents relative path resolution discrepancies between HMR, Turbopack, and Server Actions.
-process.env.DATABASE_URL = `file:${path.join(process.cwd(), 'dev.db')}`;
+// Resolve the database URL dynamically. If not set, default to 'dev.db' in the project root.
+// If it's a relative file path, make it absolute using process.cwd() to prevent discrepancies in Next.js Server Actions.
+if (!process.env.DATABASE_URL) {
+  process.env.DATABASE_URL = `file:${path.join(process.cwd(), 'dev.db')}`;
+} else if (process.env.DATABASE_URL.startsWith('file:')) {
+  const filePath = process.env.DATABASE_URL.replace('file:', '');
+  if (!path.isAbsolute(filePath)) {
+    process.env.DATABASE_URL = `file:${path.resolve(process.cwd(), filePath)}`;
+  }
+}
 
 // Ensure a single PrismaClient instance for the entire application.
 let prisma: PrismaClient;
