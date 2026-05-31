@@ -24,9 +24,10 @@ export async function addCategory(name: string) {
       data: { name: name.trim() }
     });
     
-    // Refresh the categories lists
+    // Refresh the categories lists and global website header layout cache
     revalidatePath('/admin/categories');
     revalidatePath('/admin/news/add');
+    revalidatePath('/', 'layout');
     return { success: true };
   } catch (error) {
     console.error('Failed to add category', error);
@@ -40,6 +41,7 @@ export async function deleteCategory(id: string) {
       where: { id }
     });
     revalidatePath('/admin/categories');
+    revalidatePath('/', 'layout');
     return { success: true };
   } catch (error) {
     console.error('Failed to delete category', error);
@@ -59,6 +61,7 @@ export async function updateCategory(id: string, name: string) {
     });
     
     revalidatePath('/admin/categories');
+    revalidatePath('/', 'layout');
     return { success: true };
   } catch (error) {
     console.error('Failed to update category', error);
@@ -99,6 +102,7 @@ export async function seedDefaultCategoriesAction() {
     
     revalidatePath('/admin/categories');
     revalidatePath('/admin/news/add');
+    revalidatePath('/', 'layout');
     return { success: true, count: createdCount };
   } catch (error: any) {
     console.error('Failed to seed categories', error);
