@@ -72,12 +72,38 @@ async function saveFile(file: File, categoryId: string, type: string, position: 
 
 export async function getAdCategories() {
   try {
-    return await prisma.adCategory.findMany({
+    let categories = await prisma.adCategory.findMany({
       include: {
         banners: true,
       },
       orderBy: { createdAt: "desc" },
     });
+
+    // If database has no ad categories, seed the default 8 categories immediately
+    if (categories.length === 0) {
+      console.log("No ad categories found in PostgreSQL, seeding default categories...");
+      const defaults = ["Global", "Home", "Contact", "Latest", "LiveTV", "Local", "News", "State"];
+      
+      for (const name of defaults) {
+        try {
+          await prisma.adCategory.create({
+            data: { name }
+          });
+        } catch (err) {
+          console.warn(`AdCategory "${name}" might already exist:`, err);
+        }
+      }
+
+      // Re-fetch categories
+      categories = await prisma.adCategory.findMany({
+        include: {
+          banners: true,
+        },
+        orderBy: { createdAt: "desc" },
+      });
+    }
+
+    return categories;
   } catch (error) {
     console.error("Error fetching ad categories:", error);
     return [];
