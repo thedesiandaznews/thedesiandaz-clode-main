@@ -1,9 +1,10 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styles from '../admin.module.css';
 import { updateReporterStatus, deleteReporter } from '@/actions/reporter';
 import { uploadFileAction } from '@/actions/upload';
+import { getReporterMessages, sendReporterMessage, markReporterMessagesAsRead } from '@/actions/chat';
 
 export default function ReportersClient({ initialList }: { initialList: any[] }) {
   const [reporters, setReporters] = useState<any[]>(initialList);
@@ -153,6 +154,77 @@ export default function ReportersClient({ initialList }: { initialList: any[] })
       console.error(err);
     } finally {
       setIsDeleting(false);
+    }
+  };
+
+  // Admin Direct Chat States
+  const [isAdminChatOpen, setIsAdminChatOpen] = useState(false);
+  const [adminChatMessages, setAdminChatMessages] = useState<any[]>([]);
+  const [adminChatInput, setAdminChatInput] = useState('');
+  const [isSendingAdminMessage, setIsSendingAdminMessage] = useState(false);
+
+  // Poll for new messages every 4 seconds when chat is open
+  useEffect(() => {
+    if (!selectedReporter?.id) {
+      setIsAdminChatOpen(false);
+      return;
+    }
+
+    const fetchAdminChatData = async () => {
+      try {
+        if (isAdminChatOpen) {
+          const messages = await getReporterMessages(selectedReporter.id);
+          setAdminChatMessages(messages);
+          await markReporterMessagesAsRead(selectedReporter.id, 'Admin');
+        }
+      } catch (e) {
+        console.error('Error polling admin chat:', e);
+      }
+    };
+
+    fetchAdminChatData();
+    const interval = setInterval(fetchAdminChatData, 4000);
+    return () => clearInterval(interval);
+  }, [selectedReporter?.id, isAdminChatOpen]);
+
+  // Scroll to bottom of admin chat automatically
+  useEffect(() => {
+    if (isAdminChatOpen) {
+      const chatBody = document.getElementById('adminChatMessagesBody');
+      if (chatBody) {
+        chatBody.scrollTop = chatBody.scrollHeight;
+      }
+    }
+  }, [adminChatMessages, isAdminChatOpen]);
+
+  const handleSendAdminChatMessage = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!adminChatInput.trim() || !selectedReporter?.id || isSendingAdminMessage) return;
+
+    const text = adminChatInput.trim();
+    setAdminChatInput('');
+    setIsSendingAdminMessage(true);
+
+    // Optimistic UI update
+    const tempMsg = {
+      id: `temp-${Date.now()}`,
+      reporterId: selectedReporter.id,
+      sender: 'Admin',
+      message: text,
+      createdAt: new Date().toISOString(),
+      isRead: false
+    };
+    setAdminChatMessages(prev => [...prev, tempMsg]);
+
+    try {
+      const res = await sendReporterMessage(selectedReporter.id, 'Admin', text);
+      if (res.success && res.message) {
+        setAdminChatMessages(prev => prev.map(m => m.id === tempMsg.id ? res.message : m));
+      }
+    } catch (err) {
+      console.error('Error sending admin message:', err);
+    } finally {
+      setIsSendingAdminMessage(false);
     }
   };
 
@@ -537,8 +609,9 @@ export default function ReportersClient({ initialList }: { initialList: any[] })
             borderRadius: '24px',
             border: '1px solid rgba(255, 255, 255, 0.2)',
             boxShadow: '0 25px 50px -12px rgba(15, 23, 42, 0.25)',
-            maxWidth: '850px',
+            maxWidth: isAdminChatOpen ? '1200px' : '850px',
             overflow: 'hidden',
+            transition: 'max-width 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
           }}>
             {/* Header */}
             <div style={{ 
@@ -558,39 +631,75 @@ export default function ReportersClient({ initialList }: { initialList: any[] })
                   Review personal information, verification credentials, and supporting documents.
                 </p>
               </div>
-              <button 
-                onClick={handleCloseReview} 
-                style={{ 
-                  background: '#f1f5f9', 
-                  border: 'none', 
-                  width: '36px', 
-                  height: '36px', 
-                  borderRadius: '50%', 
-                  display: 'flex', 
-                  alignItems: 'center', 
-                  justifyContent: 'center', 
-                  fontSize: '16px', 
-                  color: '#475569', 
-                  cursor: 'pointer',
-                  transition: 'all 0.2s',
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.background = '#fee2e2';
-                  e.currentTarget.style.color = '#ef4444';
-                  e.currentTarget.style.transform = 'rotate(90deg)';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.background = '#f1f5f9';
-                  e.currentTarget.style.color = '#475569';
-                  e.currentTarget.style.transform = 'rotate(0deg)';
-                }}
-              >
-                <i className="fas fa-times"></i>
-              </button>
+
+              <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                {/* Chat Toggle Button */}
+                <button 
+                  onClick={() => setIsAdminChatOpen(!isAdminChatOpen)}
+                  style={{
+                    background: isAdminChatOpen ? 'linear-gradient(135deg, #4f46e5 0%, #3730a3 100%)' : '#f1f5f9',
+                    border: isAdminChatOpen ? 'none' : '1px solid #cbd5e1',
+                    color: isAdminChatOpen ? '#ffffff' : '#475569',
+                    padding: '8px 16px',
+                    fontSize: '13px',
+                    fontWeight: 700,
+                    borderRadius: '10px',
+                    cursor: 'pointer',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                    boxShadow: isAdminChatOpen ? '0 4px 12px rgba(79, 70, 229, 0.2)' : '0 2px 4px rgba(0,0,0,0.02)',
+                    transition: 'all 0.2s'
+                  }}
+                >
+                  <i className="fas fa-comments"></i>
+                  <span>{isAdminChatOpen ? 'Close Chat Workspace' : 'Direct Chat with Reporter'}</span>
+                </button>
+
+                <button 
+                  onClick={handleCloseReview} 
+                  style={{ 
+                    background: '#f1f5f9', 
+                    border: 'none', 
+                    width: '36px', 
+                    height: '36px', 
+                    borderRadius: '50%', 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    justifyContent: 'center', 
+                    fontSize: '16px', 
+                    color: '#475569', 
+                    cursor: 'pointer',
+                    transition: 'all 0.2s',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.background = '#fee2e2';
+                    e.currentTarget.style.color = '#ef4444';
+                    e.currentTarget.style.transform = 'rotate(90deg)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = '#f1f5f9';
+                    e.currentTarget.style.color = '#475569';
+                    e.currentTarget.style.transform = 'rotate(0deg)';
+                  }}
+                >
+                  <i className="fas fa-times"></i>
+                </button>
+              </div>
             </div>
 
-            {/* Modal Body */}
-            <div style={{ padding: '32px', flexGrow: 1, maxHeight: 'calc(90vh - 120px)', overflowY: 'auto' }}>
+            {/* Split Container for KYC Dossier + Chat */}
+            <div style={{ display: 'flex', height: 'calc(90vh - 120px)', overflow: 'hidden', flexGrow: 1 }}>
+              
+              {/* Left Column: KYC Dossier (60% width if chat open, otherwise 100%) */}
+              <div style={{ 
+                width: isAdminChatOpen ? '60%' : '100%', 
+                padding: '32px', 
+                overflowY: 'auto', 
+                borderRight: isAdminChatOpen ? '1px solid #e2e8f0' : 'none',
+                maxHeight: '100%',
+                transition: 'width 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
+              }}>
               
               {/* Profile Details Grid */}
               <h4 style={{ 
@@ -1512,9 +1621,228 @@ export default function ReportersClient({ initialList }: { initialList: any[] })
               )}
 
             </div>
+
+            {/* Right Column: Chat Workspace (40% width, only visible when open) */}
+            {isAdminChatOpen && (
+              <div style={{
+                width: '40%',
+                display: 'flex',
+                flexDirection: 'column',
+                height: '100%',
+                background: '#f8fafc',
+                borderLeft: '1px solid #e2e8f0',
+              }}>
+                {/* Chat Header */}
+                <div style={{
+                  padding: '16px 24px',
+                  background: '#ffffff',
+                  borderBottom: '1px solid #e2e8f0',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    <div style={{
+                      width: '8px',
+                      height: '8px',
+                      borderRadius: '50%',
+                      background: selectedReporter.status === 'Approved' ? '#10b981' : selectedReporter.status === 'Pending' ? '#3b82f6' : '#94a3b8',
+                    }} />
+                    <div>
+                      <span style={{ fontSize: '14px', fontWeight: 800, color: '#0f172a', display: 'block' }}>
+                        Support Channel
+                      </span>
+                      <span style={{ fontSize: '11px', color: '#64748b', fontWeight: 500 }}>
+                        Direct line to {selectedReporter.fullName}
+                      </span>
+                    </div>
+                  </div>
+                  <button
+                    onClick={async () => {
+                      const messages = await getReporterMessages(selectedReporter.id);
+                      setAdminChatMessages(messages);
+                      await markReporterMessagesAsRead(selectedReporter.id, 'Admin');
+                    }}
+                    style={{
+                      background: '#f1f5f9',
+                      border: 'none',
+                      borderRadius: '8px',
+                      width: '32px',
+                      height: '32px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      cursor: 'pointer',
+                      color: '#64748b',
+                      transition: 'all 0.2s',
+                    }}
+                    title="Refresh Chat"
+                    onMouseEnter={(e) => { e.currentTarget.style.background = '#e2e8f0'; e.currentTarget.style.color = '#0f172a'; }}
+                    onMouseLeave={(e) => { e.currentTarget.style.background = '#f1f5f9'; e.currentTarget.style.color = '#64748b'; }}
+                  >
+                    <i className="fas fa-sync-alt"></i>
+                  </button>
+                </div>
+
+                {/* Chat Messages Body */}
+                <div 
+                  id="adminChatMessagesBody"
+                  style={{
+                    flexGrow: 1,
+                    padding: '24px',
+                    overflowY: 'auto',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '16px',
+                    background: '#f8fafc',
+                  }}
+                >
+                  {adminChatMessages.length === 0 ? (
+                    <div style={{
+                      margin: 'auto',
+                      textAlign: 'center',
+                      padding: '0 20px',
+                    }}>
+                      <div style={{
+                        width: '56px',
+                        height: '56px',
+                        borderRadius: '50%',
+                        background: '#eeebff',
+                        color: '#4f46e5',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontSize: '24px',
+                        margin: '0 auto 16px auto',
+                      }}>
+                        <i className="fas fa-comments"></i>
+                      </div>
+                      <h5 style={{ fontSize: '14.5px', fontWeight: 800, color: '#1e293b', margin: '0 0 6px 0' }}>
+                        No Messages Yet
+                      </h5>
+                      <p style={{ fontSize: '12px', color: '#64748b', margin: 0, lineHeight: 1.5 }}>
+                        Send a message to the reporter to initiate the conversation regarding their KYC or reports.
+                      </p>
+                    </div>
+                  ) : (
+                    adminChatMessages.map((msg) => {
+                      const isAdmin = msg.sender === 'Admin';
+                      return (
+                        <div 
+                          key={msg.id}
+                          style={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: isAdmin ? 'flex-end' : 'flex-start',
+                            maxWidth: '85%',
+                            alignSelf: isAdmin ? 'flex-end' : 'flex-start',
+                          }}
+                        >
+                          <div style={{
+                            padding: '12px 16px',
+                            borderRadius: isAdmin ? '16px 16px 4px 16px' : '16px 16px 16px 4px',
+                            background: isAdmin ? 'linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)' : '#ffffff',
+                            color: isAdmin ? '#ffffff' : '#1e293b',
+                            boxShadow: '0 2px 8px rgba(15, 23, 42, 0.04)',
+                            border: isAdmin ? 'none' : '1px solid #e2e8f0',
+                            fontSize: '13.5px',
+                            fontWeight: 500,
+                            lineHeight: 1.5,
+                            wordBreak: 'break-word',
+                          }}>
+                            {msg.message}
+                          </div>
+                          <span style={{
+                            fontSize: '10px',
+                            color: '#94a3b8',
+                            marginTop: '4px',
+                            fontWeight: 600,
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '4px',
+                          }}>
+                            {new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                            {isAdmin && (
+                              <i 
+                                className={`fas ${msg.isRead ? 'fa-check-double' : 'fa-check'}`}
+                                style={{ color: msg.isRead ? '#10b981' : '#cbd5e1', fontSize: '9px' }}
+                              />
+                            )}
+                          </span>
+                        </div>
+                      );
+                    })
+                  )}
+                </div>
+
+                {/* Chat Input Footer */}
+                <form 
+                  onSubmit={handleSendAdminChatMessage}
+                  style={{
+                    padding: '16px 20px',
+                    background: '#ffffff',
+                    borderTop: '1px solid #e2e8f0',
+                    display: 'flex',
+                    gap: '12px',
+                    alignItems: 'center',
+                  }}
+                >
+                  <input
+                    type="text"
+                    value={adminChatInput}
+                    onChange={(e) => setAdminChatInput(e.target.value)}
+                    placeholder="Type your message..."
+                    disabled={isSendingAdminMessage}
+                    style={{
+                      flexGrow: 1,
+                      padding: '12px 16px',
+                      borderRadius: '12px',
+                      border: '1px solid #cbd5e1',
+                      fontSize: '13.5px',
+                      outline: 'none',
+                      transition: 'all 0.2s',
+                      background: '#f8fafc',
+                    }}
+                    onFocus={(e) => {
+                      e.currentTarget.style.borderColor = '#4f46e5';
+                      e.currentTarget.style.background = '#ffffff';
+                      e.currentTarget.style.boxShadow = '0 0 0 3px rgba(79, 70, 229, 0.1)';
+                    }}
+                    onBlur={(e) => {
+                      e.currentTarget.style.borderColor = '#cbd5e1';
+                      e.currentTarget.style.background = '#f8fafc';
+                      e.currentTarget.style.boxShadow = 'none';
+                    }}
+                  />
+                  <button
+                    type="submit"
+                    disabled={!adminChatInput.trim() || isSendingAdminMessage}
+                    style={{
+                      background: adminChatInput.trim() ? 'linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)' : '#f1f5f9',
+                      color: adminChatInput.trim() ? '#ffffff' : '#94a3b8',
+                      border: 'none',
+                      borderRadius: '12px',
+                      width: '42px',
+                      height: '42px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: '16px',
+                      cursor: adminChatInput.trim() ? 'pointer' : 'default',
+                      transition: 'all 0.2s',
+                      boxShadow: adminChatInput.trim() ? '0 4px 12px rgba(79, 70, 229, 0.2)' : 'none',
+                    }}
+                  >
+                    <i className="fas fa-paper-plane"></i>
+                  </button>
+                </form>
+              </div>
+            )}
+
           </div>
         </div>
-      )}
+      </div>
+    )}
 
     </div>
   );

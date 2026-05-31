@@ -7,6 +7,7 @@ import styles from '../reporter.module.css';
 import { getReporterById, getReporterStats, getReporterArticles, submitReporterArticle, updateReporterArticle, updateReporterProfilePicture } from '@/actions/reporter';
 import { getCategories } from '@/actions/categories';
 import { uploadFileAction } from '@/actions/upload';
+import { getReporterMessages, sendReporterMessage, markReporterMessagesAsRead, getUnreadMessageCount } from '@/actions/chat';
 import { stateDistricts, allStates } from '@/lib/localization';
 import RichTextEditor from '@/components/RichTextEditor';
 
@@ -42,6 +43,79 @@ export default function DashboardClient() {
   const [newsContent, setNewsContent] = useState('');
   const [newsImageUrl, setNewsImageUrl] = useState('');
   const [newsUploadStatus, setNewsUploadStatus] = useState<'idle' | 'uploading' | 'success'>('idle');
+
+  // Direct Chat States
+  const [isChatOpen, setIsChatOpen] = useState(false);
+  const [chatMessages, setChatMessages] = useState<any[]>([]);
+  const [chatInput, setChatInput] = useState('');
+  const [unreadMessages, setUnreadMessages] = useState(0);
+  const [isSendingMessage, setIsSendingMessage] = useState(false);
+
+  // Poll for new messages every 4 seconds
+  useEffect(() => {
+    if (!reporter?.id) return;
+
+    const fetchChatData = async () => {
+      try {
+        const count = await getUnreadMessageCount(reporter.id, 'Reporter');
+        setUnreadMessages(count);
+
+        if (isChatOpen) {
+          const messages = await getReporterMessages(reporter.id);
+          setChatMessages(messages);
+          await markReporterMessagesAsRead(reporter.id, 'Reporter');
+          setUnreadMessages(0);
+        }
+      } catch (e) {
+        console.error('Error polling chat messages:', e);
+      }
+    };
+
+    fetchChatData();
+    const interval = setInterval(fetchChatData, 4000);
+    return () => clearInterval(interval);
+  }, [reporter?.id, isChatOpen]);
+
+  // Scroll to bottom of chat automatically
+  useEffect(() => {
+    if (isChatOpen) {
+      const chatBody = document.getElementById('chatMessagesBody');
+      if (chatBody) {
+        chatBody.scrollTop = chatBody.scrollHeight;
+      }
+    }
+  }, [chatMessages, isChatOpen]);
+
+  const handleSendChatMessage = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!chatInput.trim() || !reporter?.id || isSendingMessage) return;
+
+    const text = chatInput.trim();
+    setChatInput('');
+    setIsSendingMessage(true);
+
+    // Optimistic UI update
+    const tempMsg = {
+      id: `temp-${Date.now()}`,
+      reporterId: reporter.id,
+      sender: 'Reporter',
+      message: text,
+      createdAt: new Date().toISOString(),
+      isRead: false
+    };
+    setChatMessages(prev => [...prev, tempMsg]);
+
+    try {
+      const res = await sendReporterMessage(reporter.id, 'Reporter', text);
+      if (res.success && res.message) {
+        setChatMessages(prev => prev.map(m => m.id === tempMsg.id ? res.message : m));
+      }
+    } catch (err) {
+      console.error('Error sending message:', err);
+    } finally {
+      setIsSendingMessage(false);
+    }
+  };
 
   // Draft State
   const [draftExists, setDraftExists] = useState(false);
@@ -1031,6 +1105,264 @@ export default function DashboardClient() {
               </div>
             </div>
           </div>
+        </div>
+      )}
+
+      {/* DIRECT CHAT WIDGET - FLOATING SUPPORT SYSTEM */}
+      {reporter?.status === 'Approved' && (
+        <div style={{ position: 'fixed', bottom: '24px', right: '24px', zIndex: 9999, fontFamily: 'system-ui, sans-serif' }}>
+          
+          {/* Floating Circle Button */}
+          {!isChatOpen && (
+            <button 
+              onClick={() => setIsChatOpen(true)}
+              style={{
+                width: '60px',
+                height: '60px',
+                borderRadius: '50%',
+                background: 'linear-gradient(135deg, #4f46e5 0%, #3730a3 100%)',
+                color: '#ffffff',
+                border: 'none',
+                boxShadow: '0 8px 30px rgba(79, 70, 229, 0.4)',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: '24px',
+                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                position: 'relative'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = 'scale(1.1) translateY(-2px)';
+                e.currentTarget.style.boxShadow = '0 12px 40px rgba(79, 70, 229, 0.5)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'scale(1) translateY(0)';
+                e.currentTarget.style.boxShadow = '0 8px 30px rgba(79, 70, 229, 0.4)';
+              }}
+            >
+              <i className="fas fa-comments"></i>
+              {/* Pulsing Badge */}
+              {unreadMessages > 0 && (
+                <span style={{
+                  position: 'absolute',
+                  top: '-4px',
+                  right: '-4px',
+                  background: '#ef4444',
+                  color: '#ffffff',
+                  fontSize: '11px',
+                  fontWeight: 800,
+                  borderRadius: '10px',
+                  padding: '3px 7px',
+                  border: '2px solid #ffffff',
+                  boxShadow: '0 2px 8px rgba(239, 68, 68, 0.4)',
+                }}>
+                  {unreadMessages}
+                </span>
+              )}
+            </button>
+          )}
+
+          {/* Active Chat Window */}
+          {isChatOpen && (
+            <div style={{
+              width: '380px',
+              height: '520px',
+              borderRadius: '24px',
+              background: '#ffffff',
+              border: '1px solid #e2e8f0',
+              boxShadow: '0 20px 40px rgba(15, 23, 42, 0.15)',
+              display: 'flex',
+              flexDirection: 'column',
+              overflow: 'hidden',
+            }}>
+              
+              {/* Chat Header */}
+              <div style={{
+                padding: '16px 20px',
+                background: 'linear-gradient(135deg, #4f46e5 0%, #3730a3 100%)',
+                color: '#ffffff',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                boxShadow: '0 2px 10px rgba(0,0,0,0.05)'
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <div style={{ position: 'relative' }}>
+                    <div style={{
+                      width: '38px',
+                      height: '38px',
+                      borderRadius: '50%',
+                      background: 'rgba(255,255,255,0.2)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: '18px',
+                      fontWeight: 700
+                    }}>
+                      A
+                    </div>
+                    <span style={{
+                      position: 'absolute',
+                      bottom: '0',
+                      right: '0',
+                      width: '10px',
+                      height: '10px',
+                      background: '#10b981',
+                      border: '2px solid #4f46e5',
+                      borderRadius: '50%'
+                    }}></span>
+                  </div>
+                  <div>
+                    <span style={{ fontWeight: 750, fontSize: '14.5px', display: 'block' }}>Super Admin Chat</span>
+                    <span style={{ fontSize: '11px', opacity: 0.8, fontWeight: 500 }}>Desi Andaz Newsroom Support</span>
+                  </div>
+                </div>
+                <button 
+                  onClick={() => setIsChatOpen(false)}
+                  style={{
+                    background: 'transparent',
+                    border: 'none',
+                    color: '#ffffff',
+                    fontSize: '18px',
+                    cursor: 'pointer',
+                    opacity: 0.8,
+                    padding: '4px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    transition: 'all 0.2s'
+                  }}
+                  onMouseEnter={(e) => e.currentTarget.style.opacity = '1'}
+                  onMouseLeave={(e) => e.currentTarget.style.opacity = '0.8'}
+                >
+                  <i className="fas fa-times-circle"></i>
+                </button>
+              </div>
+
+              {/* Chat Messages Body */}
+              <div 
+                id="chatMessagesBody"
+                style={{
+                  flex: 1,
+                  padding: '20px',
+                  background: '#f8fafc',
+                  overflowY: 'auto',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '12px'
+                }}
+              >
+                {chatMessages.length === 0 ? (
+                  <div style={{
+                    textAlign: 'center',
+                    color: '#94a3b8',
+                    margin: 'auto',
+                    padding: '20px',
+                    fontSize: '13px'
+                  }}>
+                    <i className="fas fa-comments" style={{ fontSize: '32px', color: '#cbd5e1', marginBottom: '8px', display: 'block' }}></i>
+                    <b>No messages yet</b>
+                    <p style={{ marginTop: '4px', fontSize: '12px' }}>Start the conversation! Type a message below to chat with the Super Admin.</p>
+                  </div>
+                ) : (
+                  chatMessages.map((msg) => {
+                    const isMe = msg.sender === 'Reporter';
+                    return (
+                      <div 
+                        key={msg.id}
+                        style={{
+                          alignSelf: isMe ? 'flex-end' : 'flex-start',
+                          maxWidth: '75%',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          alignItems: isMe ? 'flex-end' : 'flex-start'
+                        }}
+                      >
+                        <div style={{
+                          padding: '10px 14px',
+                          borderRadius: isMe ? '16px 16px 2px 16px' : '16px 16px 16px 2px',
+                          background: isMe ? 'linear-gradient(135deg, #4f46e5 0%, #3b82f6 100%)' : '#ffffff',
+                          color: isMe ? '#ffffff' : '#334155',
+                          fontSize: '13px',
+                          fontWeight: 500,
+                          lineHeight: '1.4',
+                          border: isMe ? 'none' : '1px solid #e2e8f0',
+                          boxShadow: '0 2px 6px rgba(15, 23, 42, 0.03)',
+                          whiteSpace: 'pre-wrap',
+                          wordBreak: 'break-word'
+                        }}>
+                          {msg.message}
+                        </div>
+                        <span style={{
+                          fontSize: '10px',
+                          color: '#94a3b8',
+                          marginTop: '4px',
+                          fontWeight: 500
+                        }}>
+                          {new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                        </span>
+                      </div>
+                    );
+                  })
+                )}
+              </div>
+
+              {/* Chat Input Footer */}
+              <form 
+                onSubmit={handleSendChatMessage}
+                style={{
+                  padding: '12px 16px',
+                  background: '#ffffff',
+                  borderTop: '1px solid #e2e8f0',
+                  display: 'flex',
+                  gap: '8px',
+                  alignItems: 'center'
+                }}
+              >
+                <input 
+                  type="text"
+                  placeholder="Type your message..."
+                  value={chatInput}
+                  onChange={(e) => setChatInput(e.target.value)}
+                  style={{
+                    flex: 1,
+                    padding: '10px 14px',
+                    borderRadius: '12px',
+                    border: '1px solid #cbd5e1',
+                    fontSize: '13px',
+                    outline: 'none',
+                    fontWeight: 500,
+                    transition: 'border-color 0.2s'
+                  }}
+                  onFocus={(e) => e.currentTarget.style.borderColor = '#4f46e5'}
+                  onBlur={(e) => e.currentTarget.style.borderColor = '#cbd5e1'}
+                />
+                <button 
+                  type="submit"
+                  disabled={!chatInput.trim() || isSendingMessage}
+                  style={{
+                    width: '38px',
+                    height: '38px',
+                    borderRadius: '12px',
+                    background: chatInput.trim() ? 'linear-gradient(135deg, #4f46e5 0%, #3730a3 100%)' : '#f1f5f9',
+                    color: chatInput.trim() ? '#ffffff' : '#94a3b8',
+                    border: 'none',
+                    cursor: chatInput.trim() ? 'pointer' : 'default',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: '14px',
+                    transition: 'all 0.2s'
+                  }}
+                >
+                  <i className="fas fa-paper-plane"></i>
+                </button>
+              </form>
+
+            </div>
+          )}
+
         </div>
       )}
 
