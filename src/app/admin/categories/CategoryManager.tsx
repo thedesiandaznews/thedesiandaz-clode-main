@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import styles from '../admin.module.css';
-import { addCategory, deleteCategory, updateCategory } from '@/actions/categories';
+import { addCategory, deleteCategory, updateCategory, seedDefaultCategoriesAction } from '@/actions/categories';
 
 export default function CategoryManager({ initialCategories }: { initialCategories: any[] }) {
   const [newCatName, setNewCatName] = useState('');
@@ -59,11 +59,21 @@ export default function CategoryManager({ initialCategories }: { initialCategori
         </div>
         <button 
           onClick={async () => {
-            const defaults = ['Politics', 'Sports', 'Jharkhand News', 'Entertainment', 'Technology', 'Health', 'Local News'];
-            for (const cat of defaults) {
-              await addCategory(cat);
+            if (isSubmitting) return;
+            setIsSubmitting(true);
+            try {
+              const res = await seedDefaultCategoriesAction();
+              if (res.success) {
+                alert(`Successfully restored default categories in Hindi!`);
+                window.location.reload();
+              } else {
+                alert('Failed to seed categories: ' + res.message);
+              }
+            } catch (err) {
+              console.error('Error seeding:', err);
+            } finally {
+              setIsSubmitting(false);
             }
-            alert('Default categories added successfully!');
           }} 
           style={{
             background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)',
@@ -89,7 +99,7 @@ export default function CategoryManager({ initialCategories }: { initialCategori
             e.currentTarget.style.transform = 'translateY(0)';
           }}
         >
-          <i className="fas fa-seedling" style={{ color: '#10b981' }}></i> Seed Defaults
+          <i className="fas fa-seedling" style={{ color: '#10b981' }}></i> Seed Hindi Defaults
         </button>
       </div>
 
