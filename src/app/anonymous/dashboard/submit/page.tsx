@@ -6,6 +6,7 @@ import Link from 'next/link';
 import styles from '../../join/join.module.css';
 import { submitIncidentReport } from '@/actions/community';
 import { uploadImage } from '@/actions/upload';
+import { compressImage } from '@/lib/imageCompressor';
 
 const CATEGORIES = ['Accident', 'Corruption', 'Crime', 'Public Complaint', 'Politics', 'Local Event', 'Government Issue', 'Water Problem', 'Electricity Problem', 'Social Issue', 'Road Accident', 'Emergency', 'Other'];
 
@@ -13,13 +14,22 @@ interface MediaItem {
   file: File;
   previewUrl: string;
   type: string;
+  originalSize: number;
+  compressedSize?: number;
 }
+
+const formatSize = (bytes: number) => {
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1048576) return `${(bytes / 1024).toFixed(0)} KB`;
+  return `${(bytes / 1048576).toFixed(1)} MB`;
+};
 
 export default function SubmitReport() {
   const router = useRouter();
   const [contributorId, setContributorId] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isLocating, setIsLocating] = useState(false);
+  const [isCompressing, setIsCompressing] = useState(false);
   
   const [formData, setFormData] = useState({
     title: '',
@@ -90,18 +100,63 @@ export default function SubmitReport() {
     }
   };
 
-  const handleMediaChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleMediaChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
+      setIsCompressing(true);
+      const selectedFiles = Array.from(e.target.files);
       const newItems: MediaItem[] = [];
-      Array.from(e.target.files).forEach(file => {
-        const previewUrl = URL.createObjectURL(file);
-        newItems.push({
-          file,
-          previewUrl,
-          type: file.type.startsWith('video/') ? 'video' : 'image'
-        });
-      });
+
+      for (const file of selectedFiles) {
+        if (file.type.startsWith('video/')) {
+          // Check video size (Max 3.5 MB for secure anonymous submission)
+          if (file.size > 3.5 * 1024 * 1024) {
+            alert(`Video "${file.name}" exceeds the 3.5MB size limit. Please select a smaller video or compress it first to ensure a successful secure upload.`);
+            continue;
+          }
+          const previewUrl = URL.createObjectURL(file);
+          newItems.push({
+            file,
+            previewUrl,
+            type: 'video',
+            originalSize: file.size,
+            compressedSize: file.size
+          });
+        } else if (file.type.startsWith('image/')) {
+          try {
+            const compressedFile = await compressImage(file);
+            const previewUrl = URL.createObjectURL(compressedFile);
+            newItems.push({
+              file: compressedFile,
+              previewUrl,
+              type: 'image',
+              originalSize: file.size,
+              compressedSize: compressedFile.size
+            });
+          } catch (err) {
+            console.error('Image compression error:', err);
+            const previewUrl = URL.createObjectURL(file);
+            newItems.push({
+              file,
+              previewUrl,
+              type: 'image',
+              originalSize: file.size,
+              compressedSize: file.size
+            });
+          }
+        } else {
+          const previewUrl = URL.createObjectURL(file);
+          newItems.push({
+            file,
+            previewUrl,
+            type: 'file',
+            originalSize: file.size,
+            compressedSize: file.size
+          });
+        }
+      }
+
       setMediaItems(prev => [...prev, ...newItems]);
+      setIsCompressing(false);
       // Reset input so the same files can be selected again if needed
       e.target.value = '';
     }
@@ -188,10 +243,19 @@ export default function SubmitReport() {
               }}
               onMouseOver={e => e.currentTarget.style.borderColor = '#ef4444'}
               onMouseOut={e => e.currentTarget.style.borderColor = '#374151'}
-              onClick={() => document.getElementById('media-upload')?.click()}
+              onClick={() => !isCompressing && document.getElementById('media-upload')?.click()}
             >
-              <i className="fas fa-cloud-upload-alt" style={{ fontSize: '32px', color: '#6b7280', marginBottom: '8px' }}></i>
-              <span style={{ color: '#9ca3af' }}>Tap to Securely Upload Multiple Photos/Videos</span>
+              {isCompressing ? (
+                <>
+                  <i className="fas fa-spinner fa-spin" style={{ fontSize: '32px', color: '#10b981', marginBottom: '8px' }}></i>
+                  <span style={{ color: '#10b981', fontWeight: 'bold' }}>Optimizing & Compressing Media...</span>
+                </>
+              ) : (
+                <>
+                  <i className="fas fa-cloud-upload-alt" style={{ fontSize: '32px', color: '#6b7280', marginBottom: '8px' }}></i>
+                  <span style={{ color: '#9ca3af' }}>Tap to Securely Upload Multiple Photos/Videos</span>
+                </>
+              )}
             </div>
             
             <input type="file" id="media-upload" accept="image/*,video/*" multiple style={{ display: 'none' }} onChange={handleMediaChange} />
@@ -209,20 +273,44 @@ export default function SubmitReport() {
                     <button 
                       type="button" 
                       onClick={() => removeMedia(index)}
-                      style={{ position: 'absolute', top: '4px', right: '4px', background: 'rgba(0,0,0,0.6)', color: 'white', border: 'none', borderRadius: '50%', width: '20px', height: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', fontSize: '10px' }}
+                      style={{ position: 'absolute', top: '4px', right: '4px', background: 'rgba(0,0,0,0.6)', color: 'white', border: 'none', borderRadius: '50%', width: '20px', height: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', fontSize: '10px', zIndex: 10 }}
                     >
                       <i className="fas fa-times"></i>
                     </button>
                     {item.type === 'video' && (
-                      <div style={{ position: 'absolute', bottom: '4px', left: '4px', background: 'rgba(0,0,0,0.6)', padding: '2px 4px', borderRadius: '4px', fontSize: '10px', color: 'white' }}>
+                      <div style={{ position: 'absolute', top: '4px', left: '4px', background: 'rgba(0,0,0,0.6)', padding: '2px 4px', borderRadius: '4px', fontSize: '9px', color: 'white', zIndex: 10 }}>
                         <i className="fas fa-video"></i>
                       </div>
                     )}
+                    <div 
+                      style={{ 
+                        position: 'absolute', 
+                        bottom: '4px', 
+                        left: '4px', 
+                        background: item.type === 'video' ? 'rgba(0,0,0,0.7)' : 'rgba(16, 185, 129, 0.85)', 
+                        padding: '2px 4px', 
+                        borderRadius: '4px', 
+                        fontSize: '9px', 
+                        color: 'white',
+                        fontWeight: 'bold',
+                        boxShadow: '0 1px 2px rgba(0,0,0,0.3)',
+                        zIndex: 10
+                      }}
+                    >
+                      {item.compressedSize && item.compressedSize < item.originalSize ? (
+                        <>
+                          <i className="fas fa-bolt" style={{ marginRight: '2px' }}></i>
+                          {formatSize(item.compressedSize)}
+                        </>
+                      ) : (
+                        formatSize(item.file.size)
+                      )}
+                    </div>
                   </div>
                 ))}
                 <div 
-                  onClick={() => document.getElementById('media-upload')?.click()}
-                  style={{ flexShrink: 0, width: '80px', height: '80px', borderRadius: '8px', border: '1px dashed rgba(255,255,255,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: 'var(--gray)' }}
+                  onClick={() => !isCompressing && document.getElementById('media-upload')?.click()}
+                  style={{ flexShrink: 0, width: '80px', height: '80px', borderRadius: '8px', border: '1px dashed rgba(255,255,255,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: '#9ca3af' }}
                 >
                   <i className="fas fa-plus"></i>
                 </div>
