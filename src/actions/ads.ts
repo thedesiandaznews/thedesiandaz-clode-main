@@ -14,10 +14,14 @@ async function saveFile(file: File, categoryId: string, type: string, position: 
   const extension = file.name.split('.').pop() || 'png';
   const lowerExt = extension.toLowerCase();
   
-  // Scale/upscale by 5X for absolute high-definition quality using Jimp
+  // Downscale and optimize extremely large images to prevent database bloat
   try {
     const image = await Jimp.read(buffer);
-    image.scale(5);
+    const maxWidth = type === 'desktop' ? 1200 : 600;
+    if (image.width > maxWidth) {
+      const scaleFactor = maxWidth / image.width;
+      image.scale(scaleFactor);
+    }
     
     let mimeType: any = JimpMime.png;
     if (lowerExt === 'jpg' || lowerExt === 'jpeg') {
@@ -32,7 +36,7 @@ async function saveFile(file: File, categoryId: string, type: string, position: 
     
     buffer = await image.getBuffer(mimeType);
   } catch (error) {
-    console.error('Failed to upscale image with Jimp, falling back to original buffer:', error);
+    console.error('Failed to process image with Jimp, falling back to original buffer:', error);
   }
 
   // Determine standard mime type for Base64 Data URL
