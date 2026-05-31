@@ -4,11 +4,11 @@ import React, { useState, useEffect } from 'react';
 import styles from '../admin.module.css';
 import { updateReporterStatus, deleteReporter } from '@/actions/reporter';
 import { uploadFileAction } from '@/actions/upload';
-import { getReporterMessages, sendReporterMessage, markReporterMessagesAsRead } from '@/actions/chat';
+import { getReporterMessages, sendReporterMessage, markReporterMessagesAsRead, getReportersListWithUnreadCounts } from '@/actions/chat';
 
 export default function ReportersClient({ initialList }: { initialList: any[] }) {
   const [reporters, setReporters] = useState<any[]>(initialList);
-  const [activeTab, setActiveTab] = useState<'Pending' | 'Approved' | 'Rejected' | 'Suspended'>('Pending');
+  const [activeTab, setActiveTab] = useState<'Pending' | 'Approved' | 'Rejected' | 'Suspended' | 'Chat'>('Pending');
   const [selectedReporter, setSelectedReporter] = useState<any | null>(null);
 
   // Rejection Dialogue States
@@ -21,7 +21,19 @@ export default function ReportersClient({ initialList }: { initialList: any[] })
   const [joiningLetterFile, setJoiningLetterFile] = useState<File | null>(null);
   const [isApproving, setIsApproving] = useState(false);
 
-  const filteredList = reporters.filter(r => r.status === activeTab);
+  const filteredList = activeTab === 'Chat'
+    ? [...reporters].sort((a, b) => {
+        if ((a.unreadCount || 0) !== (b.unreadCount || 0)) {
+          return (b.unreadCount || 0) - (a.unreadCount || 0);
+        }
+        if (a.lastMessageTime && b.lastMessageTime) {
+          return new Date(b.lastMessageTime).getTime() - new Date(a.lastMessageTime).getTime();
+        }
+        if (a.lastMessageTime) return -1;
+        if (b.lastMessageTime) return 1;
+        return a.fullName.localeCompare(b.fullName);
+      })
+    : reporters.filter(r => r.status === activeTab);
 
   const handleOpenReview = (rep: any) => {
     setSelectedReporter(rep);
@@ -29,6 +41,9 @@ export default function ReportersClient({ initialList }: { initialList: any[] })
     setShowApproveForm(false);
     setRejectReason('');
     setJoiningLetterFile(null);
+    if (activeTab === 'Chat') {
+      setIsAdminChatOpen(true);
+    }
   };
 
   const handleCloseReview = () => {
@@ -176,6 +191,8 @@ export default function ReportersClient({ initialList }: { initialList: any[] })
           const messages = await getReporterMessages(selectedReporter.id);
           setAdminChatMessages(messages);
           await markReporterMessagesAsRead(selectedReporter.id, 'Admin');
+          // Instantly clear unread count for this reporter in local state
+          setReporters(prev => prev.map(r => r.id === selectedReporter.id ? { ...r, unreadCount: 0 } : r));
         }
       } catch (e) {
         console.error('Error polling admin chat:', e);
@@ -186,6 +203,24 @@ export default function ReportersClient({ initialList }: { initialList: any[] })
     const interval = setInterval(fetchAdminChatData, 4000);
     return () => clearInterval(interval);
   }, [selectedReporter?.id, isAdminChatOpen]);
+
+  // Periodic polling for reporters list with unread counts (every 5 seconds)
+  useEffect(() => {
+    const fetchReportersUnreadData = async () => {
+      try {
+        const list = await getReportersListWithUnreadCounts();
+        if (list && list.length > 0) {
+          setReporters(list);
+        }
+      } catch (err) {
+        console.error('Error fetching reporters unread data:', err);
+      }
+    };
+
+    fetchReportersUnreadData();
+    const interval = setInterval(fetchReportersUnreadData, 5000);
+    return () => clearInterval(interval);
+  }, []);
 
   // Scroll to bottom of admin chat automatically
   useEffect(() => {
@@ -391,6 +426,46 @@ export default function ReportersClient({ initialList }: { initialList: any[] })
             {reporters.filter(r => r.status === 'Suspended').length}
           </span>
         </button>
+
+        <button 
+          onClick={() => setActiveTab('Chat')} 
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            padding: '10px 20px',
+            borderRadius: '12px',
+            fontSize: '13px',
+            fontWeight: 700,
+            cursor: 'pointer',
+            transition: 'all 0.25s cubic-bezier(0.4, 0, 0.2, 1)',
+            border: 'none',
+            background: activeTab === 'Chat' ? 'linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)' : 'transparent',
+            color: activeTab === 'Chat' ? '#ffffff' : '#64748b',
+            boxShadow: activeTab === 'Chat' ? '0 4px 12px rgba(79, 70, 229, 0.2)' : 'none',
+            whiteSpace: 'nowrap',
+          }}
+        >
+          <i className="fas fa-comments" style={{ color: activeTab === 'Chat' ? '#fff' : '#6366f1' }}></i>
+          <span>Direct Chat with Reporter</span>
+          
+          {reporters.reduce((acc, r) => acc + (r.unreadCount || 0), 0) > 0 && (
+            <span style={{
+              fontSize: '11px',
+              background: activeTab === 'Chat' ? '#ffffff' : '#ef4444',
+              color: activeTab === 'Chat' ? '#ef4444' : '#ffffff',
+              padding: '2px 8px',
+              borderRadius: '20px',
+              fontWeight: 800,
+              marginLeft: '4px',
+              boxShadow: activeTab === 'Chat' ? 'none' : '0 2px 6px rgba(239, 68, 68, 0.3)',
+              display: 'inline-flex',
+              alignItems: 'center',
+            }}>
+              {reporters.reduce((acc, r) => acc + (r.unreadCount || 0), 0)} New
+            </span>
+          )}
+        </button>
       </div>
 
       {/* Spacious Card-Separated Row spacing grid */}
@@ -464,27 +539,70 @@ export default function ReportersClient({ initialList }: { initialList: any[] })
                           height: '12px',
                           borderRadius: '50%',
                           border: '2px solid #ffffff',
-                          background: activeTab === 'Approved' ? '#10b981' : activeTab === 'Pending' ? '#6366f1' : activeTab === 'Rejected' ? '#f59e0b' : '#ef4444',
+                          background: rep.status === 'Approved' ? '#10b981' : rep.status === 'Pending' ? '#6366f1' : rep.status === 'Rejected' ? '#f59e0b' : '#ef4444',
                           boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
                         }} />
                       </div>
                       <div>
-                        <span style={{ fontWeight: 750, color: '#1e293b', fontSize: '14.5px', display: 'block' }}>{rep.fullName}</span>
-                        <span style={{ 
-                          display: 'inline-flex', 
-                          alignItems: 'center', 
-                          gap: '4px',
-                          fontSize: '10.5px', 
-                          color: '#4f46e5', 
-                          fontWeight: 800, 
-                          fontFamily: 'monospace', 
-                          marginTop: '4px',
-                          background: '#eeebff',
-                          padding: '2px 8px',
-                          borderRadius: '6px',
-                        }}>
-                          <i className="fas fa-id-badge"></i> {rep.reporterCode || 'NO ID ASSIGNED'}
+                        <span style={{ fontWeight: 750, color: '#1e293b', fontSize: '14.5px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          <span>{rep.fullName}</span>
+                          {(rep.unreadCount || 0) > 0 && (
+                            <span style={{
+                              background: '#ef4444',
+                              color: '#ffffff',
+                              fontSize: '10px',
+                              fontWeight: 800,
+                              padding: '2px 8px',
+                              borderRadius: '20px',
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: '3px',
+                              boxShadow: '0 2px 8px rgba(239, 68, 68, 0.3)'
+                            }}>
+                              <i className="fas fa-bell" style={{ fontSize: '8px' }}></i>
+                              <span>{rep.unreadCount} New</span>
+                            </span>
+                          )}
                         </span>
+                        
+                        {activeTab === 'Chat' ? (
+                          <div style={{ marginTop: '4px' }}>
+                            {rep.lastMessageText ? (
+                              <span style={{ 
+                                fontSize: '12px', 
+                                color: (rep.unreadCount || 0) > 0 ? '#4f46e5' : '#64748b', 
+                                fontWeight: (rep.unreadCount || 0) > 0 ? 700 : 500, 
+                                display: 'block',
+                                maxWidth: '280px',
+                                textOverflow: 'ellipsis',
+                                overflow: 'hidden',
+                                whiteSpace: 'nowrap'
+                              }}>
+                                {(rep.unreadCount || 0) > 0 ? '💬 ' : ''}{rep.lastMessageText}
+                              </span>
+                            ) : (
+                              <span style={{ fontSize: '12px', color: '#94a3b8', fontStyle: 'italic', display: 'block' }}>
+                                No message history
+                              </span>
+                            )}
+                          </div>
+                        ) : (
+                          <span style={{ 
+                            display: 'inline-flex', 
+                            alignItems: 'center', 
+                            gap: '4px',
+                            fontSize: '10.5px', 
+                            color: '#4f46e5', 
+                            fontWeight: 800, 
+                            fontFamily: 'monospace', 
+                            marginTop: '4px',
+                            background: '#eeebff',
+                            padding: '2px 8px',
+                            borderRadius: '6px',
+                          }}>
+                            <i className="fas fa-id-badge"></i> {rep.reporterCode || 'NO ID ASSIGNED'}
+                          </span>
+                        )}
                       </div>
                     </div>
                   </td>
@@ -556,9 +674,11 @@ export default function ReportersClient({ initialList }: { initialList: any[] })
                     <button 
                       onClick={() => handleOpenReview(rep)} 
                       style={{
-                        background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)',
-                        border: '1px solid #cbd5e1',
-                        color: '#334155',
+                        background: activeTab === 'Chat' && (rep.unreadCount || 0) > 0
+                          ? 'linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)'
+                          : 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)',
+                        border: activeTab === 'Chat' && (rep.unreadCount || 0) > 0 ? 'none' : '1px solid #cbd5e1',
+                        color: activeTab === 'Chat' && (rep.unreadCount || 0) > 0 ? '#ffffff' : '#334155',
                         padding: '8px 16px',
                         fontSize: '12.5px',
                         fontWeight: 700,
@@ -568,25 +688,35 @@ export default function ReportersClient({ initialList }: { initialList: any[] })
                         alignItems: 'center',
                         gap: '6px',
                         transition: 'all 0.2s',
-                        boxShadow: '0 2px 4px rgba(0,0,0,0.02)',
+                        boxShadow: activeTab === 'Chat' && (rep.unreadCount || 0) > 0 ? '0 4px 12px rgba(79, 70, 229, 0.25)' : '0 2px 4px rgba(0,0,0,0.02)',
                       }}
                       onMouseEnter={(e) => {
-                        e.currentTarget.style.background = 'linear-gradient(135deg, #334155 0%, #1e293b 100%)';
-                        e.currentTarget.style.color = '#ffffff';
-                        e.currentTarget.style.borderColor = '#1e293b';
-                        e.currentTarget.style.transform = 'translateY(-1px)';
-                        e.currentTarget.style.boxShadow = '0 4px 12px rgba(30, 41, 59, 0.15)';
+                        if (activeTab === 'Chat' && (rep.unreadCount || 0) > 0) {
+                          e.currentTarget.style.transform = 'translateY(-1px)';
+                          e.currentTarget.style.boxShadow = '0 6px 16px rgba(79, 70, 229, 0.35)';
+                        } else {
+                          e.currentTarget.style.background = 'linear-gradient(135deg, #334155 0%, #1e293b 100%)';
+                          e.currentTarget.style.color = '#ffffff';
+                          e.currentTarget.style.borderColor = '#1e293b';
+                          e.currentTarget.style.transform = 'translateY(-1px)';
+                          e.currentTarget.style.boxShadow = '0 4px 12px rgba(30, 41, 59, 0.15)';
+                        }
                       }}
                       onMouseLeave={(e) => {
-                        e.currentTarget.style.background = 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)';
-                        e.currentTarget.style.color = '#334155';
-                        e.currentTarget.style.borderColor = '#cbd5e1';
-                        e.currentTarget.style.transform = 'translateY(0)';
-                        e.currentTarget.style.boxShadow = '0 2px 4px rgba(0,0,0,0.02)';
+                        if (activeTab === 'Chat' && (rep.unreadCount || 0) > 0) {
+                          e.currentTarget.style.transform = 'translateY(0)';
+                          e.currentTarget.style.boxShadow = '0 4px 12px rgba(79, 70, 229, 0.25)';
+                        } else {
+                          e.currentTarget.style.background = 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)';
+                          e.currentTarget.style.color = '#334155';
+                          e.currentTarget.style.borderColor = '#cbd5e1';
+                          e.currentTarget.style.transform = 'translateY(0)';
+                          e.currentTarget.style.boxShadow = '0 2px 4px rgba(0,0,0,0.02)';
+                        }
                       }}
                     >
-                      <i className="fas fa-clipboard-check"></i>
-                      <span>Review KYC</span>
+                      <i className={`fas ${activeTab === 'Chat' ? 'fa-comments' : 'fa-clipboard-check'}`}></i>
+                      <span>{activeTab === 'Chat' ? 'Open Chat' : 'Review KYC'}</span>
                     </button>
                   </td>
                 </tr>

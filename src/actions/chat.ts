@@ -89,3 +89,43 @@ export async function getUnreadMessageCount(reporterId: string, viewer: 'Admin' 
     return 0;
   }
 }
+
+// Fetch all reporters with their unread messages count and last message preview
+export async function getReportersListWithUnreadCounts() {
+  try {
+    const reporters = await prisma.reporter.findMany({
+      orderBy: { fullName: 'asc' }
+    });
+
+    const reportersWithCounts = await Promise.all(
+      reporters.map(async (rep) => {
+        const unreadCount = await prisma.reporterMessage.count({
+          where: {
+            reporterId: rep.id,
+            sender: 'Reporter',
+            isRead: false
+          }
+        });
+
+        const lastMessage = await prisma.reporterMessage.findFirst({
+          where: { reporterId: rep.id },
+          orderBy: { createdAt: 'desc' }
+        });
+
+        const { password, ...safeRep } = rep;
+        return {
+          ...safeRep,
+          unreadCount,
+          lastMessageText: lastMessage ? lastMessage.message : null,
+          lastMessageTime: lastMessage ? lastMessage.createdAt : null
+        };
+      })
+    );
+
+    return reportersWithCounts;
+  } catch (error) {
+    console.error('Error fetching reporters list with unread counts:', error);
+    return [];
+  }
+}
+
