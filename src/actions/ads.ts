@@ -9,28 +9,17 @@ import { Jimp, JimpMime } from 'jimp';
 
 async function saveFile(file: File, categoryId: string, type: string, position: number): Promise<string> {
   const bytes = await file.arrayBuffer();
-  const buffer = Buffer.from(bytes);
-
-  const uploadDir = path.join(process.cwd(), "public", "uploads", "banners", categoryId, type);
-  
-  if (!existsSync(uploadDir)) {
-    await mkdir(uploadDir, { recursive: true });
-  }
+  let buffer: any = Buffer.from(bytes);
 
   const extension = file.name.split('.').pop() || 'png';
-  const fileName = `pos${position}-${Date.now()}.${extension}`;
-  const filePath = path.join(uploadDir, fileName);
-
+  const lowerExt = extension.toLowerCase();
+  
+  // Scale/upscale by 5X for absolute high-definition quality using Jimp
   try {
-    // Read the uploaded image using Jimp
     const image = await Jimp.read(buffer);
-    
-    // Scale/upscale by 5X for absolute high-definition quality
     image.scale(5);
     
-    // Determine target MIME type based on file extension
     let mimeType: any = JimpMime.png;
-    const lowerExt = extension.toLowerCase();
     if (lowerExt === 'jpg' || lowerExt === 'jpeg') {
       mimeType = JimpMime.jpeg;
     } else if (lowerExt === 'gif') {
@@ -41,18 +30,42 @@ async function saveFile(file: File, categoryId: string, type: string, position: 
       mimeType = JimpMime.tiff;
     }
     
-    // Retrieve the high-quality 5X upscaled buffer
-    const upscaledBuffer = await image.getBuffer(mimeType);
-    
-    // Save the upscaled buffer
-    await writeFile(filePath, upscaledBuffer);
+    buffer = await image.getBuffer(mimeType);
   } catch (error) {
     console.error('Failed to upscale image with Jimp, falling back to original buffer:', error);
-    // Safe fallback to original uploaded buffer in case of processing error
-    await writeFile(filePath, buffer);
   }
-  
-  return `/uploads/banners/${categoryId}/${type}/${fileName}`;
+
+  // Determine standard mime type for Base64 Data URL
+  let mimeString = file.type || 'image/png';
+  if (lowerExt === 'jpg' || lowerExt === 'jpeg') {
+    mimeString = 'image/jpeg';
+  } else if (lowerExt === 'gif') {
+    mimeString = 'image/gif';
+  } else if (lowerExt === 'png') {
+    mimeString = 'image/png';
+  }
+
+  // If in Vercel/production, convert the upscaled buffer to Base64 data URL directly
+  if (process.env.VERCEL === '1' || process.env.NODE_ENV === 'production') {
+    const base64 = buffer.toString('base64');
+    return `data:${mimeString};base64,${base64}`;
+  }
+
+  // Otherwise, try saving locally in development
+  try {
+    const uploadDir = path.join(process.cwd(), "public", "uploads", "banners", categoryId, type);
+    if (!existsSync(uploadDir)) {
+      await mkdir(uploadDir, { recursive: true });
+    }
+    const fileName = `pos${position}-${Date.now()}.${extension}`;
+    const filePath = path.join(uploadDir, fileName);
+    await writeFile(filePath, buffer);
+    return `/uploads/banners/${categoryId}/${type}/${fileName}`;
+  } catch (fsError: any) {
+    console.warn('Local banner write failed, falling back to Base64:', fsError.message);
+    const base64 = buffer.toString('base64');
+    return `data:${mimeString};base64,${base64}`;
+  }
 }
 
 // -- Category Actions --
