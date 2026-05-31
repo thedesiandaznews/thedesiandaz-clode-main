@@ -59,12 +59,77 @@ export default function RegisterClient() {
     }
   };
 
+// Browser-side lightweight image compression using HTML5 Canvas to prevent Vercel 4.5MB Serverless function payload limits.
+// Reduces camera shots (~5MB) to highly legible optimized documents (~150KB) in milliseconds.
+function compressImage(file: File, maxWidth = 1000, maxHeight = 1000, quality = 0.7): Promise<File> {
+  return new Promise((resolve) => {
+    if (!file.type.startsWith('image/')) {
+      return resolve(file); // Don't compress PDFs/Zips
+    }
+    
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        let width = img.width;
+        let height = img.height;
+        
+        if (width > height) {
+          if (width > maxWidth) {
+            height = Math.round((height * maxWidth) / width);
+            width = maxWidth;
+          }
+        } else {
+          if (height > maxHeight) {
+            width = Math.round((width * maxHeight) / height);
+            height = maxHeight;
+          }
+        }
+        
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return resolve(file);
+        
+        ctx.drawImage(img, 0, 0, width, height);
+        
+        canvas.toBlob(
+          (blob) => {
+            if (!blob) return resolve(file);
+            const compressedFile = new File([blob], file.name, {
+              type: file.type,
+              lastModified: Date.now(),
+            });
+            resolve(compressedFile);
+          },
+          file.type,
+          quality
+        );
+      };
+      img.onerror = () => resolve(file);
+      img.src = event.target?.result as string;
+    };
+    reader.onerror = () => resolve(file);
+    reader.readAsDataURL(file);
+  });
+}
+
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>, type: string) => {
     if (e.target.files && e.target.files[0]) {
-      const file = e.target.files[0];
+      let file = e.target.files[0];
       setUploadStatus(prev => ({ ...prev, [type]: 'uploading' }));
 
       try {
+        // Compress image client-side before converting to Base64 to bypass Vercel limits
+        if (file.type.startsWith('image/')) {
+          try {
+            file = await compressImage(file);
+          } catch (compressError) {
+            console.warn('Image compression failed, using original file:', compressError);
+          }
+        }
+
         const formData = new FormData();
         formData.append('file', file);
         formData.append('folder', 'kyc'); // store in /uploads/kyc
