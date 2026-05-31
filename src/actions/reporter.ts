@@ -300,6 +300,24 @@ export async function updateReporterStatus(
   }
 }
 
+export async function deleteReporter(id: string) {
+  try {
+    if (!id) {
+      return { success: false, message: 'Reporter ID is required.' };
+    }
+
+    await prisma.reporter.delete({
+      where: { id }
+    });
+
+    revalidatePath('/admin/reporters');
+    return { success: true };
+  } catch (error: any) {
+    console.error('Error deleting reporter:', error);
+    return { success: false, message: error.message || 'Failed to delete reporter.' };
+  }
+}
+
 export async function getReporterStats(reporterId: string) {
   try {
     const [totalArticles, publishedArticles, pendingArticles, draftArticles, totalViewsAgg] = await Promise.all([

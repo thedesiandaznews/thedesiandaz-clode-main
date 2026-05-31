@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import styles from '../admin.module.css';
-import { updateReporterStatus } from '@/actions/reporter';
+import { updateReporterStatus, deleteReporter } from '@/actions/reporter';
 import { uploadFileAction } from '@/actions/upload';
 
 export default function ReportersClient({ initialList }: { initialList: any[] }) {
@@ -91,9 +91,10 @@ export default function ReportersClient({ initialList }: { initialList: any[] })
     }
   };
 
-  // Suspension States
+  // Suspension & Deletion States
   const [isSuspending, setIsSuspending] = useState(false);
   const [isReactivating, setIsReactivating] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const handleSuspendReporter = async () => {
     if (!selectedReporter) return;
@@ -132,6 +133,26 @@ export default function ReportersClient({ initialList }: { initialList: any[] })
       console.error(err);
     } finally {
       setIsReactivating(false);
+    }
+  };
+
+  const handleDeleteReporter = async () => {
+    if (!selectedReporter) return;
+    if (!confirm(`Are you sure you want to permanently delete reporter ${selectedReporter.fullName} and their KYC documents? This action cannot be undone.`)) return;
+    setIsDeleting(true);
+    try {
+      const res = await deleteReporter(selectedReporter.id);
+      if (res.success) {
+        alert('Reporter has been successfully deleted.');
+        setReporters(prev => prev.filter(r => r.id !== selectedReporter.id));
+        handleCloseReview();
+      } else {
+        alert('Failed to delete: ' + res.message);
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -1187,6 +1208,37 @@ export default function ReportersClient({ initialList }: { initialList: any[] })
                   </div>
                   <div style={{ display: 'flex', gap: '16px', justifyContent: 'flex-end' }}>
                     <button 
+                      onClick={handleDeleteReporter} 
+                      style={{ 
+                        padding: '12px 24px', 
+                        background: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)', 
+                        color: '#ffffff', 
+                        border: 'none', 
+                        borderRadius: '12px', 
+                        fontWeight: 700,
+                        fontSize: '14px',
+                        cursor: 'pointer', 
+                        display: 'inline-flex', 
+                        alignItems: 'center', 
+                        gap: '8px',
+                        boxShadow: '0 4px 12px rgba(239, 68, 68, 0.2)',
+                        transition: 'all 0.2s',
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.transform = 'translateY(-1px)';
+                        e.currentTarget.style.boxShadow = '0 6px 16px rgba(239, 68, 68, 0.3)';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.transform = 'translateY(0)';
+                        e.currentTarget.style.boxShadow = '0 4px 12px rgba(239, 68, 68, 0.2)';
+                      }}
+                      disabled={isDeleting || isReactivating}
+                    >
+                      <i className="fas fa-trash-alt"></i> 
+                      <span>{isDeleting ? 'Deleting Profile...' : 'Delete Profile'}</span>
+                    </button>
+
+                    <button 
                       onClick={handleReactivateReporter} 
                       style={{ 
                         padding: '12px 24px', 
@@ -1211,7 +1263,7 @@ export default function ReportersClient({ initialList }: { initialList: any[] })
                         e.currentTarget.style.transform = 'translateY(0)';
                         e.currentTarget.style.boxShadow = '0 4px 12px rgba(16, 185, 129, 0.2)';
                       }}
-                      disabled={isReactivating}
+                      disabled={isReactivating || isDeleting}
                     >
                       <i className="fas fa-check-circle"></i> 
                       <span>{isReactivating ? 'Reactivating Account...' : 'Reactivate & Approve Profile'}</span>
