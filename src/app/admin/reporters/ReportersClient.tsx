@@ -411,26 +411,22 @@ export default function ReportersClient({ initialList }: { initialList: any[] })
                 <strong style="color: #6c0d1b; font-size: 11px;">The Desi Andaz Media Network</strong>
               </div>
               <div style="text-align: right; position: relative; width: 220px; padding-right: 10px;">
-                <!-- Cursive Signature -->
-                <div style="font-family: 'Mrs Saint Delafield', cursive; font-size: 38px; color: #0f172a; margin-bottom: -22px; text-align: center; transform: rotate(-3deg); padding-right: 15px; opacity: 0.9;">
-                  Sonu Kumar Saha
+                <!-- Digital Signature Block -->
+                <div style="position: absolute; bottom: 35px; left: -75px; width: 140px; border: 1px solid #10b981; background: rgba(240, 253, 244, 0.96); border-radius: 6px; padding: 5px 8px; text-align: left; font-family: 'Montserrat', sans-serif; box-shadow: 0 2px 8px rgba(16, 185, 129, 0.1); font-size: 6.5px; line-height: 1.35; color: #065f46; pointer-events: none; z-index: 10; box-sizing: border-box;">
+                  <div style="display: flex; align-items: center; gap: 4px; border-bottom: 1px solid #a7f3d0; padding-bottom: 3px; margin-bottom: 3px;">
+                    <span style="color: #10b981; font-weight: 900; font-size: 8px; line-height: 1;">✔</span>
+                    <span style="font-weight: 800; text-transform: uppercase; color: #047857; letter-spacing: 0.2px;">Digitally Signed</span>
+                  </div>
+                  <div><strong>Signed By:</strong> Sonu Kumar Saha</div>
+                  <div><strong>Designation:</strong> Managing Director</div>
+                  <div><strong>Date:</strong> ${probationDate}</div>
+                  <div style="color: #059669; font-weight: 600; font-size: 5.2px; margin-top: 1px; font-family: monospace;">AUTH ID: TDA-SEC-${reporter.reporterCode || 'PENDING'}</div>
                 </div>
-                <div style="margin-bottom: 25px; font-style: italic; color: #64748b; font-family: 'Montserrat', sans-serif; font-size: 8.5px;">Managing Director's Seal & Sign</div>
+
+                <div style="margin-bottom: 25px; color: #64748b; font-family: 'Montserrat', sans-serif; font-size: 8px; font-style: italic; letter-spacing: 0.5px;">Verified Digital Signature</div>
                 <strong style="font-size: 12px; color: #6c0d1b;">सोनू कुमार साहा</strong><br/>
                 <span style="font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 9.5px; color: #334155;">Founder & Managing Director</span><br/>
                 <span style="color: #64748b; font-size: 9px; font-family: 'Montserrat', sans-serif;">The Desi Andaz Media Network</span>
-                
-                <!-- Circular Seal Stamp -->
-                <div style="position: absolute; bottom: 35px; left: -25px; width: 95px; height: 95px; border: 3px double #6c0d1b; border-radius: 50%; background: rgba(250, 248, 243, 0.95); transform: rotate(-8deg); z-index: 10; display: flex; flex-direction: column; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(108, 13, 27, 0.15); pointer-events: none; box-sizing: border-box;">
-                  <div style="border: 1px dashed #b89748; border-radius: 50%; width: 83px; height: 83px; display: flex; flex-direction: column; align-items: center; justify-content: center; box-sizing: border-box; padding: 2px;">
-                    <div style="border: 1.5px solid #6c0d1b; border-radius: 50%; width: 73px; height: 73px; display: flex; flex-direction: column; align-items: center; justify-content: center; background: rgba(250, 248, 243, 0.98); box-sizing: border-box;">
-                      <div style="font-family: 'Cinzel', serif; font-weight: 900; font-size: 14px; color: #6c0d1b; line-height: 1.1;">TDA</div>
-                      <div style="font-family: 'Montserrat', sans-serif; font-weight: 800; font-size: 7px; color: #b89748; letter-spacing: 0.5px; line-height: 1.1; margin: 2px 0;">OFFICIAL</div>
-                      <div style="width: 45px; height: 1px; background: #6c0d1b; margin: 1px 0;"></div>
-                      <div style="font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 6.5px; color: #6c0d1b; text-transform: uppercase; line-height: 1.1;">APPROVED</div>
-                    </div>
-                  </div>
-                </div>
               </div>
             </div>
 
