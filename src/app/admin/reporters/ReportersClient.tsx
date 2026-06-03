@@ -116,42 +116,24 @@ export default function ReportersClient({ initialList }: { initialList: any[] })
           <div style="position: absolute; top: 4px; left: 4px; right: 4px; bottom: 4px; border: 1px solid #6c0d1b; pointer-events: none; z-index: 1;"></div>
           
           <!-- Corner Accents -->
-          <svg width="24" height="24" viewBox="0 0 24 24" style="position: absolute; top: 8px; left: 8px; z-index: 2;">
-            <path d="M 0 24 L 0 0 L 24 0 L 24 4 L 4 4 L 4 24 Z" fill="#6c0d1b" />
-            <rect x="6" y="6" width="4" height="4" fill="#b89748" />
-          </svg>
-          <svg width="24" height="24" viewBox="0 0 24 24" style="position: absolute; top: 8px; right: 8px; z-index: 2;">
-            <path d="M 24 24 L 24 0 L 0 0 L 0 4 L 20 4 L 20 24 Z" fill="#6c0d1b" />
-            <rect x="14" y="6" width="4" height="4" fill="#b89748" />
-          </svg>
-          <svg width="24" height="24" viewBox="0 0 24 24" style="position: absolute; bottom: 8px; left: 8px; z-index: 2;">
-            <path d="M 0 0 L 0 24 L 24 24 L 24 20 L 4 20 L 4 0 Z" fill="#6c0d1b" />
-            <rect x="6" y="14" width="4" height="4" fill="#b89748" />
-          </svg>
-          <svg width="24" height="24" viewBox="0 0 24 24" style="position: absolute; bottom: 8px; right: 8px; z-index: 2;">
-            <path d="M 24 0 L 24 24 L 0 24 L 0 20 L 20 20 L 20 0 Z" fill="#6c0d1b" />
-            <rect x="14" y="14" width="4" height="4" fill="#b89748" />
-          </svg>
+          <div style="position: absolute; top: 8px; left: 8px; width: 24px; height: 24px; border-top: 4px solid #6c0d1b; border-left: 4px solid #6c0d1b; z-index: 2; box-sizing: border-box; pointer-events: none;">
+            <div style="position: absolute; top: 2px; left: 2px; width: 4px; height: 4px; background: #b89748;"></div>
+          </div>
+          <div style="position: absolute; top: 8px; right: 8px; width: 24px; height: 24px; border-top: 4px solid #6c0d1b; border-right: 4px solid #6c0d1b; z-index: 2; box-sizing: border-box; pointer-events: none;">
+            <div style="position: absolute; top: 2px; right: 2px; width: 4px; height: 4px; background: #b89748;"></div>
+          </div>
+          <div style="position: absolute; bottom: 8px; left: 8px; width: 24px; height: 24px; border-bottom: 4px solid #6c0d1b; border-left: 4px solid #6c0d1b; z-index: 2; box-sizing: border-box; pointer-events: none;">
+            <div style="position: absolute; bottom: 2px; left: 2px; width: 4px; height: 4px; background: #b89748;"></div>
+          </div>
+          <div style="position: absolute; bottom: 8px; right: 8px; width: 24px; height: 24px; border-bottom: 4px solid #6c0d1b; border-right: 4px solid #6c0d1b; z-index: 2; box-sizing: border-box; pointer-events: none;">
+            <div style="position: absolute; bottom: 2px; right: 2px; width: 4px; height: 4px; background: #b89748;"></div>
+          </div>
 
           <!-- Watermark Crest -->
-          <div style="position: absolute; top: 52%; left: 50%; transform: translate(-50%, -50%); width: 420px; height: 420px; opacity: 0.035; pointer-events: none; z-index: 0;">
-            <svg width="420" height="420" viewBox="0 0 200 200">
-              <circle cx="100" cy="100" r="85" fill="none" stroke="#b89748" stroke-width="1.5" stroke-dasharray="3, 4" />
-              <circle cx="100" cy="100" r="80" fill="none" stroke="#6c0d1b" stroke-width="0.75" />
-              <path d="M100 40 C130 40 145 45 145 60 C145 110 100 155 100 155 C100 155 55 110 55 60 C55 45 70 40 100 40 Z" fill="none" stroke="#6c0d1b" stroke-width="2" />
-              <path d="M100 46 C124 46 137 50 137 62 C137 102 100 143 100 143 C100 143 63 102 63 62 C63 50 76 46 100 46 Z" fill="none" stroke="#b89748" stroke-width="1" />
-              <path d="M45 120 C35 90 40 60 55 45" fill="none" stroke="#b89748" stroke-width="1.5" />
-              <path d="M45 120 Q35 110 40 100 Q43 105 45 120 Z" fill="#b89748" />
-              <path d="M41 95 Q31 88 38 78 Q40 85 41 95 Z" fill="#b89748" />
-              <path d="M43 73 Q35 63 42 55 Q45 62 43 73 Z" fill="#b89748" />
-              <path d="M155 120 C165 90 160 60 145 45" fill="none" stroke="#b89748" stroke-width="1.5" />
-              <path d="M155 120 Q165 110 160 100 Q157 105 155 120 Z" fill="#b89748" />
-              <path d="M159 95 Q169 88 162 78 Q160 85 159 95 Z" fill="#b89748" />
-              <path d="M157 73 Q165 63 158 55 Q155 62 157 73 Z" fill="#b89748" />
-              <text x="100" y="95" font-family="'Cinzel', 'Georgia', serif" font-size="28" font-weight="900" text-anchor="middle" fill="#6c0d1b" letter-spacing="1">TDA</text>
-              <text x="100" y="115" font-family="'Montserrat', sans-serif" font-size="8" font-weight="700" text-anchor="middle" fill="#b89748" letter-spacing="2">MEDIA</text>
-              <path d="M90 32 L95 37 L100 30 L105 37 L110 32 L105 27 L100 29 L95 27 Z" fill="#b89748" />
-            </svg>
+          <div style="position: absolute; top: 52%; left: 50%; transform: translate(-50%, -50%); opacity: 0.035; pointer-events: none; z-index: 0; text-align: center; font-family: 'Cinzel', serif; user-select: none;">
+            <div style="font-size: 80px; font-weight: 900; color: #6c0d1b; letter-spacing: 6px; line-height: 1;">TDA</div>
+            <div style="font-size: 16px; font-weight: 700; color: #b89748; letter-spacing: 12px; margin-top: 5px; font-family: 'Montserrat', sans-serif;">MEDIA</div>
+            <div style="border-top: 1px solid #b89748; width: 120px; margin: 10px auto 0 auto; opacity: 0.5;"></div>
           </div>
 
           <!-- Content Wrap -->
@@ -299,42 +281,24 @@ export default function ReportersClient({ initialList }: { initialList: any[] })
           <div style="position: absolute; top: 4px; left: 4px; right: 4px; bottom: 4px; border: 1px solid #6c0d1b; pointer-events: none; z-index: 1;"></div>
           
           <!-- Corner Accents -->
-          <svg width="24" height="24" viewBox="0 0 24 24" style="position: absolute; top: 8px; left: 8px; z-index: 2;">
-            <path d="M 0 24 L 0 0 L 24 0 L 24 4 L 4 4 L 4 24 Z" fill="#6c0d1b" />
-            <rect x="6" y="6" width="4" height="4" fill="#b89748" />
-          </svg>
-          <svg width="24" height="24" viewBox="0 0 24 24" style="position: absolute; top: 8px; right: 8px; z-index: 2;">
-            <path d="M 24 24 L 24 0 L 0 0 L 0 4 L 20 4 L 20 24 Z" fill="#6c0d1b" />
-            <rect x="14" y="6" width="4" height="4" fill="#b89748" />
-          </svg>
-          <svg width="24" height="24" viewBox="0 0 24 24" style="position: absolute; bottom: 8px; left: 8px; z-index: 2;">
-            <path d="M 0 0 L 0 24 L 24 24 L 24 20 L 4 20 L 4 0 Z" fill="#6c0d1b" />
-            <rect x="6" y="14" width="4" height="4" fill="#b89748" />
-          </svg>
-          <svg width="24" height="24" viewBox="0 0 24 24" style="position: absolute; bottom: 8px; right: 8px; z-index: 2;">
-            <path d="M 24 0 L 24 24 L 0 24 L 0 20 L 20 20 L 20 0 Z" fill="#6c0d1b" />
-            <rect x="14" y="14" width="4" height="4" fill="#b89748" />
-          </svg>
+          <div style="position: absolute; top: 8px; left: 8px; width: 24px; height: 24px; border-top: 4px solid #6c0d1b; border-left: 4px solid #6c0d1b; z-index: 2; box-sizing: border-box; pointer-events: none;">
+            <div style="position: absolute; top: 2px; left: 2px; width: 4px; height: 4px; background: #b89748;"></div>
+          </div>
+          <div style="position: absolute; top: 8px; right: 8px; width: 24px; height: 24px; border-top: 4px solid #6c0d1b; border-right: 4px solid #6c0d1b; z-index: 2; box-sizing: border-box; pointer-events: none;">
+            <div style="position: absolute; top: 2px; right: 2px; width: 4px; height: 4px; background: #b89748;"></div>
+          </div>
+          <div style="position: absolute; bottom: 8px; left: 8px; width: 24px; height: 24px; border-bottom: 4px solid #6c0d1b; border-left: 4px solid #6c0d1b; z-index: 2; box-sizing: border-box; pointer-events: none;">
+            <div style="position: absolute; bottom: 2px; left: 2px; width: 4px; height: 4px; background: #b89748;"></div>
+          </div>
+          <div style="position: absolute; bottom: 8px; right: 8px; width: 24px; height: 24px; border-bottom: 4px solid #6c0d1b; border-right: 4px solid #6c0d1b; z-index: 2; box-sizing: border-box; pointer-events: none;">
+            <div style="position: absolute; bottom: 2px; right: 2px; width: 4px; height: 4px; background: #b89748;"></div>
+          </div>
 
           <!-- Watermark Crest -->
-          <div style="position: absolute; top: 52%; left: 50%; transform: translate(-50%, -50%); width: 420px; height: 420px; opacity: 0.035; pointer-events: none; z-index: 0;">
-            <svg width="420" height="420" viewBox="0 0 200 200">
-              <circle cx="100" cy="100" r="85" fill="none" stroke="#b89748" stroke-width="1.5" stroke-dasharray="3, 4" />
-              <circle cx="100" cy="100" r="80" fill="none" stroke="#6c0d1b" stroke-width="0.75" />
-              <path d="M100 40 C130 40 145 45 145 60 C145 110 100 155 100 155 C100 155 55 110 55 60 C55 45 70 40 100 40 Z" fill="none" stroke="#6c0d1b" stroke-width="2" />
-              <path d="M100 46 C124 46 137 50 137 62 C137 102 100 143 100 143 C100 143 63 102 63 62 C63 50 76 46 100 46 Z" fill="none" stroke="#b89748" stroke-width="1" />
-              <path d="M45 120 C35 90 40 60 55 45" fill="none" stroke="#b89748" stroke-width="1.5" />
-              <path d="M45 120 Q35 110 40 100 Q43 105 45 120 Z" fill="#b89748" />
-              <path d="M41 95 Q31 88 38 78 Q40 85 41 95 Z" fill="#b89748" />
-              <path d="M43 73 Q35 63 42 55 Q45 62 43 73 Z" fill="#b89748" />
-              <path d="M155 120 C165 90 160 60 145 45" fill="none" stroke="#b89748" stroke-width="1.5" />
-              <path d="M155 120 Q165 110 160 100 Q157 105 155 120 Z" fill="#b89748" />
-              <path d="M159 95 Q169 88 162 78 Q160 85 159 95 Z" fill="#b89748" />
-              <path d="M157 73 Q165 63 158 55 Q155 62 157 73 Z" fill="#b89748" />
-              <text x="100" y="95" font-family="'Cinzel', 'Georgia', serif" font-size="28" font-weight="900" text-anchor="middle" fill="#6c0d1b" letter-spacing="1">TDA</text>
-              <text x="100" y="115" font-family="'Montserrat', sans-serif" font-size="8" font-weight="700" text-anchor="middle" fill="#b89748" letter-spacing="2">MEDIA</text>
-              <path d="M90 32 L95 37 L100 30 L105 37 L110 32 L105 27 L100 29 L95 27 Z" fill="#b89748" />
-            </svg>
+          <div style="position: absolute; top: 52%; left: 50%; transform: translate(-50%, -50%); opacity: 0.035; pointer-events: none; z-index: 0; text-align: center; font-family: 'Cinzel', serif; user-select: none;">
+            <div style="font-size: 80px; font-weight: 900; color: #6c0d1b; letter-spacing: 6px; line-height: 1;">TDA</div>
+            <div style="font-size: 16px; font-weight: 700; color: #b89748; letter-spacing: 12px; margin-top: 5px; font-family: 'Montserrat', sans-serif;">MEDIA</div>
+            <div style="border-top: 1px solid #b89748; width: 120px; margin: 10px auto 0 auto; opacity: 0.5;"></div>
           </div>
 
           <!-- Content Wrap -->
@@ -429,23 +393,15 @@ export default function ReportersClient({ initialList }: { initialList: any[] })
                 <span style="color: #64748b; font-size: 9px; font-family: 'Montserrat', sans-serif;">The Desi Andaz Media Network</span>
                 
                 <!-- Circular Seal Stamp -->
-                <div style="position: absolute; bottom: 35px; left: -25px; width: 95px; height: 95px; transform: rotate(-8deg); z-index: 10; opacity: 0.9; pointer-events: none;">
-                  <svg width="95" height="95" viewBox="0 0 120 120">
-                    <circle cx="60" cy="60" r="54" fill="none" stroke="#b89748" stroke-width="2" />
-                    <circle cx="60" cy="60" r="50" fill="none" stroke="#b89748" stroke-width="0.75" stroke-dasharray="2 2" />
-                    <circle cx="60" cy="60" r="46" fill="none" stroke="#6c0d1b" stroke-width="1.5" />
-                    <path id="sealTextPath" d="M 60,60 m -38,0 a 38,38 0 1,1 76,0 a 38,38 0 1,1 -76,0" fill="none" />
-                    <text font-family="'Montserrat', sans-serif" font-weight="800" font-size="7.5" fill="#6c0d1b" letter-spacing="0.5">
-                      <textPath href="#sealTextPath" startOffset="0%">
-                        ★ THE DESI ANDAZ MEDIA NETWORK ★ OFFICIAL APPROVED
-                      </textPath>
-                    </text>
-                    <circle cx="60" cy="60" r="28" fill="#faf8f3" stroke="#b89748" stroke-width="1.25" />
-                    <text x="60" y="55" font-family="'Cinzel', serif" font-weight="900" font-size="9" text-anchor="middle" fill="#6c0d1b">MD</text>
-                    <text x="60" y="66" font-family="'Montserrat', sans-serif" font-weight="800" font-size="6" text-anchor="middle" fill="#b89748" letter-spacing="1">SEAL</text>
-                    <path d="M45 72 L75 72" stroke="#6c0d1b" stroke-width="1" />
-                    <text x="60" y="79" font-family="'Montserrat', sans-serif" font-weight="700" font-size="5" text-anchor="middle" fill="#6c0d1b">VERIFIED</text>
-                  </svg>
+                <div style="position: absolute; bottom: 35px; left: -25px; width: 95px; height: 95px; border: 3px double #6c0d1b; border-radius: 50%; background: rgba(250, 248, 243, 0.95); transform: rotate(-8deg); z-index: 10; display: flex; flex-direction: column; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(108, 13, 27, 0.15); pointer-events: none; box-sizing: border-box;">
+                  <div style="border: 1px dashed #b89748; border-radius: 50%; width: 83px; height: 83px; display: flex; flex-direction: column; align-items: center; justify-content: center; box-sizing: border-box; padding: 2px;">
+                    <div style="border: 1.5px solid #6c0d1b; border-radius: 50%; width: 73px; height: 73px; display: flex; flex-direction: column; align-items: center; justify-content: center; background: rgba(250, 248, 243, 0.98); box-sizing: border-box;">
+                      <div style="font-family: 'Cinzel', serif; font-weight: 900; font-size: 14px; color: #6c0d1b; line-height: 1.1;">TDA</div>
+                      <div style="font-family: 'Montserrat', sans-serif; font-weight: 800; font-size: 7px; color: #b89748; letter-spacing: 0.5px; line-height: 1.1; margin: 2px 0;">OFFICIAL</div>
+                      <div style="width: 45px; height: 1px; background: #6c0d1b; margin: 1px 0;"></div>
+                      <div style="font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 6.5px; color: #6c0d1b; text-transform: uppercase; line-height: 1.1;">APPROVED</div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -485,30 +441,59 @@ export default function ReportersClient({ initialList }: { initialList: any[] })
     tempContainer.innerHTML = page1Html + page2Html;
     document.body.appendChild(tempContainer);
 
+    const generatePdfPromise = (async (): Promise<Blob | null> => {
+      try {
+        const page1El = tempContainer.querySelector('#appointment-page-1') as HTMLElement;
+        const page2El = tempContainer.querySelector('#appointment-page-2') as HTMLElement;
+
+        const canvas1 = await html2canvas(page1El, {
+          scale: 1.5,
+          useCORS: false,
+          logging: false,
+          imageTimeout: 3000
+        });
+        const imgData1 = canvas1.toDataURL('image/jpeg', 0.95);
+
+        const canvas2 = await html2canvas(page2El, {
+          scale: 1.5,
+          useCORS: false,
+          logging: false,
+          imageTimeout: 3000
+        });
+        const imgData2 = canvas2.toDataURL('image/jpeg', 0.95);
+
+        const pdf = new jsPDF('p', 'mm', 'a4');
+        const pdfWidth = pdf.internal.pageSize.getWidth();
+        const pdfHeight = pdf.internal.pageSize.getHeight();
+
+        pdf.addImage(imgData1, 'JPEG', 0, 0, pdfWidth, pdfHeight);
+        pdf.addPage();
+        pdf.addImage(imgData2, 'JPEG', 0, 0, pdfWidth, pdfHeight);
+
+        return pdf.output('blob');
+      } catch (e) {
+        console.error('Error generating PDF canvas:', e);
+        return null;
+      }
+    })();
+
+    const timeoutPromise = new Promise<null>((resolve) => {
+      setTimeout(() => {
+        console.warn('PDF generation timed out after 12 seconds');
+        resolve(null);
+      }, 12000);
+    });
+
     try {
-      const page1El = tempContainer.querySelector('#appointment-page-1') as HTMLElement;
-      const page2El = tempContainer.querySelector('#appointment-page-2') as HTMLElement;
-
-      const canvas1 = await html2canvas(page1El, { scale: 2, useCORS: true });
-      const imgData1 = canvas1.toDataURL('image/jpeg', 0.95);
-
-      const canvas2 = await html2canvas(page2El, { scale: 2, useCORS: true });
-      const imgData2 = canvas2.toDataURL('image/jpeg', 0.95);
-
-      const pdf = new jsPDF('p', 'mm', 'a4');
-      const pdfWidth = pdf.internal.pageSize.getWidth();
-      const pdfHeight = pdf.internal.pageSize.getHeight();
-
-      pdf.addImage(imgData1, 'JPEG', 0, 0, pdfWidth, pdfHeight);
-      pdf.addPage();
-      pdf.addImage(imgData2, 'JPEG', 0, 0, pdfWidth, pdfHeight);
-
-      return pdf.output('blob');
+      const result = await Promise.race([generatePdfPromise, timeoutPromise]);
+      return result;
     } catch (e) {
-      console.error('Error generating PDF canvas:', e);
+      console.error('Error in PDF generation race:', e);
       return null;
     } finally {
-      document.body.removeChild(tempContainer);
+      if (document.body.contains(tempContainer)) {
+        document.body.removeChild(tempContainer);
+      }
     }
   };
 
