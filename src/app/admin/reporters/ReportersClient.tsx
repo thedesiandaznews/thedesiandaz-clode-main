@@ -760,9 +760,10 @@ export default function ReportersClient({ initialList }: { initialList: any[] })
       const uploadFormData = new FormData();
       uploadFormData.append('file', finalFile);
       uploadFormData.append('folder', 'joining_letters');
+      uploadFormData.append('reporterId', selectedReporter.id);
 
       // Call single server action to upload and approve in one roundtrip
-      const res = await approveReporterWithLetterAction(selectedReporter.id, uploadFormData);
+      const res = await approveReporterWithLetterAction(uploadFormData);
       if (res.success && res.url) {
         alert('Reporter approved and Joining Letter published!');
         

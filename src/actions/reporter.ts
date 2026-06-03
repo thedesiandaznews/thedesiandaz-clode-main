@@ -587,8 +587,13 @@ export async function getActiveReporterInBlock(block: string, district: string, 
   }
 }
 
-export async function approveReporterWithLetterAction(reporterId: string, formData: FormData) {
+export async function approveReporterWithLetterAction(formData: FormData) {
   try {
+    const reporterId = formData.get('reporterId') as string;
+    if (!reporterId) {
+      return { success: false, message: 'Reporter ID is required.' };
+    }
+
     const uploadRes = await uploadFileAction(formData);
     if (!uploadRes.success || !uploadRes.url) {
       return { success: false, message: uploadRes.message || 'Failed to upload joining letter' };
