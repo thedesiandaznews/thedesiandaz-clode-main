@@ -114,16 +114,16 @@ export default function ReportersClient({ initialList }: { initialList: any[] })
 
   const handleSuspendReporter = async () => {
     if (!selectedReporter) return;
-    if (!confirm(`Are you sure you want to suspend reporter ${selectedReporter.fullName}?`)) return;
+    if (!confirm(`Are you sure you want to block/suspend reporter ${selectedReporter.fullName}?`)) return;
     setIsSuspending(true);
     try {
       const res = await updateReporterStatus(selectedReporter.id, 'Suspended');
       if (res.success) {
-        alert('Reporter has been suspended.');
+        alert('Reporter has been blocked.');
         setReporters(prev => prev.map(r => r.id === selectedReporter.id ? { ...r, status: 'Suspended' } : r));
         handleCloseReview();
       } else {
-        alert('Failed to suspend: ' + res.message);
+        alert('Failed to block: ' + res.message);
       }
     } catch (err) {
       console.error(err);
@@ -134,16 +134,16 @@ export default function ReportersClient({ initialList }: { initialList: any[] })
 
   const handleReactivateReporter = async () => {
     if (!selectedReporter) return;
-    if (!confirm(`Are you sure you want to reactivate reporter ${selectedReporter.fullName}?`)) return;
+    if (!confirm(`Are you sure you want to unblock and reactivate reporter ${selectedReporter.fullName}?`)) return;
     setIsReactivating(true);
     try {
       const res = await updateReporterStatus(selectedReporter.id, 'Approved');
       if (res.success) {
-        alert('Reporter has been reactivated successfully!');
+        alert('Reporter has been unblocked successfully!');
         setReporters(prev => prev.map(r => r.id === selectedReporter.id ? { ...r, status: 'Approved' } : r));
         handleCloseReview();
       } else {
-        alert('Failed to reactivate: ' + res.message);
+        alert('Failed to unblock: ' + res.message);
       }
     } catch (err) {
       console.error(err);
@@ -413,7 +413,7 @@ export default function ReportersClient({ initialList }: { initialList: any[] })
           }}
         >
           <i className="fas fa-ban" style={{ color: activeTab === 'Suspended' ? '#fff' : '#ef4444' }}></i>
-          <span>Suspended Profiles</span>
+          <span>Blocked Profiles</span>
           <span style={{
             fontSize: '11px',
             background: activeTab === 'Suspended' ? 'rgba(255,255,255,0.2)' : '#e2e8f0',
@@ -512,6 +512,7 @@ export default function ReportersClient({ initialList }: { initialList: any[] })
                     borderTopLeftRadius: '12px', 
                     borderBottomLeftRadius: '12px', 
                     border: '1px solid #e2e8f0', 
+                    borderLeft: rep.status === 'Suspended' ? '4px solid #ef4444' : '1px solid #e2e8f0',
                     borderRight: 'none',
                     verticalAlign: 'middle'
                   }}>
@@ -546,6 +547,41 @@ export default function ReportersClient({ initialList }: { initialList: any[] })
                       <div>
                         <span style={{ fontWeight: 750, color: '#1e293b', fontSize: '14.5px', display: 'flex', alignItems: 'center', gap: '8px' }}>
                           <span>{rep.fullName}</span>
+                          {rep.status === 'Suspended' ? (
+                            <span style={{
+                              background: '#fef2f2',
+                              color: '#dc2626',
+                              fontSize: '11px',
+                              fontWeight: 800,
+                              padding: '2px 8px',
+                              borderRadius: '6px',
+                              border: '1px solid #fca5a5',
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: '4px',
+                              lineHeight: '1'
+                            }}>
+                              <i className="fas fa-ban" style={{ fontSize: '9px' }}></i>
+                              <span>Blocked</span>
+                            </span>
+                          ) : activeTab === 'Chat' ? (
+                            <span style={{
+                              background: rep.status === 'Approved' ? '#ecfdf5' : rep.status === 'Pending' ? '#eeebff' : '#fff9db',
+                              color: rep.status === 'Approved' ? '#10b981' : rep.status === 'Pending' ? '#4f46e5' : '#d97706',
+                              fontSize: '11px',
+                              fontWeight: 800,
+                              padding: '2px 8px',
+                              borderRadius: '6px',
+                              border: `1px solid ${rep.status === 'Approved' ? '#a7f3d0' : rep.status === 'Pending' ? '#cbd5e1' : '#fde68a'}`,
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: '4px',
+                              lineHeight: '1'
+                            }}>
+                              <i className={`fas ${rep.status === 'Approved' ? 'fa-check-circle' : rep.status === 'Pending' ? 'fa-hourglass-half' : 'fa-times-circle'}`} style={{ fontSize: '9px' }}></i>
+                              <span>{rep.status}</span>
+                            </span>
+                          ) : null}
                           {(rep.unreadCount || 0) > 0 && (
                             <span style={{
                               background: '#ef4444',
@@ -1369,7 +1405,7 @@ export default function ReportersClient({ initialList }: { initialList: any[] })
                       disabled={isSuspending}
                     >
                       <i className="fas fa-ban"></i> 
-                      <span>{isSuspending ? 'Suspending Account...' : 'Suspend Reporter Profile'}</span>
+                      <span>{isSuspending ? 'Blocking Account...' : 'Block / Suspend Reporter Profile'}</span>
                     </button>
                   </div>
                 </div>
@@ -1439,7 +1475,7 @@ export default function ReportersClient({ initialList }: { initialList: any[] })
                       <i className="fas fa-exclamation-triangle"></i>
                     </div>
                     <div>
-                      <span style={{ fontSize: '15px', fontWeight: 800, color: '#991b1b', display: 'block', marginBottom: '2px' }}>Reporter Account Suspended</span>
+                      <span style={{ fontSize: '15px', fontWeight: 800, color: '#991b1b', display: 'block', marginBottom: '2px' }}>Reporter Account Blocked / Suspended</span>
                       <span style={{ fontSize: '13.5px', color: '#7f1d1d', fontWeight: 500 }}>
                         This profile is currently blocked from writing articles, submitting news, and using their dashboard.
                       </span>
@@ -1505,7 +1541,7 @@ export default function ReportersClient({ initialList }: { initialList: any[] })
                       disabled={isReactivating || isDeleting}
                     >
                       <i className="fas fa-check-circle"></i> 
-                      <span>{isReactivating ? 'Reactivating Account...' : 'Reactivate & Approve Profile'}</span>
+                      <span>{isReactivating ? 'Unblocking Account...' : 'Unblock & Reactivate Profile'}</span>
                     </button>
                   </div>
                 </div>
