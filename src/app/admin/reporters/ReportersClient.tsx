@@ -2,8 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import styles from '../admin.module.css';
-import { updateReporterStatus, deleteReporter } from '@/actions/reporter';
-import { uploadFileAction } from '@/actions/upload';
+import { updateReporterStatus, deleteReporter, approveReporterWithLetterAction } from '@/actions/reporter';
 import { getReporterMessages, sendReporterMessage, markReporterMessagesAsRead, getReportersListWithUnreadCounts } from '@/actions/chat';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
@@ -758,31 +757,24 @@ export default function ReportersClient({ initialList }: { initialList: any[] })
 
       const finalFile = new File([previewPdfBlob], fileName, { type: 'application/pdf' });
 
-      // 1. Upload Joining Letter
       const uploadFormData = new FormData();
       uploadFormData.append('file', finalFile);
       uploadFormData.append('folder', 'joining_letters');
 
-      const uploadRes = await uploadFileAction(uploadFormData);
-      if (!uploadRes.success || !uploadRes.url) {
-        alert('Failed to upload joining letter: ' + uploadRes.message);
-        setIsApproving(false);
-        return;
-      }
-
-      // 2. Call server action to update status to Approved
-      const res = await updateReporterStatus(selectedReporter.id, 'Approved', uploadRes.url);
-      if (res.success) {
+      // Call single server action to upload and approve in one roundtrip
+      const res = await approveReporterWithLetterAction(selectedReporter.id, uploadFormData);
+      if (res.success && res.url) {
         alert('Reporter approved and Joining Letter published!');
         
         // Update local list state
-        setReporters(prev => prev.map(r => r.id === selectedReporter.id ? { ...r, status: 'Approved', joiningLetter: uploadRes.url } : r));
+        setReporters(prev => prev.map(r => r.id === selectedReporter.id ? { ...r, status: 'Approved', joiningLetter: res.url } : r));
         handleCloseReview();
       } else {
         alert('Failed to approve reporter: ' + res.message);
       }
     } catch (err) {
       console.error(err);
+      alert('An error occurred during approval process.');
     } finally {
       setIsApproving(false);
     }

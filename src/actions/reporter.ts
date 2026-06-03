@@ -4,6 +4,7 @@ import { revalidatePath } from 'next/cache';
 import prisma from '@/lib/db';
 import crypto from 'crypto';
 import { generateUniqueSlug } from '@/lib/slug';
+import { uploadFileAction } from './upload';
 
 // ─── Slug uniqueness checker for articles ────────────────────────────────────
 async function isArticleSlugTaken(slug: string, excludeId?: string): Promise<boolean> {
@@ -583,6 +584,25 @@ export async function getActiveReporterInBlock(block: string, district: string, 
   } catch (error) {
     console.error('Error getting active reporter in block:', error);
     return null;
+  }
+}
+
+export async function approveReporterWithLetterAction(reporterId: string, formData: FormData) {
+  try {
+    const uploadRes = await uploadFileAction(formData);
+    if (!uploadRes.success || !uploadRes.url) {
+      return { success: false, message: uploadRes.message || 'Failed to upload joining letter' };
+    }
+
+    const res = await updateReporterStatus(reporterId, 'Approved', uploadRes.url);
+    if (!res.success) {
+      return { success: false, message: res.message || 'Failed to update reporter status' };
+    }
+
+    return { success: true, url: uploadRes.url };
+  } catch (error: any) {
+    console.error('Error in approveReporterWithLetterAction:', error);
+    return { success: false, message: error.message || 'Operation failed.' };
   }
 }
 
