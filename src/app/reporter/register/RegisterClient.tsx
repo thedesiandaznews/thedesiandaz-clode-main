@@ -6,7 +6,7 @@ import Link from 'next/link';
 import styles from '../reporter.module.css';
 import { registerReporter } from '@/actions/reporter';
 import { uploadFileAction } from '@/actions/upload';
-import { stateDistricts, allStates } from '@/lib/localization';
+import { stateDistricts, allStates, jharkhandBlocks } from '@/lib/localization';
 
 export default function RegisterClient() {
   const router = useRouter();
@@ -26,7 +26,7 @@ export default function RegisterClient() {
   const [state, setState] = useState('Jharkhand');
   const [district, setDistrict] = useState('Ranchi');
   const [poPs, setPoPs] = useState('');
-  const [block, setBlock] = useState('');
+  const [block, setBlock] = useState('Ranchi');
   const [fullAddress, setFullAddress] = useState('');
 
   // Step 3: Documents Upload URLs
@@ -54,9 +54,26 @@ export default function RegisterClient() {
     // Reset district based on new state's first available option
     const districtsForState = stateDistricts[selectedState];
     if (districtsForState && districtsForState.length > 0) {
-      setDistrict(districtsForState[0]);
+      const nextDistrict = districtsForState[0];
+      setDistrict(nextDistrict);
+      if (selectedState === 'Jharkhand') {
+        const blocks = jharkhandBlocks[nextDistrict];
+        setBlock(blocks && blocks.length > 0 ? blocks[0] : '');
+      } else {
+        setBlock('');
+      }
     } else {
       setDistrict('');
+      setBlock('');
+    }
+  };
+
+  const handleDistrictChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const selectedDistrict = e.target.value;
+    setDistrict(selectedDistrict);
+    if (state === 'Jharkhand') {
+      const blocks = jharkhandBlocks[selectedDistrict];
+      setBlock(blocks && blocks.length > 0 ? blocks[0] : '');
     }
   };
 
@@ -375,7 +392,7 @@ function compressImage(file: File, maxWidth = 1000, maxHeight = 1000, quality = 
 
               <div className={styles.formGroup}>
                 <label className={styles.label}>District <span style={{ color: 'red' }}>*</span></label>
-                <select className={styles.select} value={district} onChange={(e) => setDistrict(e.target.value)}>
+                <select className={styles.select} value={district} onChange={handleDistrictChange}>
                   {stateDistricts[state]?.map(d => <option key={d} value={d}>{d}</option>)}
                 </select>
               </div>
@@ -394,14 +411,28 @@ function compressImage(file: File, maxWidth = 1000, maxHeight = 1000, quality = 
 
               <div className={styles.formGroup}>
                 <label className={styles.label}>Block <span style={{ color: 'red' }}>*</span></label>
-                <input 
-                  type="text" 
-                  className={styles.input} 
-                  value={block}
-                  onChange={(e) => setBlock(e.target.value)}
-                  placeholder="e.g. Kanke Block"
-                  required
-                />
+                {state === 'Jharkhand' && jharkhandBlocks[district] ? (
+                  <select 
+                    className={styles.select} 
+                    value={block} 
+                    onChange={(e) => setBlock(e.target.value)}
+                    required
+                  >
+                    <option value="">Select Block</option>
+                    {jharkhandBlocks[district].map(b => (
+                      <option key={b} value={b}>{b}</option>
+                    ))}
+                  </select>
+                ) : (
+                  <input 
+                    type="text" 
+                    className={styles.input} 
+                    value={block}
+                    onChange={(e) => setBlock(e.target.value)}
+                    placeholder="e.g. Kanke Block"
+                    required
+                  />
+                )}
               </div>
 
               <div className={`${styles.formGroup} ${styles.fullWidth}`}>

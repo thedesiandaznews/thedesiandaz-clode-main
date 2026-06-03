@@ -36,3 +36,30 @@ export const stateDistricts: Record<string, string[]> = {
 };
 
 export const allStates = Object.keys(stateDistricts).sort();
+
+export const jharkhandBlocks: Record<string, string[]> = {
+  "Bokaro": ["Chas", "Chandankiyari", "Jaridih", "Kasmar", "Peterwar", "Gomia", "Bermo", "Nawadih"],
+  "Chatra": ["Chatra", "Hunterganj", "Itkhori", "Kanhachatti", "Simaria", "Tandwa", "Pathalgada", "Gidhaur", "Lawalong", "Pratappur", "Mayurhand"],
+  "Deoghar": ["Deoghar", "Mohanpur", "Sarwan", "Devipur", "Madhupur", "Margomunda", "Karon", "Sarath", "Palojori", "Sonaraithodi"],
+  "Dhanbad": ["Dhanbad", "Jharia", "Baghmara", "Nirsa", "Govindpur", "Tundi", "Purbi Tundi", "Topchanchi", "Baliapur", "Kaliasole", "Egarkund"],
+  "Dumka": ["Dumka", "Jarmaundi", "Jama", "Saraiyahat", "Ranishwar", "Masalia", "Kathikund", "Gopikandar", "Shikaripara", "Ramgarh"],
+  "East Singhbhum": ["Ghatshila", "Musabani", "Dumaria", "Baharagora", "Dhalbhumgarh", "Gurabanda", "Jamshedpur (Golmuri-cum-Jugsalai)", "Potka", "Patamda", "Bodam"],
+  "Garhwa": ["Garhwa", "Meral", "Ramna", "Nagar Untari", "Dhurki", "Bhawnathpur", "Kharaundhi", "Kandi", "Majhiaon", "Dandai", "Ramkanda", "Bhandaria", "Ranka", "Chiniya", "Ketar", "Baradih", "Sagma", "Dundur"],
+  "Giridih": ["Giridih", "Gandey", "Bengabad", "Pirtand", "Dumri", "Bagodar", "Birni", "Sariya", "Gawan", "Tisri", "Deori", "Dhanwar", "Jamua"],
+  "Godda": ["Godda", "Pathargama", "Basantrai", "Mahagama", "Meharma", "Boarijor", "Sundarpahari", "Poraiyahat", "Thakurgangti"],
+  "Gumla": ["Gumla", "Ghaghra", "Sisai", "Verno", "Kamdara", "Basia", "Palkot", "Chainpur", "Dumri", "Albert Ekka (Jari)", "Raidih", "Bharno"],
+  "Hazaribag": ["Hazaribag", "Sadar", "Ichak", "Churchu", "Daroo", "Tati Jhariya", "Katkamsandi", "Katkamdag", "Bishnugarh", "Barkagaon", "Keredari", "Barhi", "Chauparan", "Barkatha", "Padma"],
+  "Jamtara": ["Jamtara", "Narayanpur", "Kundahit", "Nala", "Fatehpur", "Karmatand"],
+  "Khunti": ["Khunti", "Karra", "Torpa", "Rania", "Murhu", "Arki"],
+  "Koderma": ["Koderma", "Jainagar", "Chandwara", "Markacho", "Satgawan", "Domchanch"],
+  "Latehar": ["Latehar", "Chandwa", "Balumath", "Manika", "Barwadih", "Mahuadanr", "Garu", "Herhanj", "Bariatu"],
+  "Lohardaga": ["Lohardaga", "Kisko", "Senha", "Bhandra", "Peshrar", "Kuru"],
+  "Pakur": ["Pakur", "Hiranpur", "Littipara", "Amrapara", "Maheshpur", "Pakuria"],
+  "Palamu": ["Daltonganj (Medininagar)", "Lesliganj", "Patan", "Chhatarpur", "Hariharganj", "Hussainabad", "Pipra", "Nawa Bazar", "Pandu", "Untari Road", "Bishrampur", "Sigra", "Satbarwa", "Manatu", "Tarhasi", "Panki", "Chainpur", "Haidernagar", "Mohammadganj"],
+  "Ramgarh": ["Ramgarh", "Gola", "Mandu", "Patratu", "Dulmi", "Chitarpur"],
+  "Ranchi": ["Ranchi", "Kanke", "Ratu", "Namkum", "Ormanjhi", "Angara", "Silli", "Mandar", "Bero", "Chanho", "Burmu", "Khelari", "Lapung", "Bundu", "Rahe", "Sonahatu", "Tamar", "Nagri"],
+  "Sahibganj": ["Sahibganj", "Borio", "Taljhari", "Rajmahal", "Udhwa", "Barharwa", "Pathna", "Barhait", "Mandro"],
+  "Seraikela-Kharsawan": ["Seraikela", "Kharsawan", "Kuchai", "Chandil", "Ichagarh", "Nimdih", "Adityapur (Gamharia)", "Rajnagar", "Kukru"],
+  "Simdega": ["Simdega", "Kurdeg", "Bolba", "Thethaitanger", "Kalebira", "Bano", "Jaldega", "Pakartanr", "Bansjore"],
+  "West Singhbhum": ["Chaibasa", "Khuntpani", "Jhinkpani", "Tonto", "Jagannathpur", "Noamundi", "Kumardungi", "Majhgaon", "Manjhari", "Tantnagar", "Chakradharpur", "Sonua", "Goilkera", "Manoharpur", "Anandpur", "Bandgaon"]
+};
