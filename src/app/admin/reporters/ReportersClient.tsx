@@ -52,7 +52,7 @@ export default function ReportersClient({ initialList }: { initialList: any[] })
       const link = document.createElement('link');
       link.id = fontId;
       link.rel = 'stylesheet';
-      link.href = 'https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Montserrat:wght@400;500;600;700;800&family=Mukta:wght@300;400;500;600;700;800&family=Alex+Brush&family=Mrs+Saint+Delafield&display=swap';
+      link.href = 'https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Montserrat:wght@400;500;600;700;800&family=Mukta:wght@300;400;500;600;700;800&family=Alex+Brush&family=Mrs+Saint+Delafield&family=Playfair+Display:wght@500;600;700;800&family=Source+Sans+3:wght@400;500;600;700&family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap';
       document.head.appendChild(link);
     }
   }, []);
@@ -153,7 +153,7 @@ export default function ReportersClient({ initialList }: { initialList: any[] })
         body {
             font-family: 'Source Sans 3', 'Noto Sans Devanagari', sans-serif;
             background: #E8E4DE;
-            color: var(--dark);
+            color: #1E1B18;
             font-size: 12px;
             -webkit-print-color-adjust: exact;
             print-color-adjust: exact;
@@ -178,12 +178,12 @@ export default function ReportersClient({ initialList }: { initialList: any[] })
         .corner-tl, .corner-tr, .corner-bl, .corner-br {
             position: absolute; width: 22mm; height: 22mm; z-index: 5;
         }
-        .corner-tl { top: 7mm; left: 7mm; border-top: 2px solid var(--gold); border-left: 2px solid var(--gold); }
-        .corner-tr { top: 7mm; right: 7mm; border-top: 2px solid var(--gold); border-right: 2px solid var(--gold); }
-        .corner-bl { bottom: 7mm; left: 7mm; border-bottom: 2px solid var(--gold); border-left: 2px solid var(--gold); }
-        .corner-br { bottom: 7mm; right: 7mm; border-bottom: 2px solid var(--gold); border-right: 2px solid var(--gold); }
+        .corner-tl { top: 7mm; left: 7mm; border-top: 2px solid #C9A84C; border-left: 2px solid #C9A84C; }
+        .corner-tr { top: 7mm; right: 7mm; border-top: 2px solid #C9A84C; border-right: 2px solid #C9A84C; }
+        .corner-bl { bottom: 7mm; left: 7mm; border-bottom: 2px solid #C9A84C; border-left: 2px solid #C9A84C; }
+        .corner-br { bottom: 7mm; right: 7mm; border-bottom: 2px solid #C9A84C; border-right: 2px solid #C9A84C; }
 
-        .top-strip { height: 4mm; background: linear-gradient(90deg, var(--crimson), var(--dark-red)); }
+        .top-strip { height: 4mm; background: linear-gradient(90deg, #C41E3A, #8B1428); }
 
         .page-inner {
             padding: 10mm 14mm 8mm 14mm;
@@ -195,7 +195,7 @@ export default function ReportersClient({ initialList }: { initialList: any[] })
         /* ── Header ── */
         .header {
             display: flex; align-items: center; justify-content: space-between;
-            margin-bottom: 4mm; padding-bottom: 4mm; border-bottom: 0.5px solid var(--border);
+            margin-bottom: 4mm; padding-bottom: 4mm; border-bottom: 0.5px solid #DDD5C9;
         }
 
         .logo-area { display: flex; align-items: center; gap: 4mm; }
@@ -203,60 +203,60 @@ export default function ReportersClient({ initialList }: { initialList: any[] })
 
         .company-text h1 {
             font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 800;
-            color: var(--crimson); letter-spacing: 0.5px; line-height: 1.1;
+            color: #C41E3A; letter-spacing: 0.5px; line-height: 1.1;
         }
-        .company-text .subtitle { font-size: 12px; font-weight: 700; color: var(--dark-red); letter-spacing: 3px; text-transform: uppercase; }
+        .company-text .subtitle { font-size: 12px; font-weight: 700; color: #8B1428; letter-spacing: 3px; text-transform: uppercase; }
 
-        .header-right { text-align: right; font-size: 12px; color: var(--warm-gray); line-height: 1.7; }
+        .header-right { text-align: right; font-size: 12px; color: #6B6460; line-height: 1.7; }
 
         .rni-badge {
-            display: inline-block; background: var(--dark-red); color: white;
+            display: inline-block; background: #8B1428; color: white;
             font-size: 10px; font-weight: 700; padding: 1mm 3mm; letter-spacing: 0.5px; margin-bottom: 1mm;
         }
 
-        .cert-line { font-size: 10px; font-weight: 600; letter-spacing: 0.8px; color: var(--dark-red); }
+        .cert-line { font-size: 10px; font-weight: 600; letter-spacing: 0.8px; color: #8B1428; }
 
         /* ── Address ── */
         .address-bar {
             display: flex; justify-content: space-between; padding: 3mm 0; margin-bottom: 4mm;
-            border-bottom: 0.5px solid var(--border); font-size: 10px; color: var(--warm-gray); line-height: 1.5;
+            border-bottom: 0.5px solid #DDD5C9; font-size: 10px; color: #6B6460; line-height: 1.5;
         }
 
         /* ── Title ── */
         .title-band {
             text-align: center; padding: 5mm 0; margin-bottom: 5mm;
-            background: linear-gradient(135deg, var(--cream) 0%, #f5f0e6 100%);
-            border: 1px solid var(--gold-light);
+            background: linear-gradient(135deg, #FBF8F2 0%, #f5f0e6 100%);
+            border: 1px solid #E8D9A0;
         }
-        .title-band h2 { font-family: 'Noto Sans Devanagari', sans-serif; font-size: 20px; font-weight: 700; color: var(--dark-red); }
-        .title-band .eng { font-family: 'Playfair Display', serif; font-size: 16px; font-weight: 600; color: var(--dark); letter-spacing: 3px; text-transform: uppercase; margin-top: 1mm; }
+        .title-band h2 { font-family: 'Noto Sans Devanagari', sans-serif; font-size: 20px; font-weight: 700; color: #8B1428; }
+        .title-band .eng { font-family: 'Playfair Display', serif; font-size: 16px; font-weight: 600; color: #1E1B18; letter-spacing: 3px; text-transform: uppercase; margin-top: 1mm; }
 
         /* ── Dossier ── */
         .section-head {
-            font-size: 12px; font-weight: 700; color: white; background: var(--dark-red);
+            font-size: 12px; font-weight: 700; color: white; background: #8B1428;
             padding: 2.5mm 4mm; margin-bottom: 0; letter-spacing: 0.5px;
         }
 
-        .dossier-table { width: 100%; border-collapse: collapse; margin-bottom: 4mm; border: 1px solid var(--border); }
-        .dossier-table td { padding: 3mm 4mm; font-size: 12px; border: 0.5px solid var(--border); vertical-align: middle; }
-        .dossier-table .label { background: var(--cream); color: var(--warm-gray); font-weight: 600; width: 18%; }
-        .dossier-table .value { font-weight: 500; color: var(--dark); }
+        .dossier-table { width: 100%; border-collapse: collapse; margin-bottom: 4mm; border: 1px solid #DDD5C9; }
+        .dossier-table td { padding: 3mm 4mm; font-size: 12px; border: 0.5px solid #DDD5C9; vertical-align: middle; }
+        .dossier-table .label { background: #FBF8F2; color: #6B6460; font-weight: 600; width: 18%; }
+        .dossier-table .value { font-weight: 500; color: #1E1B18; }
 
         /* ── Sections ── */
         .section { margin-bottom: 5mm; }
 
         .sec-title {
-            font-size: 14px; font-weight: 700; color: var(--dark-red);
-            padding-bottom: 2mm; margin-bottom: 3mm; border-bottom: 1.5px solid var(--gold);
+            font-size: 14px; font-weight: 700; color: #8B1428;
+            padding-bottom: 2mm; margin-bottom: 3mm; border-bottom: 1.5px solid #C9A84C;
             display: flex; align-items: center; gap: 2mm;
         }
         .sec-title::before {
             content: ''; display: inline-block; width: 3mm; height: 6mm;
-            background: var(--crimson); flex-shrink: 0;
+            background: #C41E3A; flex-shrink: 0;
         }
 
         .body-text { font-size: 12px; line-height: 1.75; color: #333; text-align: justify; }
-        .body-text strong { color: var(--dark); }
+        .body-text strong { color: #1E1B18; }
 
         /* ── Lists ── */
         .bullet-list { list-style: none; padding: 0; margin: 0; }
@@ -264,24 +264,24 @@ export default function ReportersClient({ initialList }: { initialList: any[] })
             font-size: 12px; line-height: 1.7; color: #333;
             padding: 1.5mm 0 1.5mm 6mm; position: relative;
         }
-        .bullet-list li::before { content: '◆'; position: absolute; left: 0; color: var(--crimson); font-size: 7px; top: 3mm; }
+        .bullet-list li::before { content: '◆'; position: absolute; left: 0; color: #C41E3A; font-size: 7px; top: 3mm; }
 
         .num-list { list-style: none; padding: 0; margin: 0; counter-reset: item; }
         .num-list li {
             font-size: 12px; line-height: 1.7; color: #333;
             padding: 1.5mm 0 1.5mm 8mm; position: relative; counter-increment: item;
         }
-        .num-list li::before { content: counter(item) "."; position: absolute; left: 0; color: var(--crimson); font-weight: 700; font-size: 12px; }
+        .num-list li::before { content: counter(item) "."; position: absolute; left: 0; color: #C41E3A; font-weight: 700; font-size: 12px; }
 
         /* ── Jurisdiction ── */
-        .juris-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; border: 1px solid var(--border); margin-bottom: 4mm; }
-        .juris-cell { text-align: center; padding: 4mm 3mm; border-right: 0.5px solid var(--border); }
+        .juris-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; border: 1px solid #DDD5C9; margin-bottom: 4mm; }
+        .juris-cell { text-align: center; padding: 4mm 3mm; border-right: 0.5px solid #DDD5C9; }
         .juris-cell:last-child { border-right: none; }
-        .juris-cell .jvalue { font-size: 13px; font-weight: 700; color: var(--dark-red); }
+        .juris-cell .jvalue { font-size: 13px; font-weight: 700; color: #8B1428; }
 
         .juris-head {
             display: grid; grid-template-columns: 1fr 1fr 1fr;
-            background: var(--dark-red); color: white; font-size: 12px; font-weight: 700; text-align: center;
+            background: #8B1428; color: white; font-size: 12px; font-weight: 700; text-align: center;
         }
         .juris-head div { padding: 2.5mm 3mm; border-right: 0.5px solid rgba(255,255,255,0.2); }
         .juris-head div:last-child { border-right: none; }
@@ -294,26 +294,26 @@ export default function ReportersClient({ initialList }: { initialList: any[] })
             margin-bottom: 2mm; background: #f1f8e9; line-height: 1.6;
         }
         .sig-digital .sig-check { font-weight: 700; color: #2E7D32; font-size: 11px; }
-        .sig-name { font-size: 14px; font-weight: 700; color: var(--dark); margin-top: 2mm; }
-        .sig-name-hi { font-family: 'Noto Sans Devanagari', sans-serif; font-size: 14px; font-weight: 700; color: var(--dark); }
-        .sig-desig { font-size: 12px; color: var(--warm-gray); font-weight: 600; }
-        .sig-org { font-size: 11px; color: var(--warm-gray); }
+        .sig-name { font-size: 14px; font-weight: 700; color: #1E1B18; margin-top: 2mm; }
+        .sig-name-hi { font-family: 'Noto Sans Devanagari', sans-serif; font-size: 14px; font-weight: 700; color: #1E1B18; }
+        .sig-desig { font-size: 12px; color: #6B6460; font-weight: 600; }
+        .sig-org { font-size: 11px; color: #6B6460; }
         .verified-text { font-size: 11px; color: #2E7D32; font-style: italic; margin-top: 2mm; }
 
         /* ── Acceptance ── */
         .acceptance-box {
-            border: 1.5px solid var(--gold); padding: 5mm 6mm; margin-top: 6mm; background: var(--cream);
+            border: 1.5px solid #C9A84C; padding: 5mm 6mm; margin-top: 6mm; background: #FBF8F2;
         }
         .acceptance-box .acc-title {
-            font-size: 14px; font-weight: 700; color: var(--dark-red);
-            margin-bottom: 3mm; padding-bottom: 2mm; border-bottom: 1px solid var(--gold-light);
+            font-size: 14px; font-weight: 700; color: #8B1428;
+            margin-bottom: 3mm; padding-bottom: 2mm; border-bottom: 1px solid #E8D9A0;
         }
         .acceptance-box .acc-text { font-size: 12px; line-height: 1.75; color: #333; margin-bottom: 5mm; }
 
         .acc-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 5mm 12mm; }
         .acc-field { display: flex; flex-direction: column; }
-        .acc-field .af-label { font-size: 12px; color: var(--warm-gray); font-weight: 600; margin-bottom: 2mm; }
-        .acc-field .af-line { border-bottom: 1px dashed var(--warm-gray); height: 7mm; }
+        .acc-field .af-label { font-size: 12px; color: #6B6460; font-weight: 600; margin-bottom: 2mm; }
+        .acc-field .af-line { border-bottom: 1px dashed #6B6460; height: 7mm; }
 
         /* ── Watermark ── */
         .watermark {
@@ -326,19 +326,19 @@ export default function ReportersClient({ initialList }: { initialList: any[] })
 
         .page-footer {
             margin-top: auto; text-align: center; padding-top: 3mm;
-            border-top: 0.5px solid var(--border); font-size: 10px; color: #aaa;
+            border-top: 0.5px solid #DDD5C9; font-size: 10px; color: #aaa;
         }
 
         /* ── Mini Header (page 2+) ── */
         .mini-header {
             display: flex; justify-content: space-between; align-items: center;
-            margin-bottom: 5mm; padding-bottom: 4mm; border-bottom: 0.5px solid var(--border);
+            margin-bottom: 5mm; padding-bottom: 4mm; border-bottom: 0.5px solid #DDD5C9;
         }
         .mini-header-left { display: flex; align-items: center; gap: 3mm; }
         .mini-header-left img { height: 10mm; }
-        .mini-header-left .mh-name { font-size: 12px; font-weight: 700; color: var(--dark-red); letter-spacing: 1px; }
-        .mini-header-left .mh-sub { font-size: 10px; color: var(--warm-gray); margin-left: 2mm; }
-        .mini-header-right { font-size: 10px; color: var(--warm-gray); font-weight: 600; }
+        .mini-header-left .mh-name { font-size: 12px; font-weight: 700; color: #8B1428; letter-spacing: 1px; }
+        .mini-header-left .mh-sub { font-size: 10px; color: #6B6460; margin-left: 2mm; }
+        .mini-header-right { font-size: 10px; color: #6B6460; font-weight: 600; }
     </style>`;
     const page1Html = `<!-- ═══════════════════ PAGE 1 ═══════════════════ -->
 <div id="appointment-page-1" class="page">
@@ -358,7 +358,7 @@ export default function ReportersClient({ initialList }: { initialList: any[] })
             <div class="header-right">
                 <div class="rni-badge">RNI NO: JHBIL/26/A3245</div><br>
                 <span class="cert-line">PRINT · DIGITAL · ELECTRONIC</span><br>
-                <span style="font-size:12px; font-weight:600; color:var(--warm-gray);">Date: ${probationDate}</span>
+                <span style="font-size:12px; font-weight:600; color:#6B6460;">Date: ${probationDate}</span>
             </div>
         </div>
 
@@ -378,7 +378,7 @@ export default function ReportersClient({ initialList }: { initialList: any[] })
                 <td class="label">श्री/श्रीमती:</td>
                 <td class="value">${reporter.fullName}</td>
                 <td class="label">Official ID:</td>
-                <td class="value" style="color:var(--dark-red); font-weight:700;">${reporter.reporterCode || 'NO ID ASSIGNED'}</td>
+                <td class="value" style="color:#8B1428; font-weight:700;">${reporter.reporterCode || 'NO ID ASSIGNED'}</td>
             </tr>
             <tr>
                 <td class="label">पिता/पति:</td>
@@ -575,7 +575,7 @@ export default function ReportersClient({ initialList }: { initialList: any[] })
 
         <div class="sig-section">
             <div>
-                <div style="font-size:12px; color:var(--warm-gray); margin-bottom:4mm;">Issued on behalf of:<br><strong style="color:var(--dark);">The Desi Andaz Media Network</strong></div>
+                <div style="font-size:12px; color:#6B6460; margin-bottom:4mm;">Issued on behalf of:<br><strong style="color:#1E1B18;">The Desi Andaz Media Network</strong></div>
             </div>
             <div style="margin-left:auto; text-align:center;">
                 <div class="sig-digital">
