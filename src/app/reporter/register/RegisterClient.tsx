@@ -178,7 +178,7 @@ function compressImage(file: File, maxWidth = 1000, maxHeight = 1000, quality = 
   const validateStep = () => {
     setError('');
     if (step === 1) {
-      if (!fullName.trim() || !fatherHusbandName.trim() || !email.trim() || !password.trim() || !mobile.trim()) {
+      if (!fullName.trim() || !fatherHusbandName.trim() || !email.trim() || !password.trim() || !mobile.trim() || !bloodGroup) {
         setError('Please fill out all required fields.');
         return false;
       }
@@ -210,9 +210,15 @@ function compressImage(file: File, maxWidth = 1000, maxHeight = 1000, quality = 
     e.preventDefault();
     setError('');
 
+    // Ensure Aadhaar Card Number is valid
+    if (!aadhaarNumber.trim() || aadhaarNumber.trim().length !== 12 || isNaN(Number(aadhaarNumber.trim()))) {
+      setError('Please enter a valid 12-digit Aadhaar Card Number.');
+      return;
+    }
+
     // Ensure all critical docs uploaded
-    if (!aadhaarUrl || !panUrl || !photoUrl || !educationUrl) {
-      setError('Please upload at least Aadhaar Card, PAN Card, Passport Photo, and Educational Certificates.');
+    if (!aadhaarUrl || !panUrl || !voterIdUrl || !photoUrl || !educationUrl || !videoUrl) {
+      setError('Please upload all documents (Aadhaar Card, PAN Card, Voter ID, Passport Photo, Education Certs, and Introduction Video).');
       return;
     }
 
@@ -364,7 +370,7 @@ function compressImage(file: File, maxWidth = 1000, maxHeight = 1000, quality = 
               </div>
 
               <div className={styles.formGroup}>
-                <label className={styles.label}>Blood Group</label>
+                <label className={styles.label}>Blood Group <span style={{ color: 'red' }}>*</span></label>
                 <select className={styles.select} value={bloodGroup} onChange={(e) => setBloodGroup(e.target.value)}>
                   <option value="">Select Blood Group</option>
                   <option value="A+">A+</option>
@@ -453,7 +459,7 @@ function compressImage(file: File, maxWidth = 1000, maxHeight = 1000, quality = 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '30px' }}>
               
               <div className={styles.formGroup} style={{ maxWidth: '400px' }}>
-                <label className={styles.label}>Aadhaar Card Number</label>
+                <label className={styles.label}>Aadhaar Card Number <span style={{ color: 'red' }}>*</span></label>
                 <input 
                   type="text" 
                   className={styles.input} 
@@ -492,7 +498,7 @@ function compressImage(file: File, maxWidth = 1000, maxHeight = 1000, quality = 
                   onClick={() => document.getElementById('voterIdUpload')?.click()}
                 >
                   <i className={`fas ${uploadStatus.voterId === 'success' ? 'fa-check-circle' : uploadStatus.voterId === 'uploading' ? 'fa-spinner fa-spin' : 'fa-address-card'} ${styles.uploadIcon}`}></i>
-                  <span className={styles.uploadTitle}>Voter ID Card</span>
+                  <span className={styles.uploadTitle}>Voter ID Card <span style={{ color: 'red' }}>*</span></span>
                   <span className={styles.uploadSubtitle}>PDF, PNG or JPG supported</span>
                   <input type="file" id="voterIdUpload" style={{ display: 'none' }} accept="image/*,application/pdf" onChange={(e) => handleFileUpload(e, 'voterId')} />
                 </div>
@@ -525,7 +531,7 @@ function compressImage(file: File, maxWidth = 1000, maxHeight = 1000, quality = 
                   onClick={() => document.getElementById('videoUpload')?.click()}
                 >
                   <i className={`fas ${uploadStatus.video === 'success' ? 'fa-check-circle' : uploadStatus.video === 'uploading' ? 'fa-spinner fa-spin' : 'fa-video'} ${styles.uploadIcon}`}></i>
-                  <span className={styles.uploadTitle}>Introduction Video</span>
+                  <span className={styles.uploadTitle}>Introduction Video <span style={{ color: 'red' }}>*</span></span>
                   <span className={styles.uploadSubtitle}>Short clip (MP4, max 50MB)</span>
                   <input type="file" id="videoUpload" style={{ display: 'none' }} accept="video/*" onChange={(e) => handleFileUpload(e, 'video')} />
                 </div>
