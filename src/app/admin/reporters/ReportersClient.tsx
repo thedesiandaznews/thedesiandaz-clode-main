@@ -681,7 +681,7 @@ export default function ReportersClient({ initialList }: { initialList: any[] })
                   }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                       <i className="fas fa-map-marker-alt" style={{ color: '#f43f5e' }}></i>
-                      <span>{rep.district}, {rep.state}</span>
+                      <span>{rep.block ? `${rep.block}, ` : ''}{rep.district}, {rep.state}</span>
                     </div>
                   </td>
                   <td style={{ 
