@@ -32,6 +32,17 @@ export default function ReportersClient({ initialList }: { initialList: any[] })
     return `${dd}-${mm}-${yyyy}`;
   });
 
+  useEffect(() => {
+    const fontId = 'google-fonts-preload';
+    if (!document.getElementById(fontId)) {
+      const link = document.createElement('link');
+      link.id = fontId;
+      link.rel = 'stylesheet';
+      link.href = 'https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Montserrat:wght@400;500;600;700;800&family=Mukta:wght@300;400;500;600;700;800&family=Alex+Brush&family=Mrs+Saint+Delafield&display=swap';
+      document.head.appendChild(link);
+    }
+  }, []);
+
   const filteredList = activeTab === 'Chat'
     ? [...reporters].sort((a, b) => {
         if ((a.unreadCount || 0) !== (b.unreadCount || 0)) {
@@ -98,141 +109,408 @@ export default function ReportersClient({ initialList }: { initialList: any[] })
     tempContainer.style.width = '794px';
     
     const page1Html = `
-      <div id="appointment-page-1" style="width: 794px; height: 1123px; padding: 45px 55px; box-sizing: border-box; background: white; color: black; font-family: 'system-ui', -apple-system, sans-serif; position: relative; display: flex; flex-direction: column; justify-content: space-between; border: 1px solid #cbd5e1;">
-        <div>
-          <!-- Letterhead -->
-          <div style="text-align: center;">
-            <h2 style="margin: 0; color: #b91c1c; font-size: 22px; font-weight: 800; letter-spacing: 0.5px; font-family: inherit;">THE DESI ANDAZ MEDIA NETWORK</h2>
-            <p style="margin: 3px 0 0 0; color: #475569; font-size: 11px; font-weight: 700; letter-spacing: 1px;">(Print • Digital • Electronic Media)</p>
-            <p style="margin: 3px 0 0 0; color: #1e293b; font-size: 10.5px; font-weight: 700;">RNI Registration Number: JHBIL/26/A3245</p>
-          </div>
+      <div id="appointment-page-1" style="width: 794px; height: 1123px; padding: 25px; box-sizing: border-box; background: #ffffff; color: #1e293b; font-family: 'Mukta', sans-serif; position: relative; display: flex; flex-direction: column; justify-content: space-between;">
+        <!-- Inner Border Frame -->
+        <div style="border: 2px solid #b89748; height: 100%; box-sizing: border-box; padding: 35px 40px; position: relative; display: flex; flex-direction: column; justify-content: space-between; background: #ffffff;">
+          <!-- Double border inset -->
+          <div style="position: absolute; top: 4px; left: 4px; right: 4px; bottom: 4px; border: 1px solid #6c0d1b; pointer-events: none; z-index: 1;"></div>
           
-          <div style="display: flex; justify-content: space-between; border-bottom: 2px solid #b91c1c; padding-bottom: 8px; margin-top: 12px; font-size: 10.5px; color: #334155; line-height: 1.4;">
-            <div style="flex: 1; padding-right: 15px; text-align: left;">
-              <strong>Location:</strong> Near Everett Mission School, D.S.M Hospital, Dhanushpuja, Pakur, Jharkhand – 816107
+          <!-- Corner Accents -->
+          <svg width="24" height="24" viewBox="0 0 24 24" style="position: absolute; top: 8px; left: 8px; z-index: 2;">
+            <path d="M 0 24 L 0 0 L 24 0 L 24 4 L 4 4 L 4 24 Z" fill="#6c0d1b" />
+            <rect x="6" y="6" width="4" height="4" fill="#b89748" />
+          </svg>
+          <svg width="24" height="24" viewBox="0 0 24 24" style="position: absolute; top: 8px; right: 8px; z-index: 2;">
+            <path d="M 24 24 L 24 0 L 0 0 L 0 4 L 20 4 L 20 24 Z" fill="#6c0d1b" />
+            <rect x="14" y="6" width="4" height="4" fill="#b89748" />
+          </svg>
+          <svg width="24" height="24" viewBox="0 0 24 24" style="position: absolute; bottom: 8px; left: 8px; z-index: 2;">
+            <path d="M 0 0 L 0 24 L 24 24 L 24 20 L 4 20 L 4 0 Z" fill="#6c0d1b" />
+            <rect x="6" y="14" width="4" height="4" fill="#b89748" />
+          </svg>
+          <svg width="24" height="24" viewBox="0 0 24 24" style="position: absolute; bottom: 8px; right: 8px; z-index: 2;">
+            <path d="M 24 0 L 24 24 L 0 24 L 0 20 L 20 20 L 20 0 Z" fill="#6c0d1b" />
+            <rect x="14" y="14" width="4" height="4" fill="#b89748" />
+          </svg>
+
+          <!-- Watermark Crest -->
+          <div style="position: absolute; top: 52%; left: 50%; transform: translate(-50%, -50%); width: 420px; height: 420px; opacity: 0.035; pointer-events: none; z-index: 0;">
+            <svg width="420" height="420" viewBox="0 0 200 200">
+              <circle cx="100" cy="100" r="85" fill="none" stroke="#b89748" stroke-width="1.5" stroke-dasharray="3, 4" />
+              <circle cx="100" cy="100" r="80" fill="none" stroke="#6c0d1b" stroke-width="0.75" />
+              <path d="M100 40 C130 40 145 45 145 60 C145 110 100 155 100 155 C100 155 55 110 55 60 C55 45 70 40 100 40 Z" fill="none" stroke="#6c0d1b" stroke-width="2" />
+              <path d="M100 46 C124 46 137 50 137 62 C137 102 100 143 100 143 C100 143 63 102 63 62 C63 50 76 46 100 46 Z" fill="none" stroke="#b89748" stroke-width="1" />
+              <path d="M45 120 C35 90 40 60 55 45" fill="none" stroke="#b89748" stroke-width="1.5" />
+              <path d="M45 120 Q35 110 40 100 Q43 105 45 120 Z" fill="#b89748" />
+              <path d="M41 95 Q31 88 38 78 Q40 85 41 95 Z" fill="#b89748" />
+              <path d="M43 73 Q35 63 42 55 Q45 62 43 73 Z" fill="#b89748" />
+              <path d="M155 120 C165 90 160 60 145 45" fill="none" stroke="#b89748" stroke-width="1.5" />
+              <path d="M155 120 Q165 110 160 100 Q157 105 155 120 Z" fill="#b89748" />
+              <path d="M159 95 Q169 88 162 78 Q160 85 159 95 Z" fill="#b89748" />
+              <path d="M157 73 Q165 63 158 55 Q155 62 157 73 Z" fill="#b89748" />
+              <text x="100" y="95" font-family="'Cinzel', 'Georgia', serif" font-size="28" font-weight="900" text-anchor="middle" fill="#6c0d1b" letter-spacing="1">TDA</text>
+              <text x="100" y="115" font-family="'Montserrat', sans-serif" font-size="8" font-weight="700" text-anchor="middle" fill="#b89748" letter-spacing="2">MEDIA</text>
+              <path d="M90 32 L95 37 L100 30 L105 37 L110 32 L105 27 L100 29 L95 27 Z" fill="#b89748" />
+            </svg>
+          </div>
+
+          <!-- Content Wrap -->
+          <div style="position: relative; z-index: 2;">
+            <!-- Letterhead -->
+            <div style="text-align: center;">
+              <h2 style="margin: 0; color: #6c0d1b; font-size: 24px; font-weight: 900; letter-spacing: 1px; font-family: 'Cinzel', serif;">THE DESI ANDAZ MEDIA NETWORK</h2>
+              <div style="margin: 5px 0 0 0;">
+                <span style="background: #faf8f3; border: 1px solid #e2d9c2; color: #b89748; font-size: 9.5px; font-weight: 800; letter-spacing: 1.5px; padding: 3px 12px; border-radius: 20px; font-family: 'Montserrat', sans-serif; text-transform: uppercase;">
+                  Print • Digital • Electronic Media
+                </span>
+              </div>
+              <div style="margin: 8px 0 0 0;">
+                <span style="background: #6c0d1b; color: #faf8f3; font-size: 9px; font-weight: 700; letter-spacing: 0.5px; padding: 4px 14px; border-radius: 4px; font-family: 'Montserrat', sans-serif; display: inline-block;">
+                  RNI Registration Number: JHBIL/26/A3245
+                </span>
+              </div>
             </div>
-            <div style="text-align: right; white-space: nowrap;">
-              <strong>Mob:</strong> +91-8409659560, +91-6203868383<br/>
-              <strong>Email:</strong> info@thedesiandaz.com | <strong>Web:</strong> www.thedesiandaz.com
+
+            <!-- Address and Contacts Row -->
+            <div style="display: flex; align-items: center; border-bottom: 2px solid #b89748; padding-bottom: 10px; margin-top: 15px; font-size: 10.5px; color: #334155; line-height: 1.45;">
+              <div style="flex: 1.2; padding-right: 15px; text-align: left;">
+                <strong style="color: #6c0d1b; font-family: 'Montserrat', sans-serif; font-size: 9.5px;">Head Office:</strong> Near Everett Mission School, D.S.M Hospital, Dhanushpuja, Pakur, Jharkhand – 816107
+              </div>
+              <div style="width: 1px; height: 35px; background: #e2d9c2; margin: 0 15px;"></div>
+              <div style="flex: 0.8; text-align: right; font-family: 'Montserrat', sans-serif; font-size: 9.5px; font-weight: 500;">
+                <strong style="color: #6c0d1b;">Mob:</strong> +91-8409659560, +91-6203868383<br/>
+                <strong style="color: #6c0d1b;">Email:</strong> info@thedesiandaz.com | <strong style="color: #6c0d1b;">Web:</strong> www.thedesiandaz.com
+              </div>
+            </div>
+
+            <!-- Title -->
+            <div style="margin: 18px 0 12px 0; text-align: center;">
+              <div style="border-top: 1.5px solid #b89748; border-bottom: 1.5px solid #b89748; padding: 8px 0; font-size: 15px; font-weight: 800; letter-spacing: 0.5px; background: #faf8f3; color: #6c0d1b;">
+                नियुक्ति पत्र (APPOINTMENT LETTER)
+              </div>
+            </div>
+
+            <!-- Ref and Date Block -->
+            <div style="display: flex; justify-content: space-between; font-size: 11px; font-family: 'Montserrat', sans-serif; font-weight: 600; color: #334155; margin-bottom: 12px; padding: 0 4px;">
+              <div>Ref No: <span style="color: #6c0d1b;">TDA/HR/REP/${reporter.reporterCode || 'PENDING'}</span></div>
+              <div>Date: <span style="color: #6c0d1b;">${probationDate}</span></div>
+            </div>
+
+            <!-- Recipient Info (Dossier Card) -->
+            <div style="background: #faf8f3; border: 1px solid #e2d9c2; border-left: 4px solid #6c0d1b; border-radius: 6px; padding: 12px 18px; margin-bottom: 15px; text-align: left; font-size: 12px; line-height: 1.7;">
+              <div style="font-weight: 700; color: #6c0d1b; font-family: 'Montserrat', sans-serif; font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">Recipient Dossier Details</div>
+              <table style="width: 100%; border-collapse: collapse; text-align: left;">
+                <tr>
+                  <td style="width: 18%; font-weight: 700; color: #475569; padding: 3px 0;">श्री/श्रीमती:</td>
+                  <td style="border-bottom: 1px dashed #cbd5e1; font-weight: 700; padding: 3px 5px; color: #0f172a; width: 32%;">${reporter.fullName}</td>
+                  <td style="width: 18%; font-weight: 700; color: #475569; padding: 3px 0; padding-left: 15px;">Official ID:</td>
+                  <td style="border-bottom: 1px dashed #cbd5e1; font-family: 'Montserrat', sans-serif; font-weight: 700; padding: 3px 5px; color: #6c0d1b; width: 32%;">${reporter.reporterCode || 'NO ID ASSIGNED'}</td>
+                </tr>
+                <tr>
+                  <td style="font-weight: 700; color: #475569; padding: 3px 0;">पिता/पति:</td>
+                  <td style="border-bottom: 1px dashed #cbd5e1; padding: 3px 5px;">${parentName}</td>
+                  <td style="font-weight: 700; color: #475569; padding: 3px 0; padding-left: 15px;">प्रखंड:</td>
+                  <td style="border-bottom: 1px dashed #cbd5e1; padding: 3px 5px; font-weight: 700;">${reporter.block}</td>
+                </tr>
+                <tr>
+                  <td style="font-weight: 700; color: #475569; padding: 3px 0; vertical-align: top;">ग्राम/पता:</td>
+                  <td colspan="3" style="border-bottom: 1px dashed #cbd5e1; padding: 3px 5px; line-height: 1.4;">${reporter.fullAddress || ''}</td>
+                </tr>
+                <tr>
+                  <td style="font-weight: 700; color: #475569; padding: 3px 0;">जिला:</td>
+                  <td style="border-bottom: 1px dashed #cbd5e1; padding: 3px 5px;">${reporter.district}</td>
+                  <td style="font-weight: 700; color: #475569; padding: 3px 0; padding-left: 15px;">राज्य:</td>
+                  <td style="border-bottom: 1px dashed #cbd5e1; padding: 3px 5px;">${reporter.state}</td>
+                </tr>
+              </table>
+            </div>
+
+            <!-- Subject -->
+            <div style="font-size: 12.5px; font-weight: 700; color: #6c0d1b; margin: 15px 0; padding: 8px 12px; border-left: 4px solid #b89748; background: #faf8f3; text-align: left;">
+              विषय: The Desi Andaz Media Network में Official Reporter के पद पर नियुक्ति।
+            </div>
+
+            <!-- Subject Body -->
+            <div style="font-size: 11.5px; line-height: 1.65; color: #2d3748; text-align: justify; margin-bottom: 12px;">
+              <p style="margin: 0 0 8px 0; font-weight: 700; color: #0f172a;">महोदय/महोदया,</p>
+              <p style="margin: 0 0 8px 0; text-indent: 40px;">हमें यह बताते हुए प्रसन्नता हो रही है कि आपके द्वारा प्रस्तुत आवेदन, पहचान दस्तावेजों, शैक्षणिक प्रमाण-पत्रों एवं अन्य आवश्यक अभिलेखों के सत्यापन उपरांत आपको The Desi Andaz Media Network में Official Reporter के पद पर नियुक्त किया जाता है।</p>
+              <p style="margin: 0 0 0 0; text-indent: 40px;">आपको <strong>${reporter.block}</strong> क्षेत्र के लिए संस्था के अधिकृत प्रतिनिधि एवं संवाददाता के रूप में नियुक्त किया जाता है। आप अपने क्षेत्र से समाचार संकलन, जनहित से जुड़े विषयों की रिपोर्टिंग, सामाजिक एवं प्रशासनिक गतिविधियों का कवरेज तथा स्थानीय समस्याओं एवं विकास कार्यों की जानकारी संगठन तक पहुँचाने का कार्य करेंगे।</p>
+            </div>
+
+            <!-- Probation Period -->
+            <h4 style="margin: 15px 0 6px 0; padding-bottom: 4px; border-bottom: 1.5px solid #e2d9c2; font-size: 12px; font-weight: 800; color: #6c0d1b; letter-spacing: 0.5px; text-align: left; display: flex; align-items: center; gap: 6px;">
+              <span style="display: inline-block; width: 4px; height: 12px; background: #b89748;"></span>
+              प्रोबेशन अवधि (Probation Period)
+            </h4>
+            <div style="font-size: 10.5px; line-height: 1.55; color: #2d3748; text-align: left; margin-bottom: 12px;">
+              <p style="margin: 0 0 4px 0;">• आपकी नियुक्ति प्रारंभिक रूप से 03 (तीन) माह की प्रोबेशन अवधि के लिए की जाती है, जो दिनांक <strong>${probationDate}</strong> से प्रभावी होगी।</p>
+              <p style="margin: 0 0 4px 0;">• प्रोबेशन अवधि के दौरान आपके कार्य प्रदर्शन, समाचार संकलन क्षमता, अनुशासन, व्यवहार एवं संगठन के प्रति समर्पण का मूल्यांकन किया जाएगा।</p>
+              <p style="margin: 0 0 0 0;">• संतोषजनक प्रदर्शन के आधार पर आपको नियमित रूप से कार्य करने की अनुमति प्रदान की जा सकती है।</p>
+            </div>
+
+            <!-- Duties -->
+            <h4 style="margin: 15px 0 6px 0; padding-bottom: 4px; border-bottom: 1.5px solid #e2d9c2; font-size: 12px; font-weight: 800; color: #6c0d1b; letter-spacing: 0.5px; text-align: left; display: flex; align-items: center; gap: 6px;">
+              <span style="display: inline-block; width: 4px; height: 12px; background: #b89748;"></span>
+              कर्तव्य एवं जिम्मेदारियाँ
+            </h4>
+            <div style="font-size: 10.5px; line-height: 1.55; color: #2d3748; text-align: left;">
+              <table style="width: 100%; border-collapse: collapse;">
+                <tr>
+                  <td style="width: 20px; font-weight: 700; color: #6c0d1b; vertical-align: top; padding: 2px 0;">1.</td>
+                  <td style="padding: 2px 0;">अपने कार्यक्षेत्र से सत्य, निष्पक्ष एवं तथ्यात्मक समाचार संकलित करना।</td>
+                </tr>
+                <tr>
+                  <td style="font-weight: 700; color: #6c0d1b; vertical-align: top; padding: 2px 0;">2.</td>
+                  <td style="padding: 2px 0;">किसी भी समाचार को प्रकाशित अथवा प्रेषित करने से पूर्व उसकी सत्यता सुनिश्चित करना।</td>
+                </tr>
+                <tr>
+                  <td style="font-weight: 700; color: #6c0d1b; vertical-align: top; padding: 2px 0;">3.</td>
+                  <td style="padding: 2px 0;">स्थानीय प्रशासन, शिक्षा, health, खेल, सामाजिक एवं जनहित से जुड़े समाचारों को प्राथमिकता देना।</td>
+                </tr>
+                <tr>
+                  <td style="font-weight: 700; color: #6c0d1b; vertical-align: top; padding: 2px 0;">4.</td>
+                  <td style="padding: 2px 0;">संस्था द्वारा जारी पत्रकारिता नीति एवं आचार संहिता का पालन करना।</td>
+                </tr>
+                <tr>
+                  <td style="font-weight: 700; color: #6c0d1b; vertical-align: top; padding: 2px 0;">5.</td>
+                  <td style="padding: 2px 0;">संस्था की प्रतिष्ठा एवं विश्वसनीयता बनाए रखना।</td>
+                </tr>
+                <tr>
+                  <td style="font-weight: 700; color: #6c0d1b; vertical-align: top; padding: 2px 0;">6.</td>
+                  <td style="padding: 2px 0;">समय-समय पर संस्था द्वारा दिए गए निर्देशों का पालन करना।</td>
+                </tr>
+              </table>
             </div>
           </div>
 
-          <!-- Title -->
-          <div style="margin: 20px 0 15px 0; text-align: center;">
-            <div style="border-top: 1px solid #cbd5e1; border-bottom: 1px solid #cbd5e1; padding: 6px 0; font-size: 14.5px; font-weight: 800; letter-spacing: 0.5px; background: #f8fafc; color: #1e293b;">
-              नियुक्ति पत्र (APPOINTMENT LETTER)
-            </div>
+          <!-- Footer -->
+          <div style="text-align: center; font-size: 9.5px; color: #888888; font-family: 'Montserrat', sans-serif; border-top: 1px solid #e2d9c2; padding-top: 8px; z-index: 2; font-weight: 600; letter-spacing: 1px;">
+            PAGE 1 OF 2
           </div>
-
-          <!-- Recipient Info -->
-          <div style="font-size: 12px; line-height: 1.7; margin-bottom: 15px; color: #1e293b; text-align: left;">
-            <table style="width: 100%; border-collapse: collapse; text-align: left;">
-              <tr>
-                <td style="width: 20%; font-weight: 700; padding: 2px 0; vertical-align: top;">प्रति,</td>
-                <td></td>
-              </tr>
-              <tr>
-                <td style="font-weight: 700; padding: 2px 0;">श्री/श्रीमती:</td>
-                <td style="border-bottom: 1px dashed #94a3b8; font-weight: 700; padding: 2px 5px; color: #0f172a;">${reporter.fullName}</td>
-              </tr>
-              <tr>
-                <td style="font-weight: 700; padding: 2px 0;">Official ID:</td>
-                <td style="border-bottom: 1px dashed #94a3b8; font-family: monospace; font-weight: 700; padding: 2px 5px; color: #b91c1c;">${reporter.reporterCode || 'NO ID ASSIGNED'}</td>
-              </tr>
-              <tr>
-                <td style="font-weight: 700; padding: 2px 0;">पिता/पति का नाम:</td>
-                <td style="border-bottom: 1px dashed #94a3b8; padding: 2px 5px;">${parentName}</td>
-              </tr>
-              <tr>
-                <td style="font-weight: 700; padding: 2px 0; vertical-align: top;">ग्राम:</td>
-                <td style="border-bottom: 1px dashed #94a3b8; padding: 2px 5px; line-height: 1.4;">${reporter.fullAddress || ''}</td>
-              </tr>
-              <tr>
-                <td style="font-weight: 700; padding: 2px 0;">प्रखंड:</td>
-                <td style="border-bottom: 1px dashed #94a3b8; padding: 2px 5px;">${reporter.block}</td>
-              </tr>
-              <tr>
-                <td style="font-weight: 700; padding: 2px 0;">जिला:</td>
-                <td style="border-bottom: 1px dashed #94a3b8; padding: 2px 5px;">${reporter.district} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <strong>राज्य:</strong> ${reporter.state}</td>
-              </tr>
-            </table>
-          </div>
-
-          <!-- Subject -->
-          <div style="font-size: 12.5px; font-weight: 700; color: #1e293b; margin: 15px 0; padding: 8px; border-left: 3px solid #b91c1c; background: #fef2f2; text-align: left;">
-            विषय: The Desi Andaz Media Network में Official Reporter के पद पर नियुक्ति।
-          </div>
-
-          <!-- Subject Body -->
-          <div style="font-size: 11.5px; line-height: 1.6; color: #334155; text-align: justify;">
-            <p style="margin: 0 0 10px 0; font-weight: 700; color: #1e293b;">महोदय/महोदया,</p>
-            <p style="margin: 0 0 10px 0; text-indent: 40px;">हमें यह बताते हुए प्रसन्नता हो रही है कि आपके द्वारा प्रस्तुत आवेदन, पहचान दस्तावेजों, शैक्षणिक प्रमाण-पत्रों एवं अन्य आवश्यक अभिलेखों के सत्यापन उपरांत आपको The Desi Andaz Media Network में Official Reporter के पद पर नियुक्त किया जाता है।</p>
-            <p style="margin: 0 0 15px 0; text-indent: 40px;">आपको <strong>${reporter.block}</strong> क्षेत्र के लिए संस्था के अधिकृत प्रतिनिधि एवं संवाददाता के रूप में नियुक्त किया जाता है। आप अपने क्षेत्र से समाचार संकलन, जनहित से जुड़े विषयों की रिपोर्टिंग, सामाजिक एवं प्रशासनिक गतिविधियों का कवरेज तथा स्थानीय समस्याओं एवं विकास कार्यों की जानकारी संगठन तक पहुँचाने का कार्य करेंगे।</p>
-          </div>
-
-          <!-- Probation -->
-          <h4 style="margin: 15px 0 6px 0; padding-bottom: 4px; border-bottom: 1px solid #cbd5e1; font-size: 12px; font-weight: 800; color: #b91c1c; text-transform: uppercase; letter-spacing: 0.5px; text-align: left;">प्रोबेशन अवधि (Probation Period)</h4>
-          <div style="font-size: 11px; line-height: 1.5; color: #334155; text-align: left;">
-            <p style="margin: 0 0 6px 0;">• आपकी नियुक्ति प्रारंभिक रूप से 03 (तीन) माह की प्रोबेशन अवधि के लिए की जाती है, जो दिनांक <strong>${probationDate}</strong> से प्रभावी होगी।</p>
-            <p style="margin: 0 0 6px 0;">• प्रोबेशन अवधि के दौरान आपके कार्य प्रदर्शन, समाचार संकलन क्षमता, अनुशासन, व्यवहार एवं संगठन के प्रति समर्पण का मूल्यांकन किया जाएगा।</p>
-            <p style="margin: 0 0 0 0;">• संतोषजनक प्रदर्शन के आधार पर आपको नियमित रूप से कार्य करने की अनुमति प्रदान की जा सकती है।</p>
-          </div>
-
-          <!-- Duties -->
-          <h4 style="margin: 15px 0 6px 0; padding-bottom: 4px; border-bottom: 1px solid #cbd5e1; font-size: 12px; font-weight: 800; color: #b91c1c; text-transform: uppercase; letter-spacing: 0.5px; text-align: left;">कर्तव्य एवं जिम्मेदारियाँ</h4>
-          <div style="font-size: 10.5px; line-height: 1.5; color: #334155; text-align: left;">
-            <div style="margin-bottom: 4px;"><strong>1.</strong> अपने कार्यक्षेत्र से सत्य, निष्पक्ष एवं तथ्यात्मक समाचार संकलित करना।</div>
-            <div style="margin-bottom: 4px;"><strong>2.</strong> किसी भी समाचार को प्रकाशित अथवा प्रेषित करने से पूर्व उसकी सत्यता सुनिश्चित करना।</div>
-            <div style="margin-bottom: 4px;"><strong>3.</strong> स्थानीय प्रशासन, शिक्षा, स्वास्थ्य, खेल, सामाजिक एवं जनहित से जुड़े समाचारों को प्राथमिकता देना।</div>
-            <div style="margin-bottom: 4px;"><strong>4.</strong> संस्था द्वारा जारी पत्रकारिता नीति एवं आचार संहिता का पालन करना।</div>
-            <div style="margin-bottom: 4px;"><strong>5.</strong> संस्था की प्रतिष्ठा एवं विश्वसनीयता बनाए रखना।</div>
-            <div><strong>6.</strong> समय-समय पर संस्था द्वारा दिए गए निर्देशों का पालन करना।</div>
-          </div>
-        </div>
-
-        <div style="text-align: right; font-size: 9.5px; color: #64748b; border-top: 1px solid #cbd5e1; padding-top: 10px; margin-top: 15px;">
-          Page 1 of 2
         </div>
       </div>
     `;
 
     const page2Html = `
-      <div id="appointment-page-2" style="width: 794px; height: 1123px; padding: 45px 55px; box-sizing: border-box; background: white; color: black; font-family: 'system-ui', -apple-system, sans-serif; position: relative; display: flex; flex-direction: column; justify-content: space-between; border: 1px solid #cbd5e1; margin-top: 20px;">
-        <div>
-          <!-- Letterhead Mini -->
-          <div style="display: flex; justify-content: space-between; border-bottom: 1px solid #cbd5e1; padding-bottom: 6px; font-size: 9.5px; color: #64748b;">
-            <div><strong>THE DESI ANDAZ MEDIA NETWORK</strong> • Official Appointment Letter</div>
-            <div>RNI: JHBIL/26/A3245</div>
+      <div id="appointment-page-2" style="width: 794px; height: 1123px; padding: 25px; box-sizing: border-box; background: #ffffff; color: #1e293b; font-family: 'Mukta', sans-serif; position: relative; display: flex; flex-direction: column; justify-content: space-between; margin-top: 20px;">
+        <!-- Inner Border Frame -->
+        <div style="border: 2px solid #b89748; height: 100%; box-sizing: border-box; padding: 35px 40px; position: relative; display: flex; flex-direction: column; justify-content: space-between; background: #ffffff;">
+          <!-- Double border inset -->
+          <div style="position: absolute; top: 4px; left: 4px; right: 4px; bottom: 4px; border: 1px solid #6c0d1b; pointer-events: none; z-index: 1;"></div>
+          
+          <!-- Corner Accents -->
+          <svg width="24" height="24" viewBox="0 0 24 24" style="position: absolute; top: 8px; left: 8px; z-index: 2;">
+            <path d="M 0 24 L 0 0 L 24 0 L 24 4 L 4 4 L 4 24 Z" fill="#6c0d1b" />
+            <rect x="6" y="6" width="4" height="4" fill="#b89748" />
+          </svg>
+          <svg width="24" height="24" viewBox="0 0 24 24" style="position: absolute; top: 8px; right: 8px; z-index: 2;">
+            <path d="M 24 24 L 24 0 L 0 0 L 0 4 L 20 4 L 20 24 Z" fill="#6c0d1b" />
+            <rect x="14" y="6" width="4" height="4" fill="#b89748" />
+          </svg>
+          <svg width="24" height="24" viewBox="0 0 24 24" style="position: absolute; bottom: 8px; left: 8px; z-index: 2;">
+            <path d="M 0 0 L 0 24 L 24 24 L 24 20 L 4 20 L 4 0 Z" fill="#6c0d1b" />
+            <rect x="6" y="14" width="4" height="4" fill="#b89748" />
+          </svg>
+          <svg width="24" height="24" viewBox="0 0 24 24" style="position: absolute; bottom: 8px; right: 8px; z-index: 2;">
+            <path d="M 24 0 L 24 24 L 0 24 L 0 20 L 20 20 L 20 0 Z" fill="#6c0d1b" />
+            <rect x="14" y="14" width="4" height="4" fill="#b89748" />
+          </svg>
+
+          <!-- Watermark Crest -->
+          <div style="position: absolute; top: 52%; left: 50%; transform: translate(-50%, -50%); width: 420px; height: 420px; opacity: 0.035; pointer-events: none; z-index: 0;">
+            <svg width="420" height="420" viewBox="0 0 200 200">
+              <circle cx="100" cy="100" r="85" fill="none" stroke="#b89748" stroke-width="1.5" stroke-dasharray="3, 4" />
+              <circle cx="100" cy="100" r="80" fill="none" stroke="#6c0d1b" stroke-width="0.75" />
+              <path d="M100 40 C130 40 145 45 145 60 C145 110 100 155 100 155 C100 155 55 110 55 60 C55 45 70 40 100 40 Z" fill="none" stroke="#6c0d1b" stroke-width="2" />
+              <path d="M100 46 C124 46 137 50 137 62 C137 102 100 143 100 143 C100 143 63 102 63 62 C63 50 76 46 100 46 Z" fill="none" stroke="#b89748" stroke-width="1" />
+              <path d="M45 120 C35 90 40 60 55 45" fill="none" stroke="#b89748" stroke-width="1.5" />
+              <path d="M45 120 Q35 110 40 100 Q43 105 45 120 Z" fill="#b89748" />
+              <path d="M41 95 Q31 88 38 78 Q40 85 41 95 Z" fill="#b89748" />
+              <path d="M43 73 Q35 63 42 55 Q45 62 43 73 Z" fill="#b89748" />
+              <path d="M155 120 C165 90 160 60 145 45" fill="none" stroke="#b89748" stroke-width="1.5" />
+              <path d="M155 120 Q165 110 160 100 Q157 105 155 120 Z" fill="#b89748" />
+              <path d="M159 95 Q169 88 162 78 Q160 85 159 95 Z" fill="#b89748" />
+              <path d="M157 73 Q165 63 158 55 Q155 62 157 73 Z" fill="#b89748" />
+              <text x="100" y="95" font-family="'Cinzel', 'Georgia', serif" font-size="28" font-weight="900" text-anchor="middle" fill="#6c0d1b" letter-spacing="1">TDA</text>
+              <text x="100" y="115" font-family="'Montserrat', sans-serif" font-size="8" font-weight="700" text-anchor="middle" fill="#b89748" letter-spacing="2">MEDIA</text>
+              <path d="M90 32 L95 37 L100 30 L105 37 L110 32 L105 27 L100 29 L95 27 Z" fill="#b89748" />
+            </svg>
           </div>
 
-          <!-- Terms and Conditions -->
-          <h4 style="margin: 20px 0 10px 0; padding-bottom: 4px; border-bottom: 1px solid #cbd5e1; font-size: 12px; font-weight: 800; color: #b91c1c; text-transform: uppercase; letter-spacing: 0.5px; text-align: left;">नियम एवं शर्तें (Terms & Conditions)</h4>
-          <div style="font-size: 11px; line-height: 1.6; color: #334155; margin-bottom: 20px; text-align: left;">
-            <div style="margin-bottom: 6px;"><strong>1.</strong> Reporter ID केवल आधिकारिक कार्य हेतु मान्य होगी।</div>
-            <div style="margin-bottom: 6px;"><strong>2.</strong> संस्था के नाम, लोगो अथवा पहचान पत्र का दुरुपयोग पूर्णतः प्रतिबंधित रहेगा।</div>
-            <div style="margin-bottom: 6px;"><strong>3.</strong> संस्था के नाम पर किसी भी प्रकार का आर्थिक लेन-देन बिना लिखित अनुमति के नहीं किया जाएगा।</div>
-            <div style="margin-bottom: 6px;"><strong>4.</strong> फर्जी, भ्रामक अथवा अपुष्ट समाचार प्रकाशित या प्रसारित करना गंभीर अनुशासनहीनता माना जाएगा।</div>
-            <div style="margin-bottom: 6px;"><strong>5.</strong> संस्था के नियमों के उल्लंघन अथवा संस्था की छवि को नुकसान पहुँचाने की स्थिति में नियुक्ति तत्काल प्रभाव से समाप्त की जा सकती है।</div>
-            <div><strong>6.</strong> संस्था आवश्यकता अनुसार कार्यक्षेत्र अथवा दायित्वों में परिवर्तन करने का अधिकार सुरक्षित रखती है।</div>
+          <!-- Content Wrap -->
+          <div style="position: relative; z-index: 2;">
+            <!-- Letterhead Mini -->
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1.5px solid #e2d9c2; padding-bottom: 6px; font-size: 10px; color: #64748b; font-family: 'Montserrat', sans-serif; font-weight: 600; margin-bottom: 15px;">
+              <div style="display: flex; align-items: center; gap: 6px;">
+                <span style="color: #6c0d1b; font-weight: 800;">THE DESI ANDAZ MEDIA NETWORK</span>
+                <span style="color: #cbd5e1;">|</span>
+                <span>Official Appointment Letter</span>
+              </div>
+              <div style="color: #6c0d1b;">RNI: JHBIL/26/A3245</div>
+            </div>
+
+            <!-- Terms and Conditions -->
+            <h4 style="margin: 10px 0 6px 0; padding-bottom: 4px; border-bottom: 1.5px solid #e2d9c2; font-size: 12px; font-weight: 800; color: #6c0d1b; letter-spacing: 0.5px; text-align: left; display: flex; align-items: center; gap: 6px;">
+              <span style="display: inline-block; width: 4px; height: 12px; background: #b89748;"></span>
+              नियम एवं शर्तें (Terms & Conditions)
+            </h4>
+            <div style="font-size: 10.5px; line-height: 1.6; color: #2d3748; text-align: left; margin-bottom: 15px;">
+              <table style="width: 100%; border-collapse: collapse;">
+                <tr>
+                  <td style="width: 20px; font-weight: 700; color: #6c0d1b; vertical-align: top; padding: 2.5px 0;">1.</td>
+                  <td style="padding: 2.5px 0;">Reporter ID केवल आधिकारिक कार्य हेतु मान्य होगी।</td>
+                </tr>
+                <tr>
+                  <td style="font-weight: 700; color: #6c0d1b; vertical-align: top; padding: 2.5px 0;">2.</td>
+                  <td style="padding: 2.5px 0;">संस्था के नाम, लोगो अथवा पहचान पत्र का दुरुपयोग पूर्णतः प्रतिबंधित रहेगा।</td>
+                </tr>
+                <tr>
+                  <td style="font-weight: 700; color: #6c0d1b; vertical-align: top; padding: 2.5px 0;">3.</td>
+                  <td style="padding: 2.5px 0;">संस्था के नाम पर किसी भी प्रकार का आर्थिक लेन-देन बिना लिखित अनुमति के नहीं किया जाएगा।</td>
+                </tr>
+                <tr>
+                  <td style="font-weight: 700; color: #6c0d1b; vertical-align: top; padding: 2.5px 0;">4.</td>
+                  <td style="padding: 2.5px 0;">फर्जी, भ्रामक अथवा अपुष्ट समाचार प्रकाशित या प्रसारित करना गंभीर अनुशासनहीनता माना जाएगा।</td>
+                </tr>
+                <tr>
+                  <td style="font-weight: 700; color: #6c0d1b; vertical-align: top; padding: 2.5px 0;">5.</td>
+                  <td style="padding: 2.5px 0;">संस्था के नियमों के उल्लंघन अथवा संस्था की छवि को नुकसान पहुँचाने की स्थिति में नियुक्ति तत्काल प्रभाव से समाप्त की जा सकती है।</td>
+                </tr>
+                <tr>
+                  <td style="font-weight: 700; color: #6c0d1b; vertical-align: top; padding: 2.5px 0;">6.</td>
+                  <td style="padding: 2.5px 0;">संस्था आवश्यकता अनुसार कार्यक्षेत्र अथवा दायित्वों में परिवर्तन करने का अधिकार सुरक्षित रखती है।</td>
+                </tr>
+              </table>
+            </div>
+
+            <!-- Work Area -->
+            <h4 style="margin: 15px 0 8px 0; padding-bottom: 4px; border-bottom: 1.5px solid #e2d9c2; font-size: 12px; font-weight: 800; color: #6c0d1b; letter-spacing: 0.5px; text-align: left; display: flex; align-items: center; gap: 6px;">
+              <span style="display: inline-block; width: 4px; height: 12px; background: #b89748;"></span>
+              अधिकृत कार्य क्षेत्र (Authorized Jurisdiction)
+            </h4>
+            <div style="display: flex; gap: 15px; margin-bottom: 15px;">
+              <div style="flex: 1; background: #faf8f3; border: 1px solid #e2d9c2; border-top: 3px solid #b89748; border-radius: 4px; padding: 8px 12px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
+                <div style="font-size: 9px; color: #64748b; font-family: 'Montserrat', sans-serif; font-weight: 750; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px;">BLOCK (प्रखंड)</div>
+                <div style="font-size: 13px; font-weight: 800; color: #6c0d1b;">Block, ${reporter.block || 'N/A'}, ${reporter.district}, ${reporter.state}</div>
+              </div>
+              <div style="flex: 1; background: #faf8f3; border: 1px solid #e2d9c2; border-top: 3px solid #6c0d1b; border-radius: 4px; padding: 8px 12px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
+                <div style="font-size: 9px; color: #64748b; font-family: 'Montserrat', sans-serif; font-weight: 750; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px;">DISTRICT (जिला)</div>
+                <div style="font-size: 13px; font-weight: 800; color: #6c0d1b;">${reporter.district}</div>
+              </div>
+              <div style="flex: 1; background: #faf8f3; border: 1px solid #e2d9c2; border-top: 3px solid #b89748; border-radius: 4px; padding: 8px 12px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
+                <div style="font-size: 9px; color: #64748b; font-family: 'Montserrat', sans-serif; font-weight: 750; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px;">STATE (राज्य)</div>
+                <div style="font-size: 13px; font-weight: 800; color: #6c0d1b;">${reporter.state}</div>
+              </div>
+            </div>
+
+            <!-- Declaration -->
+            <h4 style="margin: 15px 0 6px 0; padding-bottom: 4px; border-bottom: 1.5px solid #e2d9c2; font-size: 12px; font-weight: 800; color: #6c0d1b; letter-spacing: 0.5px; text-align: left; display: flex; align-items: center; gap: 6px;">
+              <span style="display: inline-block; width: 4px; height: 12px; background: #b89748;"></span>
+              घोषणा (Declaration)
+            </h4>
+            <div style="font-size: 10.5px; line-height: 1.6; color: #2d3748; text-align: justify; margin-bottom: 20px;">
+              The Desi Andaz Media Network निष्पक्ष, निर्भीक एवं जनहित पत्रकारिता के सिद्धांतों पर कार्य करता है। आपसे अपेक्षा की जाती है कि आप पत्रकारिता की गरिमा एवं नैतिक मूल्यों का पालन करते हुए संस्था के उद्देश्यों के अनुरूप कार्य करेंगे। हम आपके उज्ज्वल भविष्य एवं सफल कार्यकाल की कामना करते हैं।
+            </div>
+
+            <!-- Sign-off Block -->
+            <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: 20px; font-size: 10.5px; line-height: 1.5; color: #1e293b; position: relative;">
+              <div style="text-align: left; padding-bottom: 10px;">
+                <span style="color: #64748b; font-size: 9px; font-family: 'Montserrat', sans-serif; font-weight: 600; display: block; margin-bottom: 2px;">Issued on behalf of:</span>
+                <strong style="color: #6c0d1b; font-size: 11px;">The Desi Andaz Media Network</strong>
+              </div>
+              <div style="text-align: right; position: relative; width: 220px; padding-right: 10px;">
+                <!-- Cursive Signature -->
+                <div style="font-family: 'Mrs Saint Delafield', cursive; font-size: 38px; color: #0f172a; margin-bottom: -22px; text-align: center; transform: rotate(-3deg); padding-right: 15px; opacity: 0.9;">
+                  Sonu Kumar Saha
+                </div>
+                <div style="margin-bottom: 25px; font-style: italic; color: #64748b; font-family: 'Montserrat', sans-serif; font-size: 8.5px;">Managing Director's Seal & Sign</div>
+                <strong style="font-size: 12px; color: #6c0d1b;">सोनू कुमार साहा</strong><br/>
+                <span style="font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 9.5px; color: #334155;">Founder & Managing Director</span><br/>
+                <span style="color: #64748b; font-size: 9px; font-family: 'Montserrat', sans-serif;">The Desi Andaz Media Network</span>
+                
+                <!-- Circular Seal Stamp -->
+                <div style="position: absolute; bottom: 35px; left: -25px; width: 95px; height: 95px; transform: rotate(-8deg); z-index: 10; opacity: 0.9; pointer-events: none;">
+                  <svg width="95" height="95" viewBox="0 0 120 120">
+                    <circle cx="60" cy="60" r="54" fill="none" stroke="#b89748" stroke-width="2" />
+                    <circle cx="60" cy="60" r="50" fill="none" stroke="#b89748" stroke-width="0.75" stroke-dasharray="2 2" />
+                    <circle cx="60" cy="60" r="46" fill="none" stroke="#6c0d1b" stroke-width="1.5" />
+                    <path id="sealTextPath" d="M 60,60 m -38,0 a 38,38 0 1,1 76,0 a 38,38 0 1,1 -76,0" fill="none" />
+                    <text font-family="'Montserrat', sans-serif" font-weight="800" font-size="7.5" fill="#6c0d1b" letter-spacing="0.5">
+                      <textPath href="#sealTextPath" startOffset="0%">
+                        ★ THE DESI ANDAZ MEDIA NETWORK ★ OFFICIAL APPROVED
+                      </textPath>
+                    </text>
+                    <circle cx="60" cy="60" r="28" fill="#faf8f3" stroke="#b89748" stroke-width="1.25" />
+                    <text x="60" y="55" font-family="'Cinzel', serif" font-weight="900" font-size="9" text-anchor="middle" fill="#6c0d1b">MD</text>
+                    <text x="60" y="66" font-family="'Montserrat', sans-serif" font-weight="800" font-size="6" text-anchor="middle" fill="#b89748" letter-spacing="1">SEAL</text>
+                    <path d="M45 72 L75 72" stroke="#6c0d1b" stroke-width="1" />
+                    <text x="60" y="79" font-family="'Montserrat', sans-serif" font-weight="700" font-size="5" text-anchor="middle" fill="#6c0d1b">VERIFIED</text>
+                  </svg>
+                </div>
+              </div>
+            </div>
+
+            <!-- Employee Acceptance -->
+            <h4 style="margin: 20px 0 6px 0; padding-bottom: 4px; border-bottom: 1.5px solid #e2d9c2; font-size: 12px; font-weight: 800; color: #6c0d1b; letter-spacing: 0.5px; text-align: left; display: flex; align-items: center; gap: 6px;">
+              <span style="display: inline-block; width: 4px; height: 12px; background: #b89748;"></span>
+              कर्मचारी स्वीकृति (Employee Acceptance)
+            </h4>
+            <div style="font-size: 10.5px; line-height: 1.6; color: #2d3748; background: #faf8f3; border: 1px solid #e2d9c2; border-left: 4px solid #b89748; padding: 12px 18px; border-radius: 6px; text-align: left; position: relative; z-index: 2;">
+              <p style="margin: 0 0 10px 0;">मैं, <strong>____________________________</strong>, इस नियुक्ति पत्र में उल्लिखित सभी नियमों एवं शर्तों को पढ़कर, समझकर एवं स्वीकार करता/करती हूँ।</p>
+              <table style="width: 100%; font-size: 10px; border-collapse: collapse; margin-top: 8px; text-align: left; line-height: 1.6;">
+                <tr>
+                  <td style="width: 50%; padding: 3px 0; color: #475569;"><strong>हस्ताक्षर:</strong> ___________________</td>
+                  <td style="padding: 3px 0; color: #475569;"><strong>Official Reporter ID:</strong> <span style="font-family: 'Montserrat', sans-serif; font-weight: 700; color: #6c0d1b;">${reporter.reporterCode || '__________'}</span></td>
+                </tr>
+                <tr>
+                  <td style="padding: 3px 0; color: #475569;"><strong>नाम:</strong> _______________________</td>
+                  <td style="padding: 3px 0; color: #475569;"><strong>दिनांक:</strong> _____________________</td>
+                </tr>
+                <tr>
+                  <td style="padding: 3px 0; color: #475569;"><strong>स्थान:</strong> ______________________</td>
+                  <td></td>
+                </tr>
+              </table>
+            </div>
           </div>
 
-          <!-- Work Area -->
-          <h4 style="margin: 15px 0 8px 0; padding-bottom: 4px; border-bottom: 1px solid #cbd5e1; font-size: 12px; font-weight: 800; color: #b91c1c; text-transform: uppercase; letter-spacing: 0.5px; text-align: left;">कार्य क्षेत्र (Work Area)</h4>
-          <div style="font-size: 11.5px; line-height: 1.5; color: #1e293b; background: #f8fafc; border: 1px solid #e2e8f0; padding: 12px 18px; border-radius: 8px; text-align: left;">
-            <table style="width: 100%;">
-              <tr>
-                <td style="width: 33%;"><strong>प्रखंड:</strong> ${reporter.block}</td>
-                <td style="width: 33%;"><strong>जिला:</strong> ${reporter.district}</td>
-                <td><strong>राज्य:</strong> ${reporter.state}</td>
-              </tr>
-            </table>
+          <!-- Footer -->
+          <div style="text-align: center; font-size: 9.5px; color: #888888; font-family: 'Montserrat', sans-serif; border-top: 1px solid #e2d9c2; padding-top: 8px; z-index: 2; font-weight: 600; letter-spacing: 1px;">
+            PAGE 2 OF 2
           </div>
+        </div>
+      </div>
+    `;
 
-          <!-- Declaration -->
-          <h4 style="margin: 20px 0 6px 0; padding-bottom: 4px; border-bottom: 1px solid #cbd5e1; font-size: 12px; font-weight: 800; color: #b91c1c; text-transform: uppercase; letter-spacing: 0.5px; text-align: left;">घोषणा (Declaration)</h4>
-          <div style="font-size: 11px; line-height: 1.6; color: #334155; text-align: justify; margin-bottom: 25px;">
-            The Desi Andaz Media Network निष्पक्ष, निर्भीक एवं जनहित पत्रकारिता के सिद्धांतों पर कार्य करता है। आपसे अपेक्षा की जाती है कि आप पत्रकारिता की गरिमा एवं नैतिक मूल्यों का पालन करते हुए संस्था के उद्देश्यों के अनुरूप कार्य करेंगे। हम आपके उज्ज्वल भविष्य एवं सफल कार्यकाल की कामना करते हैं।
-          </div>
+    tempContainer.innerHTML = page1Html + page2Html;
+    document.body.appendChild(tempContainer);
+
+    try {
+      const page1El = tempContainer.querySelector('#appointment-page-1') as HTMLElement;
+      const page2El = tempContainer.querySelector('#appointment-page-2') as HTMLElement;
+
+      const canvas1 = await html2canvas(page1El, { scale: 2, useCORS: true });
+      const imgData1 = canvas1.toDataURL('image/jpeg', 0.95);
+
+      const canvas2 = await html2canvas(page2El, { scale: 2, useCORS: true });
+      const imgData2 = canvas2.toDataURL('image/jpeg', 0.95);
+
+      const pdf = new jsPDF('p', 'mm', 'a4');
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = pdf.internal.pageSize.getHeight();
+
+      pdf.addImage(imgData1, 'JPEG', 0, 0, pdfWidth, pdfHeight);
+      pdf.addPage();
+      pdf.addImage(imgData2, 'JPEG', 0, 0, pdfWidth, pdfHeight);
+
+      return pdf.output('blob');
+    } catch (e) {
+      console.error('Error generating PDF canvas:', e);
+      return null;
+    } finally {
+      document.body.removeChild(tempContainer);
+    }
+  };
 
           <!-- Sign-off Block -->
           <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: 30px; font-size: 11px; line-height: 1.5; color: #1e293b;">
@@ -308,6 +586,16 @@ export default function ReportersClient({ initialList }: { initialList: any[] })
     setIsApproving(true);
 
     try {
+      // Policy Check: 1 active reporter per block restriction
+      const hasActive = reporters.some(r => r.status === 'Approved' && r.block === selectedReporter.block && r.district === selectedReporter.district && r.state === selectedReporter.state && r.id !== selectedReporter.id);
+      if (hasActive) {
+        const confirmApprove = confirm(`Warning: There is already an Approved active reporter in the block "${selectedReporter.block}". Approving this reporter will violate the 1-reporter-per-block policy. Do you still want to proceed?`);
+        if (!confirmApprove) {
+          setIsApproving(false);
+          return;
+        }
+      }
+
       let finalFile: File | null = null;
 
       if (useAutoGenerate) {
@@ -935,9 +1223,30 @@ export default function ReportersClient({ initialList }: { initialList: any[] })
                     color: '#475569',
                     fontWeight: 600
                   }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <i className="fas fa-map-marker-alt" style={{ color: '#f43f5e' }}></i>
-                      <span>{rep.block ? `${rep.block}, ` : ''}{rep.district}, {rep.state}</span>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', textAlign: 'left' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <i className="fas fa-map-marker-alt" style={{ color: '#f43f5e' }}></i>
+                        <span>Block, {rep.block || 'N/A'}, {rep.district}, {rep.state}</span>
+                      </div>
+                      {rep.status !== 'Approved' && reporters.some(r => r.status === 'Approved' && r.block === rep.block && r.district === rep.district && r.state === rep.state && r.id !== rep.id) && (
+                        <span style={{
+                          background: '#fee2e2',
+                          color: '#b91c1c',
+                          fontSize: '11px',
+                          fontWeight: 800,
+                          padding: '2px 8px',
+                          borderRadius: '6px',
+                          border: '1px solid #fca5a5',
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '4px',
+                          width: 'fit-content',
+                          marginLeft: '20px'
+                        }}>
+                          <i className="fas fa-exclamation-triangle" style={{ fontSize: '10px' }}></i>
+                          <span>Block Occupied</span>
+                        </span>
+                      )}
                     </div>
                   </td>
                   <td style={{ 
@@ -1207,7 +1516,26 @@ export default function ReportersClient({ initialList }: { initialList: any[] })
                   </div>
                   <div style={{ gridColumn: 'span 3' }}>
                     <span style={{ color: '#64748b', display: 'block', fontWeight: 600, fontSize: '11.5px', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '2px' }}>PO + PS Info & Area</span>
-                    <span style={{ fontWeight: 750, color: '#1e293b' }}>{selectedReporter.poPs} • Block: {selectedReporter.block}, Dist: {selectedReporter.district}, {selectedReporter.state}</span>
+                    <span style={{ fontWeight: 750, color: '#1e293b', display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                      <span>{selectedReporter.poPs} • Block, {selectedReporter.block || 'N/A'}, {selectedReporter.district}, {selectedReporter.state}</span>
+                      {selectedReporter.status !== 'Approved' && reporters.some(r => r.status === 'Approved' && r.block === selectedReporter.block && r.district === selectedReporter.district && r.state === selectedReporter.state && r.id !== selectedReporter.id) && (
+                        <span style={{
+                          background: '#fee2e2',
+                          color: '#b91c1c',
+                          fontSize: '11px',
+                          fontWeight: 800,
+                          padding: '2px 8px',
+                          borderRadius: '6px',
+                          border: '1px solid #fca5a5',
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '4px'
+                        }}>
+                          <i className="fas fa-exclamation-triangle" style={{ fontSize: '10px' }}></i>
+                          <span>Block Occupied (Another reporter is active here)</span>
+                        </span>
+                      )}
+                    </span>
                   </div>
                   <div style={{ gridColumn: 'span 3' }}>
                     <span style={{ color: '#64748b', display: 'block', fontWeight: 600, fontSize: '11.5px', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '2px' }}>Full Residential Address</span>
