@@ -5,6 +5,8 @@ import styles from '../admin.module.css';
 import { updateReporterStatus, deleteReporter } from '@/actions/reporter';
 import { uploadFileAction } from '@/actions/upload';
 import { getReporterMessages, sendReporterMessage, markReporterMessagesAsRead, getReportersListWithUnreadCounts } from '@/actions/chat';
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
 
 export default function ReportersClient({ initialList }: { initialList: any[] }) {
   const [reporters, setReporters] = useState<any[]>(initialList);
@@ -20,6 +22,15 @@ export default function ReportersClient({ initialList }: { initialList: any[] })
   const [showApproveForm, setShowApproveForm] = useState(false);
   const [joiningLetterFile, setJoiningLetterFile] = useState<File | null>(null);
   const [isApproving, setIsApproving] = useState(false);
+  const [useAutoGenerate, setUseAutoGenerate] = useState(true);
+  const [fatherHusbandName, setFatherHusbandName] = useState('');
+  const [probationStartDate, setProbationStartDate] = useState(() => {
+    const today = new Date();
+    const dd = String(today.getDate()).padStart(2, '0');
+    const mm = String(today.getMonth() + 1).padStart(2, '0');
+    const yyyy = today.getFullYear();
+    return `${dd}-${mm}-${yyyy}`;
+  });
 
   const filteredList = activeTab === 'Chat'
     ? [...reporters].sort((a, b) => {
@@ -41,6 +52,13 @@ export default function ReportersClient({ initialList }: { initialList: any[] })
     setShowApproveForm(false);
     setRejectReason('');
     setJoiningLetterFile(null);
+    setFatherHusbandName('');
+    setUseAutoGenerate(true);
+    const today = new Date();
+    const dd = String(today.getDate()).padStart(2, '0');
+    const mm = String(today.getMonth() + 1).padStart(2, '0');
+    const yyyy = today.getFullYear();
+    setProbationStartDate(`${dd}-${mm}-${yyyy}`);
     if (activeTab === 'Chat') {
       setIsAdminChatOpen(true);
     }
@@ -72,14 +90,252 @@ export default function ReportersClient({ initialList }: { initialList: any[] })
     }
   };
 
+  const generateAppointmentLetterBlob = async (reporter: any, parentName: string, probationDate: string): Promise<Blob | null> => {
+    const tempContainer = document.createElement('div');
+    tempContainer.style.position = 'absolute';
+    tempContainer.style.top = '-9999px';
+    tempContainer.style.left = '-9999px';
+    tempContainer.style.width = '794px';
+    
+    const page1Html = `
+      <div id="appointment-page-1" style="width: 794px; height: 1123px; padding: 45px 55px; box-sizing: border-box; background: white; color: black; font-family: 'system-ui', -apple-system, sans-serif; position: relative; display: flex; flex-direction: column; justify-content: space-between; border: 1px solid #cbd5e1;">
+        <div>
+          <!-- Letterhead -->
+          <div style="text-align: center;">
+            <h2 style="margin: 0; color: #b91c1c; font-size: 22px; font-weight: 800; letter-spacing: 0.5px; font-family: inherit;">THE DESI ANDAZ MEDIA NETWORK</h2>
+            <p style="margin: 3px 0 0 0; color: #475569; font-size: 11px; font-weight: 700; letter-spacing: 1px;">(Print • Digital • Electronic Media)</p>
+            <p style="margin: 3px 0 0 0; color: #1e293b; font-size: 10.5px; font-weight: 700;">RNI Registration Number: JHBIL/26/A3245</p>
+          </div>
+          
+          <div style="display: flex; justify-content: space-between; border-bottom: 2px solid #b91c1c; padding-bottom: 8px; margin-top: 12px; font-size: 10.5px; color: #334155; line-height: 1.4;">
+            <div style="flex: 1; padding-right: 15px; text-align: left;">
+              <strong>Location:</strong> Near Everett Mission School, D.S.M Hospital, Dhanushpuja, Pakur, Jharkhand – 816107
+            </div>
+            <div style="text-align: right; white-space: nowrap;">
+              <strong>Mob:</strong> +91-8409659560, +91-6203868383<br/>
+              <strong>Email:</strong> info@thedesiandaz.com | <strong>Web:</strong> www.thedesiandaz.com
+            </div>
+          </div>
+
+          <!-- Title -->
+          <div style="margin: 20px 0 15px 0; text-align: center;">
+            <div style="border-top: 1px solid #cbd5e1; border-bottom: 1px solid #cbd5e1; padding: 6px 0; font-size: 14.5px; font-weight: 800; letter-spacing: 0.5px; background: #f8fafc; color: #1e293b;">
+              नियुक्ति पत्र (APPOINTMENT LETTER)
+            </div>
+          </div>
+
+          <!-- Recipient Info -->
+          <div style="font-size: 12px; line-height: 1.7; margin-bottom: 15px; color: #1e293b; text-align: left;">
+            <table style="width: 100%; border-collapse: collapse; text-align: left;">
+              <tr>
+                <td style="width: 20%; font-weight: 700; padding: 2px 0; vertical-align: top;">प्रति,</td>
+                <td></td>
+              </tr>
+              <tr>
+                <td style="font-weight: 700; padding: 2px 0;">श्री/श्रीमती:</td>
+                <td style="border-bottom: 1px dashed #94a3b8; font-weight: 700; padding: 2px 5px; color: #0f172a;">${reporter.fullName}</td>
+              </tr>
+              <tr>
+                <td style="font-weight: 700; padding: 2px 0;">Official ID:</td>
+                <td style="border-bottom: 1px dashed #94a3b8; font-family: monospace; font-weight: 700; padding: 2px 5px; color: #b91c1c;">${reporter.reporterCode || 'NO ID ASSIGNED'}</td>
+              </tr>
+              <tr>
+                <td style="font-weight: 700; padding: 2px 0;">पिता/पति का नाम:</td>
+                <td style="border-bottom: 1px dashed #94a3b8; padding: 2px 5px;">${parentName}</td>
+              </tr>
+              <tr>
+                <td style="font-weight: 700; padding: 2px 0; vertical-align: top;">ग्राम:</td>
+                <td style="border-bottom: 1px dashed #94a3b8; padding: 2px 5px; line-height: 1.4;">${reporter.fullAddress || ''}</td>
+              </tr>
+              <tr>
+                <td style="font-weight: 700; padding: 2px 0;">प्रखंड:</td>
+                <td style="border-bottom: 1px dashed #94a3b8; padding: 2px 5px;">${reporter.block}</td>
+              </tr>
+              <tr>
+                <td style="font-weight: 700; padding: 2px 0;">जिला:</td>
+                <td style="border-bottom: 1px dashed #94a3b8; padding: 2px 5px;">${reporter.district} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <strong>राज्य:</strong> ${reporter.state}</td>
+              </tr>
+            </table>
+          </div>
+
+          <!-- Subject -->
+          <div style="font-size: 12.5px; font-weight: 700; color: #1e293b; margin: 15px 0; padding: 8px; border-left: 3px solid #b91c1c; background: #fef2f2; text-align: left;">
+            विषय: The Desi Andaz Media Network में Official Reporter के पद पर नियुक्ति।
+          </div>
+
+          <!-- Subject Body -->
+          <div style="font-size: 11.5px; line-height: 1.6; color: #334155; text-align: justify;">
+            <p style="margin: 0 0 10px 0; font-weight: 700; color: #1e293b;">महोदय/महोदया,</p>
+            <p style="margin: 0 0 10px 0; text-indent: 40px;">हमें यह बताते हुए प्रसन्नता हो रही है कि आपके द्वारा प्रस्तुत आवेदन, पहचान दस्तावेजों, शैक्षणिक प्रमाण-पत्रों एवं अन्य आवश्यक अभिलेखों के सत्यापन उपरांत आपको The Desi Andaz Media Network में Official Reporter के पद पर नियुक्त किया जाता है।</p>
+            <p style="margin: 0 0 15px 0; text-indent: 40px;">आपको <strong>${reporter.block}</strong> क्षेत्र के लिए संस्था के अधिकृत प्रतिनिधि एवं संवाददाता के रूप में नियुक्त किया जाता है। आप अपने क्षेत्र से समाचार संकलन, जनहित से जुड़े विषयों की रिपोर्टिंग, सामाजिक एवं प्रशासनिक गतिविधियों का कवरेज तथा स्थानीय समस्याओं एवं विकास कार्यों की जानकारी संगठन तक पहुँचाने का कार्य करेंगे।</p>
+          </div>
+
+          <!-- Probation -->
+          <h4 style="margin: 15px 0 6px 0; padding-bottom: 4px; border-bottom: 1px solid #cbd5e1; font-size: 12px; font-weight: 800; color: #b91c1c; text-transform: uppercase; letter-spacing: 0.5px; text-align: left;">प्रोबेशन अवधि (Probation Period)</h4>
+          <div style="font-size: 11px; line-height: 1.5; color: #334155; text-align: left;">
+            <p style="margin: 0 0 6px 0;">• आपकी नियुक्ति प्रारंभिक रूप से 03 (तीन) माह की प्रोबेशन अवधि के लिए की जाती है, जो दिनांक <strong>${probationDate}</strong> से प्रभावी होगी।</p>
+            <p style="margin: 0 0 6px 0;">• प्रोबेशन अवधि के दौरान आपके कार्य प्रदर्शन, समाचार संकलन क्षमता, अनुशासन, व्यवहार एवं संगठन के प्रति समर्पण का मूल्यांकन किया जाएगा।</p>
+            <p style="margin: 0 0 0 0;">• संतोषजनक प्रदर्शन के आधार पर आपको नियमित रूप से कार्य करने की अनुमति प्रदान की जा सकती है।</p>
+          </div>
+
+          <!-- Duties -->
+          <h4 style="margin: 15px 0 6px 0; padding-bottom: 4px; border-bottom: 1px solid #cbd5e1; font-size: 12px; font-weight: 800; color: #b91c1c; text-transform: uppercase; letter-spacing: 0.5px; text-align: left;">कर्तव्य एवं जिम्मेदारियाँ</h4>
+          <div style="font-size: 10.5px; line-height: 1.5; color: #334155; text-align: left;">
+            <div style="margin-bottom: 4px;"><strong>1.</strong> अपने कार्यक्षेत्र से सत्य, निष्पक्ष एवं तथ्यात्मक समाचार संकलित करना।</div>
+            <div style="margin-bottom: 4px;"><strong>2.</strong> किसी भी समाचार को प्रकाशित अथवा प्रेषित करने से पूर्व उसकी सत्यता सुनिश्चित करना।</div>
+            <div style="margin-bottom: 4px;"><strong>3.</strong> स्थानीय प्रशासन, शिक्षा, स्वास्थ्य, खेल, सामाजिक एवं जनहित से जुड़े समाचारों को प्राथमिकता देना।</div>
+            <div style="margin-bottom: 4px;"><strong>4.</strong> संस्था द्वारा जारी पत्रकारिता नीति एवं आचार संहिता का पालन करना।</div>
+            <div style="margin-bottom: 4px;"><strong>5.</strong> संस्था की प्रतिष्ठा एवं विश्वसनीयता बनाए रखना।</div>
+            <div><strong>6.</strong> समय-समय पर संस्था द्वारा दिए गए निर्देशों का पालन करना।</div>
+          </div>
+        </div>
+
+        <div style="text-align: right; font-size: 9.5px; color: #64748b; border-top: 1px solid #cbd5e1; padding-top: 10px; margin-top: 15px;">
+          Page 1 of 2
+        </div>
+      </div>
+    `;
+
+    const page2Html = `
+      <div id="appointment-page-2" style="width: 794px; height: 1123px; padding: 45px 55px; box-sizing: border-box; background: white; color: black; font-family: 'system-ui', -apple-system, sans-serif; position: relative; display: flex; flex-direction: column; justify-content: space-between; border: 1px solid #cbd5e1; margin-top: 20px;">
+        <div>
+          <!-- Letterhead Mini -->
+          <div style="display: flex; justify-content: space-between; border-bottom: 1px solid #cbd5e1; padding-bottom: 6px; font-size: 9.5px; color: #64748b;">
+            <div><strong>THE DESI ANDAZ MEDIA NETWORK</strong> • Official Appointment Letter</div>
+            <div>RNI: JHBIL/26/A3245</div>
+          </div>
+
+          <!-- Terms and Conditions -->
+          <h4 style="margin: 20px 0 10px 0; padding-bottom: 4px; border-bottom: 1px solid #cbd5e1; font-size: 12px; font-weight: 800; color: #b91c1c; text-transform: uppercase; letter-spacing: 0.5px; text-align: left;">नियम एवं शर्तें (Terms & Conditions)</h4>
+          <div style="font-size: 11px; line-height: 1.6; color: #334155; margin-bottom: 20px; text-align: left;">
+            <div style="margin-bottom: 6px;"><strong>1.</strong> Reporter ID केवल आधिकारिक कार्य हेतु मान्य होगी।</div>
+            <div style="margin-bottom: 6px;"><strong>2.</strong> संस्था के नाम, लोगो अथवा पहचान पत्र का दुरुपयोग पूर्णतः प्रतिबंधित रहेगा।</div>
+            <div style="margin-bottom: 6px;"><strong>3.</strong> संस्था के नाम पर किसी भी प्रकार का आर्थिक लेन-देन बिना लिखित अनुमति के नहीं किया जाएगा।</div>
+            <div style="margin-bottom: 6px;"><strong>4.</strong> फर्जी, भ्रामक अथवा अपुष्ट समाचार प्रकाशित या प्रसारित करना गंभीर अनुशासनहीनता माना जाएगा।</div>
+            <div style="margin-bottom: 6px;"><strong>5.</strong> संस्था के नियमों के उल्लंघन अथवा संस्था की छवि को नुकसान पहुँचाने की स्थिति में नियुक्ति तत्काल प्रभाव से समाप्त की जा सकती है।</div>
+            <div><strong>6.</strong> संस्था आवश्यकता अनुसार कार्यक्षेत्र अथवा दायित्वों में परिवर्तन करने का अधिकार सुरक्षित रखती है।</div>
+          </div>
+
+          <!-- Work Area -->
+          <h4 style="margin: 15px 0 8px 0; padding-bottom: 4px; border-bottom: 1px solid #cbd5e1; font-size: 12px; font-weight: 800; color: #b91c1c; text-transform: uppercase; letter-spacing: 0.5px; text-align: left;">कार्य क्षेत्र (Work Area)</h4>
+          <div style="font-size: 11.5px; line-height: 1.5; color: #1e293b; background: #f8fafc; border: 1px solid #e2e8f0; padding: 12px 18px; border-radius: 8px; text-align: left;">
+            <table style="width: 100%;">
+              <tr>
+                <td style="width: 33%;"><strong>प्रखंड:</strong> ${reporter.block}</td>
+                <td style="width: 33%;"><strong>जिला:</strong> ${reporter.district}</td>
+                <td><strong>राज्य:</strong> ${reporter.state}</td>
+              </tr>
+            </table>
+          </div>
+
+          <!-- Declaration -->
+          <h4 style="margin: 20px 0 6px 0; padding-bottom: 4px; border-bottom: 1px solid #cbd5e1; font-size: 12px; font-weight: 800; color: #b91c1c; text-transform: uppercase; letter-spacing: 0.5px; text-align: left;">घोषणा (Declaration)</h4>
+          <div style="font-size: 11px; line-height: 1.6; color: #334155; text-align: justify; margin-bottom: 25px;">
+            The Desi Andaz Media Network निष्पक्ष, निर्भीक एवं जनहित पत्रकारिता के सिद्धांतों पर कार्य करता है। आपसे अपेक्षा की जाती है कि आप पत्रकारिता की गरिमा एवं नैतिक मूल्यों का पालन करते हुए संस्था के उद्देश्यों के अनुरूप कार्य करेंगे। हम आपके उज्ज्वल भविष्य एवं सफल कार्यकाल की कामना करते हैं।
+          </div>
+
+          <!-- Sign-off Block -->
+          <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: 30px; font-size: 11px; line-height: 1.5; color: #1e293b;">
+            <div style="text-align: left;">
+              <span style="color: #64748b; font-size: 10px;">Issued on behalf of the Media Network</span>
+            </div>
+            <div style="text-align: right;">
+              <div style="margin-bottom: 45px; font-style: italic; color: #64748b;">Managing Director's Seal & Sign</div>
+              <strong>सोनू कुमार साहा</strong><br/>
+              Founder & Managing Director<br/>
+              <span style="color: #64748b; font-size: 10px;">The Desi Andaz Media Network</span>
+            </div>
+          </div>
+
+          <!-- Employee Acceptance -->
+          <h4 style="margin: 25px 0 10px 0; padding-bottom: 4px; border-bottom: 1px solid #cbd5e1; font-size: 12px; font-weight: 800; color: #b91c1c; text-transform: uppercase; letter-spacing: 0.5px; text-align: left;">कर्मचारी स्वीकृति (Employee Acceptance)</h4>
+          <div style="font-size: 11px; line-height: 1.6; color: #334155; background: #fffbeb; border: 1px solid #fef3c7; padding: 15px; border-radius: 10px; text-align: left;">
+            <p style="margin: 0 0 12px 0;">मैं, <strong>____________________________</strong>, इस नियुक्ति पत्र में उल्लिखित सभी नियमों एवं शर्तों को पढ़कर, समझकर एवं स्वीकार करता/करती हूँ।</p>
+            <table style="width: 100%; font-size: 10.5px; border-collapse: collapse; margin-top: 10px; text-align: left;">
+              <tr>
+                <td style="width: 50%; padding: 4px 0;"><strong>हस्ताक्षर:</strong> ___________________</td>
+                <td style="padding: 4px 0;"><strong>Official Reporter ID:</strong> ${reporter.reporterCode || '__________'}</td>
+              </tr>
+              <tr>
+                <td style="padding: 4px 0;"><strong>नाम:</strong> _______________________</td>
+                <td style="padding: 4px 0;"><strong>दिनांक:</strong> _____________________</td>
+              </tr>
+              <tr>
+                <td style="padding: 4px 0;"><strong>स्थान:</strong> ______________________</td>
+                <td></td>
+              </tr>
+            </table>
+          </div>
+        </div>
+
+        <div style="text-align: right; font-size: 9.5px; color: #64748b; border-top: 1px solid #cbd5e1; padding-top: 10px; margin-top: 15px;">
+          Page 2 of 2
+        </div>
+      </div>
+    `;
+
+    tempContainer.innerHTML = page1Html + page2Html;
+    document.body.appendChild(tempContainer);
+
+    try {
+      const page1El = tempContainer.querySelector('#appointment-page-1') as HTMLElement;
+      const page2El = tempContainer.querySelector('#appointment-page-2') as HTMLElement;
+
+      const canvas1 = await html2canvas(page1El, { scale: 2, useCORS: true });
+      const imgData1 = canvas1.toDataURL('image/jpeg', 0.95);
+
+      const canvas2 = await html2canvas(page2El, { scale: 2, useCORS: true });
+      const imgData2 = canvas2.toDataURL('image/jpeg', 0.95);
+
+      const pdf = new jsPDF('p', 'mm', 'a4');
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = pdf.internal.pageSize.getHeight();
+
+      pdf.addImage(imgData1, 'JPEG', 0, 0, pdfWidth, pdfHeight);
+      pdf.addPage();
+      pdf.addImage(imgData2, 'JPEG', 0, 0, pdfWidth, pdfHeight);
+
+      return pdf.output('blob');
+    } catch (e) {
+      console.error('Error generating PDF canvas:', e);
+      return null;
+    } finally {
+      document.body.removeChild(tempContainer);
+    }
+  };
+
   const handleApproveKYC = async () => {
-    if (!joiningLetterFile) return alert('Please select a Joining Letter PDF file.');
     setIsApproving(true);
 
     try {
+      let finalFile: File | null = null;
+
+      if (useAutoGenerate) {
+        if (!fatherHusbandName.trim()) {
+          alert('Please enter Father/Husband name for the appointment letter.');
+          setIsApproving(false);
+          return;
+        }
+
+        const pdfBlob = await generateAppointmentLetterBlob(selectedReporter, fatherHusbandName.trim(), probationStartDate);
+        if (!pdfBlob) {
+          alert('Failed to generate automatic appointment letter.');
+          setIsApproving(false);
+          return;
+        }
+        finalFile = new File([pdfBlob], `appointment_letter_${selectedReporter.fullName.replace(/\s+/g, '_')}.pdf`, { type: 'application/pdf' });
+      } else {
+        if (!joiningLetterFile) {
+          alert('Please select a Joining Letter PDF file.');
+          setIsApproving(false);
+          return;
+        }
+        finalFile = joiningLetterFile;
+      }
+
       // 1. Upload Joining Letter
       const uploadFormData = new FormData();
-      uploadFormData.append('file', joiningLetterFile);
+      uploadFormData.append('file', finalFile);
       uploadFormData.append('folder', 'joining_letters');
 
       const uploadRes = await uploadFileAction(uploadFormData);
@@ -1686,7 +1942,7 @@ export default function ReportersClient({ initialList }: { initialList: any[] })
                 </div>
               )}
 
-              {/* Approval Form (PDF Upload) Dialog */}
+              {/* Approval Form (PDF Auto-Generate or Upload) Dialog */}
               {showApproveForm && (
                 <div style={{ 
                   borderTop: '1px solid #f1f5f9', 
@@ -1696,60 +1952,133 @@ export default function ReportersClient({ initialList }: { initialList: any[] })
                   gap: '16px',
                   marginTop: '12px'
                 }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <i className="fas fa-file-signature" style={{ color: '#10b981', fontSize: '18px' }}></i>
-                    <label style={{ fontSize: '14px', fontWeight: 800, color: '#10b981', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                      Upload Official Joining Letter PDF
-                    </label>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <i className="fas fa-file-signature" style={{ color: '#10b981', fontSize: '18px' }}></i>
+                      <label style={{ fontSize: '14px', fontWeight: 800, color: '#10b981', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                        Approve & Generate Appointment Letter
+                      </label>
+                    </div>
+                    <button 
+                      type="button"
+                      onClick={() => setUseAutoGenerate(!useAutoGenerate)}
+                      style={{
+                        background: '#f1f5f9',
+                        border: '1px solid #cbd5e1',
+                        borderRadius: '8px',
+                        padding: '4px 12px',
+                        fontSize: '11.5px',
+                        fontWeight: 700,
+                        color: '#475569',
+                        cursor: 'pointer'
+                      }}
+                    >
+                      {useAutoGenerate ? 'Upload Custom PDF Instead' : 'Auto-Generate PDF Letter Instead'}
+                    </button>
                   </div>
 
-                  <div style={{
-                    border: '2px dashed #a7f3d0',
-                    borderRadius: '16px',
-                    padding: '24px',
-                    background: '#f0fdf4',
-                    textAlign: 'center',
-                    position: 'relative',
-                    cursor: 'pointer',
-                    transition: 'all 0.2s',
-                  }}>
-                    <input 
-                      type="file" 
-                      accept="application/pdf" 
-                      onChange={(e) => setJoiningLetterFile(e.target.files?.[0] || null)} 
-                      style={{ 
-                        position: 'absolute',
-                        top: 0,
-                        left: 0,
-                        width: '100%',
-                        height: '100%',
-                        opacity: 0,
-                        cursor: 'pointer',
-                      }}
-                    />
-                    <div style={{ fontSize: '32px', color: '#10b981', marginBottom: '8px' }}>
-                      <i className="fas fa-cloud-upload-alt"></i>
+                  {useAutoGenerate ? (
+                    <div style={{
+                      background: '#f0fdf4',
+                      border: '1px solid #a7f3d0',
+                      borderRadius: '16px',
+                      padding: '20px',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: '14px',
+                      textAlign: 'left'
+                    }}>
+                      <div style={{ fontSize: '13px', color: '#0f5132', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '6px' }}>
+                        <i className="fas fa-magic"></i>
+                        <span>System will automatically generate a styled A4 Letterhead Appointment Letter with official Terms & Conditions.</span>
+                      </div>
+                      
+                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                          <label style={{ fontSize: '12px', fontWeight: 700, color: '#374151' }}>पिता / पति का नाम (Father/Husband Name) <span style={{ color: '#dc2626' }}>*</span></label>
+                          <input 
+                            type="text" 
+                            value={fatherHusbandName}
+                            onChange={(e) => setFatherHusbandName(e.target.value)}
+                            placeholder="Type father/husband name..."
+                            style={{
+                              padding: '10px 14px',
+                              borderRadius: '8px',
+                              border: '1px solid #cbd5e1',
+                              fontSize: '13.5px',
+                              outline: 'none',
+                              color: '#1e293b'
+                            }}
+                          />
+                        </div>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                          <label style={{ fontSize: '12px', fontWeight: 700, color: '#374151' }}>नियुक्ति तिथि (Probation Start Date) <span style={{ color: '#dc2626' }}>*</span></label>
+                          <input 
+                            type="text" 
+                            value={probationStartDate}
+                            onChange={(e) => setProbationStartDate(e.target.value)}
+                            placeholder="DD-MM-YYYY"
+                            style={{
+                              padding: '10px 14px',
+                              borderRadius: '8px',
+                              border: '1px solid #cbd5e1',
+                              fontSize: '13.5px',
+                              outline: 'none',
+                              color: '#1e293b'
+                            }}
+                          />
+                        </div>
+                      </div>
                     </div>
-                    {joiningLetterFile ? (
-                      <div>
-                        <span style={{ fontSize: '14px', fontWeight: 700, color: '#065f46', display: 'block' }}>
-                          Selected: {joiningLetterFile.name}
-                        </span>
-                        <span style={{ fontSize: '12px', color: '#059669', marginTop: '4px', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-                          <i className="fas fa-check-circle"></i> File loaded and ready for publish
-                        </span>
+                  ) : (
+                    <div style={{
+                      border: '2px dashed #a7f3d0',
+                      borderRadius: '16px',
+                      padding: '24px',
+                      background: '#f0fdf4',
+                      textAlign: 'center',
+                      position: 'relative',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s',
+                    }}>
+                      <input 
+                        type="file" 
+                        accept="application/pdf" 
+                        onChange={(e) => setJoiningLetterFile(e.target.files?.[0] || null)} 
+                        style={{ 
+                          position: 'absolute',
+                          top: 0,
+                          left: 0,
+                          width: '100%',
+                          height: '100%',
+                          opacity: 0,
+                          cursor: 'pointer',
+                        }}
+                      />
+                      <div style={{ fontSize: '32px', color: '#10b981', marginBottom: '8px' }}>
+                        <i className="fas fa-cloud-upload-alt"></i>
                       </div>
-                    ) : (
-                      <div>
-                        <span style={{ fontSize: '14px', fontWeight: 700, color: '#374151', display: 'block' }}>
-                          Click here or drag-and-drop the signing contract
-                        </span>
-                        <span style={{ fontSize: '12.5px', color: '#6b7280', marginTop: '4px', display: 'block' }}>
-                          Only PDF documents are supported for official letters
-                        </span>
-                      </div>
-                    )}
-                  </div>
+                      {joiningLetterFile ? (
+                        <div>
+                          <span style={{ fontSize: '14px', fontWeight: 700, color: '#065f46', display: 'block' }}>
+                            Selected: {joiningLetterFile.name}
+                          </span>
+                          <span style={{ fontSize: '12px', color: '#059669', marginTop: '4px', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                            <i className="fas fa-check-circle"></i> File loaded and ready for publish
+                          </span>
+                        </div>
+                      ) : (
+                        <div>
+                          <span style={{ fontSize: '14px', fontWeight: 700, color: '#374151', display: 'block' }}>
+                            Click here or drag-and-drop the signing contract
+                          </span>
+                          <span style={{ fontSize: '12.5px', color: '#6b7280', marginTop: '4px', display: 'block' }}>
+                            Only PDF documents are supported for official letters
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                  )}
                   
                   <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px', marginTop: '8px' }}>
                     <button 
@@ -1780,7 +2109,7 @@ export default function ReportersClient({ initialList }: { initialList: any[] })
                       }}
                       disabled={isApproving}
                     >
-                      {isApproving ? 'Uploading Contract...' : 'Confirm Approve & Publish'}
+                      {isApproving ? 'Generating & Publishing...' : 'Confirm Approve & Publish'}
                     </button>
                   </div>
                 </div>
