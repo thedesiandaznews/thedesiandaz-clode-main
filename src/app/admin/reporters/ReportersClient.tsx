@@ -32,6 +32,20 @@ export default function ReportersClient({ initialList }: { initialList: any[] })
     return `${dd}-${mm}-${yyyy}`;
   });
 
+  // Letter Preview States
+  const [previewPdfUrl, setPreviewPdfUrl] = useState<string | null>(null);
+  const [previewPdfBlob, setPreviewPdfBlob] = useState<Blob | null>(null);
+  const [isPreviewLoading, setIsPreviewLoading] = useState(false);
+
+  // Cleanup object URLs to prevent memory leaks
+  useEffect(() => {
+    return () => {
+      if (previewPdfUrl) {
+        URL.revokeObjectURL(previewPdfUrl);
+      }
+    };
+  }, [previewPdfUrl]);
+
   useEffect(() => {
     const fontId = 'google-fonts-preload';
     if (!document.getElementById(fontId)) {
@@ -65,6 +79,15 @@ export default function ReportersClient({ initialList }: { initialList: any[] })
     setJoiningLetterFile(null);
     setFatherHusbandName(rep.fatherHusbandName || '');
     setUseAutoGenerate(true);
+
+    // Reset preview states
+    if (previewPdfUrl) {
+      URL.revokeObjectURL(previewPdfUrl);
+    }
+    setPreviewPdfUrl(null);
+    setPreviewPdfBlob(null);
+    setIsPreviewLoading(false);
+
     const today = new Date();
     const dd = String(today.getDate()).padStart(2, '0');
     const mm = String(today.getMonth() + 1).padStart(2, '0');
@@ -77,6 +100,11 @@ export default function ReportersClient({ initialList }: { initialList: any[] })
 
   const handleCloseReview = () => {
     setSelectedReporter(null);
+    if (previewPdfUrl) {
+      URL.revokeObjectURL(previewPdfUrl);
+      setPreviewPdfUrl(null);
+    }
+    setPreviewPdfBlob(null);
   };
 
   const handleRejectKYC = async () => {
@@ -497,34 +525,62 @@ export default function ReportersClient({ initialList }: { initialList: any[] })
     }
   };
 
+  const handleGeneratePreview = async () => {
+    if (useAutoGenerate && !fatherHusbandName.trim()) {
+      alert('Please enter Father/Husband name for the appointment letter.');
+      return;
+    }
+
+    setIsPreviewLoading(true);
+    try {
+      if (previewPdfUrl) {
+        URL.revokeObjectURL(previewPdfUrl);
+      }
+
+      const pdfBlob = await generateAppointmentLetterBlob(selectedReporter, fatherHusbandName.trim(), probationStartDate);
+      if (!pdfBlob) {
+        alert('Failed to generate automatic appointment letter.');
+        return;
+      }
+      
+      const url = URL.createObjectURL(pdfBlob);
+      setPreviewPdfUrl(url);
+      setPreviewPdfBlob(pdfBlob);
+    } catch (err) {
+      console.error(err);
+      alert('An error occurred during letter generation.');
+    } finally {
+      setIsPreviewLoading(false);
+    }
+  };
+
+  const handleCustomPdfChange = (file: File | null) => {
+    setJoiningLetterFile(file);
+    if (previewPdfUrl) {
+      URL.revokeObjectURL(previewPdfUrl);
+      setPreviewPdfUrl(null);
+      setPreviewPdfBlob(null);
+    }
+    if (file) {
+      const url = URL.createObjectURL(file);
+      setPreviewPdfUrl(url);
+      setPreviewPdfBlob(file);
+    }
+  };
+
   const handleApproveKYC = async () => {
+    if (!previewPdfBlob) {
+      alert('Please generate and preview the appointment letter first.');
+      return;
+    }
     setIsApproving(true);
 
     try {
-      let finalFile: File | null = null;
+      const fileName = useAutoGenerate
+        ? `appointment_letter_${selectedReporter.fullName.replace(/\s+/g, '_')}.pdf`
+        : (joiningLetterFile?.name || 'custom_joining_letter.pdf');
 
-      if (useAutoGenerate) {
-        if (!fatherHusbandName.trim()) {
-          alert('Please enter Father/Husband name for the appointment letter.');
-          setIsApproving(false);
-          return;
-        }
-
-        const pdfBlob = await generateAppointmentLetterBlob(selectedReporter, fatherHusbandName.trim(), probationStartDate);
-        if (!pdfBlob) {
-          alert('Failed to generate automatic appointment letter.');
-          setIsApproving(false);
-          return;
-        }
-        finalFile = new File([pdfBlob], `appointment_letter_${selectedReporter.fullName.replace(/\s+/g, '_')}.pdf`, { type: 'application/pdf' });
-      } else {
-        if (!joiningLetterFile) {
-          alert('Please select a Joining Letter PDF file.');
-          setIsApproving(false);
-          return;
-        }
-        finalFile = joiningLetterFile;
-      }
+      const finalFile = new File([previewPdfBlob], fileName, { type: 'application/pdf' });
 
       // 1. Upload Joining Letter
       const uploadFormData = new FormData();
@@ -2218,6 +2274,7 @@ export default function ReportersClient({ initialList }: { initialList: any[] })
               )}
 
               {/* Approval Form (PDF Auto-Generate or Upload) Dialog */}
+              {/* Approval Form (PDF Auto-Generate or Upload) Dialog */}
               {showApproveForm && (
                 <div style={{ 
                   borderTop: '1px solid #f1f5f9', 
@@ -2236,7 +2293,14 @@ export default function ReportersClient({ initialList }: { initialList: any[] })
                     </div>
                     <button 
                       type="button"
-                      onClick={() => setUseAutoGenerate(!useAutoGenerate)}
+                      onClick={() => {
+                        setUseAutoGenerate(!useAutoGenerate);
+                        if (previewPdfUrl) {
+                          URL.revokeObjectURL(previewPdfUrl);
+                          setPreviewPdfUrl(null);
+                          setPreviewPdfBlob(null);
+                        }
+                      }}
                       style={{
                         background: '#f1f5f9',
                         border: '1px solid #cbd5e1',
@@ -2274,7 +2338,14 @@ export default function ReportersClient({ initialList }: { initialList: any[] })
                           <input 
                             type="text" 
                             value={fatherHusbandName}
-                            onChange={(e) => setFatherHusbandName(e.target.value)}
+                            onChange={(e) => {
+                              setFatherHusbandName(e.target.value);
+                              if (previewPdfUrl) {
+                                URL.revokeObjectURL(previewPdfUrl);
+                                setPreviewPdfUrl(null);
+                                setPreviewPdfBlob(null);
+                              }
+                            }}
                             placeholder="Type father/husband name..."
                             style={{
                               padding: '10px 14px',
@@ -2291,7 +2362,14 @@ export default function ReportersClient({ initialList }: { initialList: any[] })
                           <input 
                             type="text" 
                             value={probationStartDate}
-                            onChange={(e) => setProbationStartDate(e.target.value)}
+                            onChange={(e) => {
+                              setProbationStartDate(e.target.value);
+                              if (previewPdfUrl) {
+                                URL.revokeObjectURL(previewPdfUrl);
+                                setPreviewPdfUrl(null);
+                                setPreviewPdfBlob(null);
+                              }
+                            }}
                             placeholder="DD-MM-YYYY"
                             style={{
                               padding: '10px 14px',
@@ -2319,7 +2397,7 @@ export default function ReportersClient({ initialList }: { initialList: any[] })
                       <input 
                         type="file" 
                         accept="application/pdf" 
-                        onChange={(e) => setJoiningLetterFile(e.target.files?.[0] || null)} 
+                        onChange={(e) => handleCustomPdfChange(e.target.files?.[0] || null)} 
                         style={{ 
                           position: 'absolute',
                           top: 0,
@@ -2339,7 +2417,7 @@ export default function ReportersClient({ initialList }: { initialList: any[] })
                             Selected: {joiningLetterFile.name}
                           </span>
                           <span style={{ fontSize: '12px', color: '#059669', marginTop: '4px', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-                            <i className="fas fa-check-circle"></i> File loaded and ready for publish
+                            <i className="fas fa-check-circle"></i> File loaded and ready for preview
                           </span>
                         </div>
                       ) : (
@@ -2354,10 +2432,101 @@ export default function ReportersClient({ initialList }: { initialList: any[] })
                       )}
                     </div>
                   )}
+
+                  {/* Actions for Auto-Generate Preview */}
+                  {useAutoGenerate && !previewPdfUrl && (
+                    <div style={{ display: 'flex', justifyContent: 'center', marginTop: '8px' }}>
+                      <button
+                        type="button"
+                        onClick={handleGeneratePreview}
+                        disabled={isPreviewLoading}
+                        style={{
+                          padding: '12px 28px',
+                          background: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)',
+                          color: '#ffffff',
+                          border: 'none',
+                          borderRadius: '10px',
+                          fontWeight: 700,
+                          cursor: 'pointer',
+                          boxShadow: '0 4px 12px rgba(37, 99, 235, 0.2)',
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '8px'
+                        }}
+                      >
+                        {isPreviewLoading ? (
+                          <>
+                            <i className="fas fa-spinner fa-spin"></i> Generating Appointment Letter...
+                          </>
+                        ) : (
+                          <>
+                            <i className="fas fa-magic"></i> Generate & Preview Letter
+                          </>
+                        )}
+                      </button>
+                    </div>
+                  )}
+
+                  {/* PDF Document Preview Panel */}
+                  {previewPdfUrl && (
+                    <div style={{
+                      border: '1px solid #e2e8f0',
+                      borderRadius: '16px',
+                      background: '#f8fafc',
+                      padding: '16px',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: '12px',
+                      marginTop: '8px'
+                    }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <span style={{ fontSize: '13px', fontWeight: 800, color: '#334155', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                          <i className="fas fa-eye" style={{ color: '#10b981' }}></i>
+                          Preview Appointment Letter:
+                        </span>
+                        <a 
+                          href={previewPdfUrl} 
+                          target="_blank" 
+                          rel="noopener noreferrer" 
+                          style={{ 
+                            fontSize: '12px', 
+                            fontWeight: 700, 
+                            color: '#2563eb', 
+                            textDecoration: 'none',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '4px'
+                          }}
+                        >
+                          <i className="fas fa-external-link-alt"></i> Open in New Tab
+                        </a>
+                      </div>
+                      
+                      <iframe 
+                        src={previewPdfUrl} 
+                        style={{ 
+                          width: '100%', 
+                          height: '450px', 
+                          border: '1px solid #cbd5e1', 
+                          borderRadius: '10px',
+                          background: '#ffffff',
+                          boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.06)'
+                        }} 
+                        title="Letter Preview"
+                      />
+                    </div>
+                  )}
                   
-                  <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px', marginTop: '8px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px', marginTop: '16px', borderTop: '1px solid #f1f5f9', paddingTop: '16px' }}>
                     <button 
-                      onClick={() => setShowApproveForm(false)} 
+                      onClick={() => {
+                        setShowApproveForm(false);
+                        if (previewPdfUrl) {
+                          URL.revokeObjectURL(previewPdfUrl);
+                          setPreviewPdfUrl(null);
+                          setPreviewPdfBlob(null);
+                        }
+                      }} 
                       style={{
                         padding: '10px 20px',
                         background: '#f1f5f9',
@@ -2374,17 +2543,19 @@ export default function ReportersClient({ initialList }: { initialList: any[] })
                       onClick={handleApproveKYC} 
                       style={{ 
                         padding: '10px 20px',
-                        background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)', 
+                        background: previewPdfBlob 
+                          ? 'linear-gradient(135deg, #10b981 0%, #059669 100%)' 
+                          : '#cbd5e1', 
                         color: '#ffffff',
                         border: 'none',
                         borderRadius: '10px',
                         fontWeight: 700,
-                        cursor: 'pointer',
-                        boxShadow: '0 4px 12px rgba(16, 185, 129, 0.2)',
+                        cursor: previewPdfBlob ? 'pointer' : 'not-allowed',
+                        boxShadow: previewPdfBlob ? '0 4px 12px rgba(16, 185, 129, 0.2)' : 'none',
                       }}
-                      disabled={isApproving}
+                      disabled={isApproving || !previewPdfBlob}
                     >
-                      {isApproving ? 'Generating & Publishing...' : 'Confirm Approve & Publish'}
+                      {isApproving ? 'Approving & Publishing...' : 'Confirm Approve & Publish'}
                     </button>
                   </div>
                 </div>
