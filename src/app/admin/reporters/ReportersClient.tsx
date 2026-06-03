@@ -166,39 +166,49 @@ export default function ReportersClient({ initialList }: { initialList: any[] })
 
           <!-- Content Wrap -->
           <div style="position: relative; z-index: 2;">
-            <!-- Letterhead -->
-            <div style="text-align: center;">
-              <h2 style="margin: 0; color: #6c0d1b; font-size: 24px; font-weight: 900; font-family: 'Cinzel', serif;">THE DESI ANDAZ MEDIA NETWORK</h2>
-              
-              <div style="display: flex; justify-content: center; margin-top: 5px;">
-                <div style="background: #faf8f3; border: 1px solid #e2d9c2; color: #b89748; font-size: 9.5px; font-weight: 800; padding: 4px 16px; border-radius: 20px; font-family: 'Montserrat', sans-serif; text-transform: uppercase; display: flex; align-items: center; justify-content: center; box-sizing: border-box; line-height: 1;">
-                  Print • Digital • Electronic Media
+            <!-- Redesigned Premium Letterhead -->
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #b89748; padding-bottom: 12px; margin-bottom: 12px; position: relative;">
+              <!-- Left Side: Branding -->
+              <div style="display: flex; align-items: center; gap: 14px;">
+                <img src="/logo.png" style="height: 60px; width: 60px; object-fit: contain;" alt="TDA Logo" />
+                <div style="text-align: left;">
+                  <h2 style="margin: 0; color: #6c0d1b; font-size: 24px; font-weight: 900; font-family: 'Cinzel', serif; letter-spacing: 0.5px; line-height: 1.1;">THE DESI ANDAZ</h2>
+                  <div style="color: #b89748; font-size: 11px; font-weight: 800; font-family: 'Montserrat', sans-serif; text-transform: uppercase; letter-spacing: 2px; margin-top: 1px;">Media Network</div>
                 </div>
               </div>
               
-              <div style="display: flex; justify-content: center; margin-top: 8px;">
-                <div style="background: #6c0d1b; color: #faf8f3; font-size: 9px; font-weight: 700; padding: 5px 16px; border-radius: 4px; font-family: 'Montserrat', sans-serif; display: flex; align-items: center; justify-content: center; box-sizing: border-box; line-height: 1;">
-                  RNI Registration Number: JHBIL/26/A3245
+              <!-- Right Side: Registration & Certification -->
+              <div style="text-align: right; font-family: 'Montserrat', sans-serif; font-weight: 600; line-height: 1.35;">
+                <div style="background: #6c0d1b; color: #ffffff; font-size: 9px; font-weight: 700; padding: 4px 12px; border-radius: 4px; display: inline-block; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px;">
+                  RNI No: JHBIL/26/A3245
+                </div>
+                <div style="color: #b89748; font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px;">
+                  Print • Digital • Electronic
+                </div>
+                <div style="color: #64748b; font-size: 8px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 2px;">
+                  ISO 9001:2015 Certified Organization
                 </div>
               </div>
             </div>
 
-            <!-- Address and Contacts Row -->
-            <div style="display: flex; align-items: center; border-bottom: 2px solid #b89748; padding-bottom: 10px; margin-top: 15px; font-size: 10.5px; color: #334155; line-height: 1.45;">
-              <div style="flex: 1.2; padding-right: 15px; text-align: left;">
-                <strong style="color: #6c0d1b; font-family: 'Montserrat', sans-serif; font-size: 9.5px;">Head Office:</strong> Near Everett Mission School, D.S.M Hospital, Dhanushpuja, Pakur, Jharkhand – 816107
+            <!-- Redesigned Address and Contacts Row -->
+            <div style="display: flex; justify-content: space-between; font-size: 9.5px; color: #475569; font-family: 'Montserrat', sans-serif; border-bottom: 1.5px solid #e2d9c2; padding-bottom: 8px; margin-bottom: 12px; line-height: 1.5;">
+              <div style="flex: 1.3; text-align: left; padding-right: 12px;">
+                <span style="color: #6c0d1b; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; display: block; margin-bottom: 2px;">Head Office Address:</span>
+                Near Everett Mission School, D.S.M Hospital, Dhanushpuja, Pakur, Jharkhand – 816107
               </div>
-              <div style="width: 1px; height: 35px; background: #e2d9c2; margin: 0 15px;"></div>
-              <div style="flex: 0.8; text-align: right; font-family: 'Montserrat', sans-serif; font-size: 9.5px; font-weight: 500;">
-                <strong style="color: #6c0d1b;">Mob:</strong> +91-8409659560, +91-6203868383<br/>
-                <strong style="color: #6c0d1b;">Email:</strong> info@thedesiandaz.com | <strong style="color: #6c0d1b;">Web:</strong> www.thedesiandaz.com
+              <div style="width: 1px; background: #e2d9c2; margin: 0 12px;"></div>
+              <div style="flex: 0.7; text-align: right; font-weight: 500;">
+                <span style="color: #6c0d1b; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; display: block; margin-bottom: 2px;">Contact Information:</span>
+                <strong style="color: #1e293b;">Mob:</strong> +91-8409659560, +91-6203868383<br/>
+                <strong style="color: #1e293b;">Email:</strong> info@thedesiandaz.com | <strong style="color: #1e293b;">Web:</strong> www.thedesiandaz.com
               </div>
             </div>
 
             <!-- Title -->
-            <div style="margin: 18px 0 12px 0; text-align: center;">
-              <div style="border-top: 1.5px solid #b89748; border-bottom: 1.5px solid #b89748; padding: 8px 0; font-size: 15px; font-weight: 800; letter-spacing: 0.5px; background: #faf8f3; color: #6c0d1b;">
-                नियुक्ति पत्र (APPOINTMENT LETTER)
+            <div style="margin: 12px 0; text-align: center;">
+              <div style="border: 1px solid #b89748; outline: 1px solid #6c0d1b; outline-offset: -3px; padding: 6px 0; font-size: 15px; font-weight: 800; letter-spacing: 1px; background: #faf8f3; color: #6c0d1b; text-transform: uppercase; font-family: 'Cinzel', serif;">
+                नियुक्ति पत्र / APPOINTMENT LETTER
               </div>
             </div>
 
@@ -209,36 +219,36 @@ export default function ReportersClient({ initialList }: { initialList: any[] })
             </div>
 
             <!-- Recipient Info (Dossier Card) -->
-            <div style="background: #faf8f3; border: 1px solid #e2d9c2; border-left: 4px solid #6c0d1b; border-radius: 6px; padding: 12px 18px; margin-bottom: 15px; text-align: left; font-size: 12px; line-height: 1.7;">
-              <div style="font-weight: 700; color: #6c0d1b; font-family: 'Montserrat', sans-serif; font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">Recipient Dossier Details</div>
+            <div style="background: linear-gradient(135deg, #faf8f3 0%, #fdfcf9 100%); border: 1.5px solid #e2d9c2; border-left: 5px solid #6c0d1b; border-radius: 8px; padding: 14px 20px; margin-bottom: 12px; text-align: left; font-size: 11.5px; line-height: 1.6; box-shadow: 0 2px 6px rgba(0,0,0,0.02);">
+              <div style="font-weight: 800; color: #6c0d1b; font-family: 'Montserrat', sans-serif; font-size: 10px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; border-bottom: 1px solid #e2d9c2; padding-bottom: 4px;">Recipient Dossier Details • प्राप्तकर्ता प्रोफ़ाइल विवरण</div>
               <table style="width: 100%; border-collapse: collapse; text-align: left;">
                 <tr>
-                  <td style="width: 18%; font-weight: 700; color: #475569; padding: 3px 0;">श्री/श्रीमती:</td>
-                  <td style="border-bottom: 1px dashed #cbd5e1; font-weight: 700; padding: 3px 5px; color: #0f172a; width: 32%;">${reporter.fullName}</td>
-                  <td style="width: 18%; font-weight: 700; color: #475569; padding: 3px 0; padding-left: 15px;">Official ID:</td>
-                  <td style="border-bottom: 1px dashed #cbd5e1; font-family: 'Montserrat', sans-serif; font-weight: 700; padding: 3px 5px; color: #6c0d1b; width: 32%;">${reporter.reporterCode || 'NO ID ASSIGNED'}</td>
+                  <td style="width: 18%; font-weight: 700; color: #475569; padding: 4px 0;">श्री/श्रीमती:</td>
+                  <td style="border-bottom: 1px dashed #cbd5e1; font-weight: 700; padding: 4px 5px; color: #0f172a; width: 32%;">${reporter.fullName}</td>
+                  <td style="width: 18%; font-weight: 700; color: #475569; padding: 4px 0; padding-left: 15px;">Official ID:</td>
+                  <td style="border-bottom: 1px dashed #cbd5e1; font-family: 'Montserrat', sans-serif; font-weight: 700; padding: 4px 5px; color: #6c0d1b; width: 32%;">${reporter.reporterCode || 'NO ID ASSIGNED'}</td>
                 </tr>
                 <tr>
-                  <td style="font-weight: 700; color: #475569; padding: 3px 0;">पिता/पति:</td>
-                  <td style="border-bottom: 1px dashed #cbd5e1; padding: 3px 5px;">${parentName}</td>
-                  <td style="font-weight: 700; color: #475569; padding: 3px 0; padding-left: 15px;">प्रखंड:</td>
-                  <td style="border-bottom: 1px dashed #cbd5e1; padding: 3px 5px; font-weight: 700;">${reporter.block}</td>
+                  <td style="font-weight: 700; color: #475569; padding: 4px 0;">पिता/पति:</td>
+                  <td style="border-bottom: 1px dashed #cbd5e1; padding: 4px 5px;">${parentName}</td>
+                  <td style="font-weight: 700; color: #475569; padding: 4px 0; padding-left: 15px;">प्रखंड:</td>
+                  <td style="border-bottom: 1px dashed #cbd5e1; padding: 4px 5px; font-weight: 700;">${reporter.block}</td>
                 </tr>
                 <tr>
-                  <td style="font-weight: 700; color: #475569; padding: 3px 0; vertical-align: top;">ग्राम/पता:</td>
-                  <td colspan="3" style="border-bottom: 1px dashed #cbd5e1; padding: 3px 5px; line-height: 1.4;">${reporter.fullAddress || ''}</td>
+                  <td style="font-weight: 700; color: #475569; padding: 4px 0; vertical-align: top;">ग्राम/पता:</td>
+                  <td colspan="3" style="border-bottom: 1px dashed #cbd5e1; padding: 4px 5px; line-height: 1.4;">${reporter.fullAddress || ''}</td>
                 </tr>
                 <tr>
-                  <td style="font-weight: 700; color: #475569; padding: 3px 0;">जिला:</td>
-                  <td style="border-bottom: 1px dashed #cbd5e1; padding: 3px 5px;">${reporter.district}</td>
-                  <td style="font-weight: 700; color: #475569; padding: 3px 0; padding-left: 15px;">राज्य:</td>
-                  <td style="border-bottom: 1px dashed #cbd5e1; padding: 3px 5px;">${reporter.state}</td>
+                  <td style="font-weight: 700; color: #475569; padding: 4px 0;">जिला:</td>
+                  <td style="border-bottom: 1px dashed #cbd5e1; padding: 4px 5px;">${reporter.district}</td>
+                  <td style="font-weight: 700; color: #475569; padding: 4px 0; padding-left: 15px;">राज्य:</td>
+                  <td style="border-bottom: 1px dashed #cbd5e1; padding: 4px 5px;">${reporter.state}</td>
                 </tr>
               </table>
             </div>
 
             <!-- Subject -->
-            <div style="font-size: 12.5px; font-weight: 700; color: #6c0d1b; margin: 15px 0; padding: 8px 12px; border-left: 4px solid #b89748; background: #faf8f3; text-align: left;">
+            <div style="font-size: 12.5px; font-weight: 700; color: #6c0d1b; margin: 12px 0; padding: 8px 12px; border-left: 4px solid #b89748; background: #faf8f3; text-align: left;">
               विषय: The Desi Andaz Media Network में Official Reporter के पद पर नियुक्ति।
             </div>
 
@@ -250,8 +260,8 @@ export default function ReportersClient({ initialList }: { initialList: any[] })
             </div>
 
             <!-- Probation Period -->
-            <h4 style="margin: 15px 0 6px 0; padding-bottom: 4px; border-bottom: 1.5px solid #e2d9c2; font-size: 12px; font-weight: 800; color: #6c0d1b; letter-spacing: 0.5px; text-align: left; display: flex; align-items: center; gap: 6px;">
-              <div style="width: 4px; height: 12px; background: #b89748; display: block; flex-shrink: 0;"></div>
+            <h4 style="margin: 12px 0 6px 0; padding-bottom: 4px; border-bottom: 1.5px solid #e2d9c2; font-size: 12px; font-weight: 800; color: #6c0d1b; letter-spacing: 0.5px; text-align: left; display: flex; align-items: center; gap: 6px; font-family: 'Montserrat', sans-serif;">
+              <div style="width: 4px; height: 12px; background: #b89748; display: block; flex-shrink: 0; border-radius: 1px;"></div>
               प्रोबेशन अवधि (Probation Period)
             </h4>
             <div style="font-size: 10.5px; line-height: 1.55; color: #2d3748; text-align: left; margin-bottom: 12px;">
@@ -261,8 +271,8 @@ export default function ReportersClient({ initialList }: { initialList: any[] })
             </div>
 
             <!-- Duties -->
-            <h4 style="margin: 15px 0 6px 0; padding-bottom: 4px; border-bottom: 1.5px solid #e2d9c2; font-size: 12px; font-weight: 800; color: #6c0d1b; letter-spacing: 0.5px; text-align: left; display: flex; align-items: center; gap: 6px;">
-              <div style="width: 4px; height: 12px; background: #b89748; display: block; flex-shrink: 0;"></div>
+            <h4 style="margin: 12px 0 6px 0; padding-bottom: 4px; border-bottom: 1.5px solid #e2d9c2; font-size: 12px; font-weight: 800; color: #6c0d1b; letter-spacing: 0.5px; text-align: left; display: flex; align-items: center; gap: 6px; font-family: 'Montserrat', sans-serif;">
+              <div style="width: 4px; height: 12px; background: #b89748; display: block; flex-shrink: 0; border-radius: 1px;"></div>
               कर्तव्य एवं जिम्मेदारियाँ
             </h4>
             <div style="font-size: 10.5px; line-height: 1.55; color: #2d3748; text-align: left;">
@@ -333,19 +343,20 @@ export default function ReportersClient({ initialList }: { initialList: any[] })
 
           <!-- Content Wrap -->
           <div style="position: relative; z-index: 2;">
-            <!-- Letterhead Mini -->
-            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1.5px solid #e2d9c2; padding-bottom: 6px; font-size: 10px; color: #64748b; font-family: 'Montserrat', sans-serif; font-weight: 600; margin-bottom: 15px;">
-              <div style="display: flex; align-items: center; gap: 6px;">
-                <span style="color: #6c0d1b; font-weight: 800;">THE DESI ANDAZ MEDIA NETWORK</span>
+            <!-- Redesigned Mini Letterhead -->
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #b89748; padding-bottom: 8px; font-size: 10px; color: #475569; font-family: 'Montserrat', sans-serif; font-weight: 600; margin-bottom: 15px;">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <img src="/logo.png" style="height: 25px; width: 25px; object-fit: contain;" alt="TDA Mini Logo" />
+                <span style="color: #6c0d1b; font-weight: 900; font-family: 'Cinzel', serif; font-size: 11px;">THE DESI ANDAZ MEDIA NETWORK</span>
                 <span style="color: #cbd5e1;">|</span>
-                <span>Official Appointment Letter</span>
+                <span style="font-size: 9.5px; color: #b89748; font-weight: 700; text-transform: uppercase;">Official Appointment Letter</span>
               </div>
-              <div style="color: #6c0d1b;">RNI: JHBIL/26/A3245</div>
+              <div style="color: #6c0d1b; font-weight: 700; font-size: 9.5px;">RNI: JHBIL/26/A3245</div>
             </div>
 
             <!-- Terms and Conditions -->
-            <h4 style="margin: 10px 0 6px 0; padding-bottom: 4px; border-bottom: 1.5px solid #e2d9c2; font-size: 12px; font-weight: 800; color: #6c0d1b; letter-spacing: 0.5px; text-align: left; display: flex; align-items: center; gap: 6px;">
-              <div style="width: 4px; height: 12px; background: #b89748; display: block; flex-shrink: 0;"></div>
+            <h4 style="margin: 10px 0 6px 0; padding-bottom: 4px; border-bottom: 1.5px solid #e2d9c2; font-size: 12px; font-weight: 800; color: #6c0d1b; letter-spacing: 0.5px; text-align: left; display: flex; align-items: center; gap: 6px; font-family: 'Montserrat', sans-serif;">
+              <div style="width: 4px; height: 12px; background: #b89748; display: block; flex-shrink: 0; border-radius: 1px;"></div>
               नियम एवं शर्तें (Terms & Conditions)
             </h4>
             <div style="font-size: 10.5px; line-height: 1.6; color: #2d3748; text-align: left; margin-bottom: 15px;">
@@ -378,8 +389,8 @@ export default function ReportersClient({ initialList }: { initialList: any[] })
             </div>
 
             <!-- Work Area -->
-            <h4 style="margin: 15px 0 8px 0; padding-bottom: 4px; border-bottom: 1.5px solid #e2d9c2; font-size: 12px; font-weight: 800; color: #6c0d1b; letter-spacing: 0.5px; text-align: left; display: flex; align-items: center; gap: 6px;">
-              <div style="width: 4px; height: 12px; background: #b89748; display: block; flex-shrink: 0;"></div>
+            <h4 style="margin: 15px 0 8px 0; padding-bottom: 4px; border-bottom: 1.5px solid #e2d9c2; font-size: 12px; font-weight: 800; color: #6c0d1b; letter-spacing: 0.5px; text-align: left; display: flex; align-items: center; gap: 6px; font-family: 'Montserrat', sans-serif;">
+              <div style="width: 4px; height: 12px; background: #b89748; display: block; flex-shrink: 0; border-radius: 1px;"></div>
               अधिकृत कार्य क्षेत्र (Authorized Jurisdiction)
             </h4>
             <div style="display: flex; gap: 15px; margin-bottom: 15px;">
@@ -398,8 +409,8 @@ export default function ReportersClient({ initialList }: { initialList: any[] })
             </div>
 
             <!-- Declaration -->
-            <h4 style="margin: 15px 0 6px 0; padding-bottom: 4px; border-bottom: 1.5px solid #e2d9c2; font-size: 12px; font-weight: 800; color: #6c0d1b; letter-spacing: 0.5px; text-align: left; display: flex; align-items: center; gap: 6px;">
-              <div style="width: 4px; height: 12px; background: #b89748; display: block; flex-shrink: 0;"></div>
+            <h4 style="margin: 15px 0 6px 0; padding-bottom: 4px; border-bottom: 1.5px solid #e2d9c2; font-size: 12px; font-weight: 800; color: #6c0d1b; letter-spacing: 0.5px; text-align: left; display: flex; align-items: center; gap: 6px; font-family: 'Montserrat', sans-serif;">
+              <div style="width: 4px; height: 12px; background: #b89748; display: block; flex-shrink: 0; border-radius: 1px;"></div>
               घोषणा (Declaration)
             </h4>
             <div style="font-size: 10.5px; line-height: 1.6; color: #2d3748; text-align: justify; margin-bottom: 20px;">
@@ -433,8 +444,8 @@ export default function ReportersClient({ initialList }: { initialList: any[] })
             </div>
 
             <!-- Employee Acceptance -->
-            <h4 style="margin: 20px 0 6px 0; padding-bottom: 4px; border-bottom: 1.5px solid #e2d9c2; font-size: 12px; font-weight: 800; color: #6c0d1b; letter-spacing: 0.5px; text-align: left; display: flex; align-items: center; gap: 6px;">
-              <div style="width: 4px; height: 12px; background: #b89748; display: block; flex-shrink: 0;"></div>
+            <h4 style="margin: 20px 0 6px 0; padding-bottom: 4px; border-bottom: 1.5px solid #e2d9c2; font-size: 12px; font-weight: 800; color: #6c0d1b; letter-spacing: 0.5px; text-align: left; display: flex; align-items: center; gap: 6px; font-family: 'Montserrat', sans-serif;">
+              <div style="width: 4px; height: 12px; background: #b89748; display: block; flex-shrink: 0; border-radius: 1px;"></div>
               कर्मचारी स्वीकृति (Employee Acceptance)
             </h4>
             <div style="font-size: 10.5px; line-height: 1.6; color: #2d3748; background: #faf8f3; border: 1px solid #e2d9c2; border-left: 4px solid #b89748; padding: 12px 18px; border-radius: 6px; text-align: left; position: relative; z-index: 2;">
@@ -471,6 +482,17 @@ export default function ReportersClient({ initialList }: { initialList: any[] })
       try {
         const page1El = tempContainer.querySelector('#appointment-page-1') as HTMLElement;
         const page2El = tempContainer.querySelector('#appointment-page-2') as HTMLElement;
+
+        // Await image loading
+        const images = tempContainer.getElementsByTagName('img');
+        const imgPromises = Array.from(images).map((img) => {
+          if (img.complete) return Promise.resolve();
+          return new Promise((resolve) => {
+            img.onload = resolve;
+            img.onerror = resolve; // Continue on failure
+          });
+        });
+        await Promise.all(imgPromises);
 
         const canvas1 = await html2canvas(page1El, {
           scale: 1.5,
