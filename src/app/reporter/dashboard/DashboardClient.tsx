@@ -4,7 +4,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import styles from '../reporter.module.css';
-import { getReporterById, getReporterStats, getReporterArticles, submitReporterArticle, updateReporterArticle, updateReporterProfilePicture } from '@/actions/reporter';
+import { getReporterById, getReporterStats, getReporterArticles, submitReporterArticle, updateReporterArticle, updateReporterProfilePicture, getActiveReporterInBlock } from '@/actions/reporter';
 import { getCategories } from '@/actions/categories';
 import { uploadFileAction } from '@/actions/upload';
 import { getReporterMessages, sendReporterMessage, markReporterMessagesAsRead, getUnreadMessageCount } from '@/actions/chat';
@@ -18,6 +18,7 @@ export default function DashboardClient() {
   const [articles, setArticles] = useState<any[]>([]);
   const [categories, setCategories] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [activeBlockReporter, setActiveBlockReporter] = useState<any>(null);
 
   // Profile Picture Crop States
   const [isCropModalOpen, setIsCropModalOpen] = useState(false);
@@ -302,6 +303,10 @@ export default function DashboardClient() {
         setReporter(profile);
         localStorage.setItem('reporterStatus', profile.status);
 
+        // Fetch if there is already an active reporter in their block
+        const activeRep = await getActiveReporterInBlock(profile.block, profile.district, profile.state, profile.id);
+        setActiveBlockReporter(activeRep);
+
         if (profile.status === 'Approved') {
           const [s, a, c] = await Promise.all([
             getReporterStats(reporterId),
@@ -555,6 +560,26 @@ export default function DashboardClient() {
       {/* Main Container */}
       <main className={styles.dashboardContent}>
         
+        {activeBlockReporter && (
+          <div className={`${styles.statusAlert}`} style={{ borderLeft: '5px solid #ea580c', background: '#fff7ed', display: 'flex', alignItems: 'start', gap: '16px', padding: '20px', borderRadius: '16px', marginBottom: '24px', boxShadow: '0 4px 12px rgba(234, 88, 12, 0.05)', border: '1px solid #ffedd5' }}>
+            <i className="fas fa-exclamation-triangle" style={{ fontSize: '22px', color: '#ea580c', marginTop: '3px' }}></i>
+            <div style={{ flex: 1, textAlign: 'left' }}>
+              <h4 style={{ fontWeight: 800, margin: 0, fontSize: '15px', color: '#c2410c' }}>Active Reporter Already Exists in Your Block!</h4>
+              <p style={{ margin: '6px 0 0 0', fontSize: '13.5px', color: '#475569', lineHeight: '1.5' }}>
+                There is already an active (Approved) reporter registered for block <strong style={{ color: '#1e293b' }}>{reporter.block}</strong> (District: {reporter.district}, {reporter.state}).
+              </p>
+              <div style={{ marginTop: '12px', padding: '12px 16px', background: '#ffedd5', borderRadius: '10px', fontSize: '13px', display: 'flex', flexDirection: 'column', gap: '6px', color: '#7c2d12', border: '1px solid #fed7aa' }}>
+                <div><strong style={{ fontWeight: 700 }}>Name:</strong> {activeBlockReporter.fullName} ({activeBlockReporter.reporterCode || 'No Code Assigned'})</div>
+                <div><strong style={{ fontWeight: 700 }}>Email:</strong> {activeBlockReporter.email}</div>
+                <div><strong style={{ fontWeight: 700 }}>Mobile:</strong> {activeBlockReporter.mobile}</div>
+              </div>
+              <p style={{ margin: '12px 0 0 0', fontSize: '13px', color: '#7c2d12', fontWeight: 600, lineHeight: '1.4' }}>
+                Desi Andaz policy restricts registrations to exactly <strong>1 reporter per block</strong>. Since your block has an active reporter, your profile cannot be approved at this time. Please contact support/administration for help.
+              </p>
+            </div>
+          </div>
+        )}
+
         {/* Verification Context Alert */}
         {reporter.status === 'Pending' && (
           <div className={`${styles.statusAlert} ${styles.statusAlertPending}`}>

@@ -556,4 +556,30 @@ export async function verifyReporterByCode(code: string) {
   }
 }
 
+export async function getActiveReporterInBlock(block: string, district: string, state: string, excludeReporterId?: string) {
+  try {
+    if (!block || !district || !state) return null;
+    const activeReporter = await prisma.reporter.findFirst({
+      where: {
+        block: block.trim(),
+        district: district.trim(),
+        state: state.trim(),
+        status: 'Approved',
+        ...(excludeReporterId ? { id: { not: excludeReporterId } } : {})
+      },
+      select: {
+        id: true,
+        fullName: true,
+        reporterCode: true,
+        email: true,
+        mobile: true
+      }
+    });
+    return activeReporter;
+  } catch (error) {
+    console.error('Error getting active reporter in block:', error);
+    return null;
+  }
+}
+
 
