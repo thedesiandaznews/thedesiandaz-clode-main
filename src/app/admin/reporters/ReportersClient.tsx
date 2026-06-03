@@ -136,354 +136,507 @@ export default function ReportersClient({ initialList }: { initialList: any[] })
     tempContainer.style.left = '-9999px';
     tempContainer.style.width = '794px';
     
-    const page1Html = `
-      <div id="appointment-page-1" style="width: 794px; height: 1123px; padding: 25px; box-sizing: border-box; background: #ffffff; color: #1e293b; font-family: 'Mukta', sans-serif; position: relative; display: flex; flex-direction: column; justify-content: space-between;">
-        <!-- Inner Border Frame -->
-        <div style="border: 2px solid #b89748; height: 100%; box-sizing: border-box; padding: 35px 40px; position: relative; display: flex; flex-direction: column; justify-content: space-between; background: #ffffff;">
-          <!-- Double border inset -->
-          <div style="position: absolute; top: 4px; left: 4px; right: 4px; bottom: 4px; border: 1px solid #6c0d1b; pointer-events: none; z-index: 1;"></div>
-          
-          <!-- Corner Accents -->
-          <div style="position: absolute; top: 8px; left: 8px; width: 24px; height: 24px; border-top: 4px solid #6c0d1b; border-left: 4px solid #6c0d1b; z-index: 2; box-sizing: border-box; pointer-events: none;">
-            <div style="position: absolute; top: 2px; left: 2px; width: 4px; height: 4px; background: #b89748;"></div>
-          </div>
-          <div style="position: absolute; top: 8px; right: 8px; width: 24px; height: 24px; border-top: 4px solid #6c0d1b; border-right: 4px solid #6c0d1b; z-index: 2; box-sizing: border-box; pointer-events: none;">
-            <div style="position: absolute; top: 2px; right: 2px; width: 4px; height: 4px; background: #b89748;"></div>
-          </div>
-          <div style="position: absolute; bottom: 8px; left: 8px; width: 24px; height: 24px; border-bottom: 4px solid #6c0d1b; border-left: 4px solid #6c0d1b; z-index: 2; box-sizing: border-box; pointer-events: none;">
-            <div style="position: absolute; bottom: 2px; left: 2px; width: 4px; height: 4px; background: #b89748;"></div>
-          </div>
-          <div style="position: absolute; bottom: 8px; right: 8px; width: 24px; height: 24px; border-bottom: 4px solid #6c0d1b; border-right: 4px solid #6c0d1b; z-index: 2; box-sizing: border-box; pointer-events: none;">
-            <div style="position: absolute; bottom: 2px; right: 2px; width: 4px; height: 4px; background: #b89748;"></div>
-          </div>
+    const stylesHtml = `<style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
-          <!-- Watermark Crest -->
-          <div style="position: absolute; top: 52%; left: 50%; transform: translate(-50%, -50%); opacity: 0.035; pointer-events: none; z-index: 0; text-align: center; font-family: 'Cinzel', serif; user-select: none;">
-            <div style="font-size: 80px; font-weight: 900; color: #6c0d1b; letter-spacing: 6px; line-height: 1;">TDA</div>
-            <div style="font-size: 16px; font-weight: 700; color: #b89748; letter-spacing: 12px; margin-top: 5px; font-family: 'Montserrat', sans-serif;">MEDIA</div>
-            <div style="border-top: 1px solid #b89748; width: 120px; margin: 10px auto 0 auto; opacity: 0.5;"></div>
-          </div>
+        :root {
+            --crimson: #C41E3A;
+            --dark-red: #8B1428;
+            --gold: #C9A84C;
+            --gold-light: #E8D9A0;
+            --cream: #FBF8F2;
+            --warm-gray: #6B6460;
+            --dark: #1E1B18;
+            --border: #DDD5C9;
+        }
 
-          <!-- Content Wrap -->
-          <div style="position: relative; z-index: 2;">
-            <!-- Redesigned Premium Letterhead -->
-            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #b89748; padding-bottom: 12px; margin-bottom: 12px; position: relative;">
-              <!-- Left Side: Branding -->
-              <div style="display: flex; align-items: center; gap: 14px;">
-                <img src="/logo.png" style="height: 60px; width: 60px; object-fit: contain;" alt="TDA Logo" />
-                <div style="text-align: left;">
-                  <h2 style="margin: 0; color: #6c0d1b; font-size: 24px; font-weight: 900; font-family: 'Cinzel', serif; letter-spacing: 0.5px; line-height: 1.1;">THE DESI ANDAZ</h2>
-                  <div style="color: #b89748; font-size: 11px; font-weight: 800; font-family: 'Montserrat', sans-serif; text-transform: uppercase; letter-spacing: 2px; margin-top: 1px;">Media Network</div>
+        body {
+            font-family: 'Source Sans 3', 'Noto Sans Devanagari', sans-serif;
+            background: #E8E4DE;
+            color: var(--dark);
+            font-size: 12px;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        @page { size: A4; margin: 0; }
+
+        .page {
+            width: 794px;
+            height: 1123px;
+            background: white;
+            margin: 8mm auto;
+            position: relative;
+            overflow: hidden;
+        }
+
+        @media print {
+            body { background: white; }
+            .page { margin: 0; box-shadow: none; page-break-after: always; }
+        }
+
+        .corner-tl, .corner-tr, .corner-bl, .corner-br {
+            position: absolute; width: 22mm; height: 22mm; z-index: 5;
+        }
+        .corner-tl { top: 7mm; left: 7mm; border-top: 2px solid var(--gold); border-left: 2px solid var(--gold); }
+        .corner-tr { top: 7mm; right: 7mm; border-top: 2px solid var(--gold); border-right: 2px solid var(--gold); }
+        .corner-bl { bottom: 7mm; left: 7mm; border-bottom: 2px solid var(--gold); border-left: 2px solid var(--gold); }
+        .corner-br { bottom: 7mm; right: 7mm; border-bottom: 2px solid var(--gold); border-right: 2px solid var(--gold); }
+
+        .top-strip { height: 4mm; background: linear-gradient(90deg, var(--crimson), var(--dark-red)); }
+
+        .page-inner {
+            padding: 10mm 14mm 8mm 14mm;
+            height: calc(1123px - 15px);
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ── Header ── */
+        .header {
+            display: flex; align-items: center; justify-content: space-between;
+            margin-bottom: 4mm; padding-bottom: 4mm; border-bottom: 0.5px solid var(--border);
+        }
+
+        .logo-area { display: flex; align-items: center; gap: 4mm; }
+        .logo-area img { height: 16mm; object-fit: contain; }
+
+        .company-text h1 {
+            font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 800;
+            color: var(--crimson); letter-spacing: 0.5px; line-height: 1.1;
+        }
+        .company-text .subtitle { font-size: 12px; font-weight: 700; color: var(--dark-red); letter-spacing: 3px; text-transform: uppercase; }
+
+        .header-right { text-align: right; font-size: 12px; color: var(--warm-gray); line-height: 1.7; }
+
+        .rni-badge {
+            display: inline-block; background: var(--dark-red); color: white;
+            font-size: 10px; font-weight: 700; padding: 1mm 3mm; letter-spacing: 0.5px; margin-bottom: 1mm;
+        }
+
+        .cert-line { font-size: 10px; font-weight: 600; letter-spacing: 0.8px; color: var(--dark-red); }
+
+        /* ── Address ── */
+        .address-bar {
+            display: flex; justify-content: space-between; padding: 3mm 0; margin-bottom: 4mm;
+            border-bottom: 0.5px solid var(--border); font-size: 10px; color: var(--warm-gray); line-height: 1.5;
+        }
+
+        /* ── Title ── */
+        .title-band {
+            text-align: center; padding: 5mm 0; margin-bottom: 5mm;
+            background: linear-gradient(135deg, var(--cream) 0%, #f5f0e6 100%);
+            border: 1px solid var(--gold-light);
+        }
+        .title-band h2 { font-family: 'Noto Sans Devanagari', sans-serif; font-size: 20px; font-weight: 700; color: var(--dark-red); }
+        .title-band .eng { font-family: 'Playfair Display', serif; font-size: 16px; font-weight: 600; color: var(--dark); letter-spacing: 3px; text-transform: uppercase; margin-top: 1mm; }
+
+        /* ── Dossier ── */
+        .section-head {
+            font-size: 12px; font-weight: 700; color: white; background: var(--dark-red);
+            padding: 2.5mm 4mm; margin-bottom: 0; letter-spacing: 0.5px;
+        }
+
+        .dossier-table { width: 100%; border-collapse: collapse; margin-bottom: 4mm; border: 1px solid var(--border); }
+        .dossier-table td { padding: 3mm 4mm; font-size: 12px; border: 0.5px solid var(--border); vertical-align: middle; }
+        .dossier-table .label { background: var(--cream); color: var(--warm-gray); font-weight: 600; width: 18%; }
+        .dossier-table .value { font-weight: 500; color: var(--dark); }
+
+        /* ── Sections ── */
+        .section { margin-bottom: 5mm; }
+
+        .sec-title {
+            font-size: 14px; font-weight: 700; color: var(--dark-red);
+            padding-bottom: 2mm; margin-bottom: 3mm; border-bottom: 1.5px solid var(--gold);
+            display: flex; align-items: center; gap: 2mm;
+        }
+        .sec-title::before {
+            content: ''; display: inline-block; width: 3mm; height: 6mm;
+            background: var(--crimson); flex-shrink: 0;
+        }
+
+        .body-text { font-size: 12px; line-height: 1.75; color: #333; text-align: justify; }
+        .body-text strong { color: var(--dark); }
+
+        /* ── Lists ── */
+        .bullet-list { list-style: none; padding: 0; margin: 0; }
+        .bullet-list li {
+            font-size: 12px; line-height: 1.7; color: #333;
+            padding: 1.5mm 0 1.5mm 6mm; position: relative;
+        }
+        .bullet-list li::before { content: '◆'; position: absolute; left: 0; color: var(--crimson); font-size: 7px; top: 3mm; }
+
+        .num-list { list-style: none; padding: 0; margin: 0; counter-reset: item; }
+        .num-list li {
+            font-size: 12px; line-height: 1.7; color: #333;
+            padding: 1.5mm 0 1.5mm 8mm; position: relative; counter-increment: item;
+        }
+        .num-list li::before { content: counter(item) "."; position: absolute; left: 0; color: var(--crimson); font-weight: 700; font-size: 12px; }
+
+        /* ── Jurisdiction ── */
+        .juris-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; border: 1px solid var(--border); margin-bottom: 4mm; }
+        .juris-cell { text-align: center; padding: 4mm 3mm; border-right: 0.5px solid var(--border); }
+        .juris-cell:last-child { border-right: none; }
+        .juris-cell .jvalue { font-size: 13px; font-weight: 700; color: var(--dark-red); }
+
+        .juris-head {
+            display: grid; grid-template-columns: 1fr 1fr 1fr;
+            background: var(--dark-red); color: white; font-size: 12px; font-weight: 700; text-align: center;
+        }
+        .juris-head div { padding: 2.5mm 3mm; border-right: 0.5px solid rgba(255,255,255,0.2); }
+        .juris-head div:last-child { border-right: none; }
+
+        /* ── Signature ── */
+        .sig-section { display: flex; justify-content: flex-end; margin-top: 8mm; padding-top: 5mm; }
+
+        .sig-digital {
+            border: 1px solid #4CAF50; padding: 3mm 5mm; font-size: 10px; color: #2E7D32;
+            margin-bottom: 2mm; background: #f1f8e9; line-height: 1.6;
+        }
+        .sig-digital .sig-check { font-weight: 700; color: #2E7D32; font-size: 11px; }
+        .sig-name { font-size: 14px; font-weight: 700; color: var(--dark); margin-top: 2mm; }
+        .sig-name-hi { font-family: 'Noto Sans Devanagari', sans-serif; font-size: 14px; font-weight: 700; color: var(--dark); }
+        .sig-desig { font-size: 12px; color: var(--warm-gray); font-weight: 600; }
+        .sig-org { font-size: 11px; color: var(--warm-gray); }
+        .verified-text { font-size: 11px; color: #2E7D32; font-style: italic; margin-top: 2mm; }
+
+        /* ── Acceptance ── */
+        .acceptance-box {
+            border: 1.5px solid var(--gold); padding: 5mm 6mm; margin-top: 6mm; background: var(--cream);
+        }
+        .acceptance-box .acc-title {
+            font-size: 14px; font-weight: 700; color: var(--dark-red);
+            margin-bottom: 3mm; padding-bottom: 2mm; border-bottom: 1px solid var(--gold-light);
+        }
+        .acceptance-box .acc-text { font-size: 12px; line-height: 1.75; color: #333; margin-bottom: 5mm; }
+
+        .acc-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 5mm 12mm; }
+        .acc-field { display: flex; flex-direction: column; }
+        .acc-field .af-label { font-size: 12px; color: var(--warm-gray); font-weight: 600; margin-bottom: 2mm; }
+        .acc-field .af-line { border-bottom: 1px dashed var(--warm-gray); height: 7mm; }
+
+        /* ── Watermark ── */
+        .watermark {
+            position: absolute; top: 50%; left: 50%;
+            transform: translate(-50%, -50%) rotate(-30deg);
+            font-family: 'Playfair Display', serif; font-size: 60pt; font-weight: 800;
+            color: rgba(196, 30, 58, 0.04); letter-spacing: 8px;
+            white-space: nowrap; pointer-events: none; z-index: 0;
+        }
+
+        .page-footer {
+            margin-top: auto; text-align: center; padding-top: 3mm;
+            border-top: 0.5px solid var(--border); font-size: 10px; color: #aaa;
+        }
+
+        /* ── Mini Header (page 2+) ── */
+        .mini-header {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 5mm; padding-bottom: 4mm; border-bottom: 0.5px solid var(--border);
+        }
+        .mini-header-left { display: flex; align-items: center; gap: 3mm; }
+        .mini-header-left img { height: 10mm; }
+        .mini-header-left .mh-name { font-size: 12px; font-weight: 700; color: var(--dark-red); letter-spacing: 1px; }
+        .mini-header-left .mh-sub { font-size: 10px; color: var(--warm-gray); margin-left: 2mm; }
+        .mini-header-right { font-size: 10px; color: var(--warm-gray); font-weight: 600; }
+    </style>`;
+    const page1Html = `<!-- ═══════════════════ PAGE 1 ═══════════════════ -->
+<div id="appointment-page-1" class="page">
+    <div class="corner-tl"></div><div class="corner-tr"></div><div class="corner-bl"></div><div class="corner-br"></div>
+    <div class="watermark">TDA</div>
+    <div class="top-strip"></div>
+    <div class="page-inner">
+
+        <div class="header">
+            <div class="logo-area">
+                <img src="data:image/png;base64,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" alt="The Desi Andaz News Logo">
+                <div class="company-text">
+                    <h1>THE DESI ANDAZ</h1>
+                    <div class="subtitle">Media Network</div>
                 </div>
-              </div>
-              
-              <!-- Right Side: Registration & Certification -->
-              <div style="text-align: right; font-family: 'Montserrat', sans-serif; font-weight: 600; line-height: 1.35;">
-                <div style="background: #6c0d1b; color: #ffffff; font-size: 9px; font-weight: 700; padding: 4px 12px; border-radius: 4px; display: inline-block; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px;">
-                  RNI No: JHBIL/26/A3245
-                </div>
-                <div style="color: #b89748; font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px;">
-                  Print • Digital • Electronic
-                </div>
-                <div style="color: #64748b; font-size: 8px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 2px;">
-                  ISO 9001:2015 Certified Organization
-                </div>
-              </div>
             </div>
-
-            <!-- Redesigned Address and Contacts Row -->
-            <div style="display: flex; justify-content: space-between; font-size: 9.5px; color: #475569; font-family: 'Montserrat', sans-serif; border-bottom: 1.5px solid #e2d9c2; padding-bottom: 8px; margin-bottom: 12px; line-height: 1.5;">
-              <div style="flex: 1.3; text-align: left; padding-right: 12px;">
-                <span style="color: #6c0d1b; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; display: block; margin-bottom: 2px;">Head Office Address:</span>
-                Near Everett Mission School, D.S.M Hospital, Dhanushpuja, Pakur, Jharkhand – 816107
-              </div>
-              <div style="width: 1px; background: #e2d9c2; margin: 0 12px;"></div>
-              <div style="flex: 0.7; text-align: right; font-weight: 500;">
-                <span style="color: #6c0d1b; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; display: block; margin-bottom: 2px;">Contact Information:</span>
-                <strong style="color: #1e293b;">Mob:</strong> +91-8409659560, +91-6203868383<br/>
-                <strong style="color: #1e293b;">Email:</strong> info@thedesiandaz.com | <strong style="color: #1e293b;">Web:</strong> www.thedesiandaz.com
-              </div>
+            <div class="header-right">
+                <div class="rni-badge">RNI NO: JHBIL/26/A3245</div><br>
+                <span class="cert-line">PRINT · DIGITAL · ELECTRONIC</span><br>
+                <span style="font-size:12px; font-weight:600; color:var(--warm-gray);">Date: ${probationDate}</span>
             </div>
-
-            <!-- Title -->
-            <div style="margin: 12px 0; text-align: center;">
-              <div style="border: 1px solid #b89748; outline: 1px solid #6c0d1b; outline-offset: -3px; padding: 6px 0; font-size: 15px; font-weight: 800; letter-spacing: 1px; background: #faf8f3; color: #6c0d1b; text-transform: uppercase; font-family: 'Cinzel', serif;">
-                नियुक्ति पत्र / APPOINTMENT LETTER
-              </div>
-            </div>
-
-            <!-- Ref and Date Block -->
-            <div style="display: flex; justify-content: space-between; font-size: 11px; font-family: 'Montserrat', sans-serif; font-weight: 600; color: #334155; margin-bottom: 12px; padding: 0 4px;">
-              <div>Ref No: <span style="color: #6c0d1b;">TDA/HR/REP/${reporter.reporterCode || 'PENDING'}</span></div>
-              <div>Date: <span style="color: #6c0d1b;">${probationDate}</span></div>
-            </div>
-
-            <!-- Recipient Info (Dossier Card) -->
-            <div style="background: linear-gradient(135deg, #faf8f3 0%, #fdfcf9 100%); border: 1.5px solid #e2d9c2; border-left: 5px solid #6c0d1b; border-radius: 8px; padding: 14px 20px; margin-bottom: 12px; text-align: left; font-size: 11.5px; line-height: 1.6; box-shadow: 0 2px 6px rgba(0,0,0,0.02);">
-              <div style="font-weight: 800; color: #6c0d1b; font-family: 'Montserrat', sans-serif; font-size: 10px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; border-bottom: 1px solid #e2d9c2; padding-bottom: 4px;">Recipient Dossier Details • प्राप्तकर्ता प्रोफ़ाइल विवरण</div>
-              <table style="width: 100%; border-collapse: collapse; text-align: left;">
-                <tr>
-                  <td style="width: 18%; font-weight: 700; color: #475569; padding: 4px 0;">श्री/श्रीमती:</td>
-                  <td style="border-bottom: 1px dashed #cbd5e1; font-weight: 700; padding: 4px 5px; color: #0f172a; width: 32%;">${reporter.fullName}</td>
-                  <td style="width: 18%; font-weight: 700; color: #475569; padding: 4px 0; padding-left: 15px;">Official ID:</td>
-                  <td style="border-bottom: 1px dashed #cbd5e1; font-family: 'Montserrat', sans-serif; font-weight: 700; padding: 4px 5px; color: #6c0d1b; width: 32%;">${reporter.reporterCode || 'NO ID ASSIGNED'}</td>
-                </tr>
-                <tr>
-                  <td style="font-weight: 700; color: #475569; padding: 4px 0;">पिता/पति:</td>
-                  <td style="border-bottom: 1px dashed #cbd5e1; padding: 4px 5px;">${parentName}</td>
-                  <td style="font-weight: 700; color: #475569; padding: 4px 0; padding-left: 15px;">प्रखंड:</td>
-                  <td style="border-bottom: 1px dashed #cbd5e1; padding: 4px 5px; font-weight: 700;">${reporter.block}</td>
-                </tr>
-                <tr>
-                  <td style="font-weight: 700; color: #475569; padding: 4px 0; vertical-align: top;">ग्राम/पता:</td>
-                  <td colspan="3" style="border-bottom: 1px dashed #cbd5e1; padding: 4px 5px; line-height: 1.4;">${reporter.fullAddress || ''}</td>
-                </tr>
-                <tr>
-                  <td style="font-weight: 700; color: #475569; padding: 4px 0;">जिला:</td>
-                  <td style="border-bottom: 1px dashed #cbd5e1; padding: 4px 5px;">${reporter.district}</td>
-                  <td style="font-weight: 700; color: #475569; padding: 4px 0; padding-left: 15px;">राज्य:</td>
-                  <td style="border-bottom: 1px dashed #cbd5e1; padding: 4px 5px;">${reporter.state}</td>
-                </tr>
-              </table>
-            </div>
-
-            <!-- Subject -->
-            <div style="font-size: 12.5px; font-weight: 700; color: #6c0d1b; margin: 12px 0; padding: 8px 12px; border-left: 4px solid #b89748; background: #faf8f3; text-align: left;">
-              विषय: The Desi Andaz Media Network में Official Reporter के पद पर नियुक्ति।
-            </div>
-
-            <!-- Subject Body -->
-            <div style="font-size: 11.5px; line-height: 1.65; color: #2d3748; text-align: justify; margin-bottom: 12px;">
-              <p style="margin: 0 0 8px 0; font-weight: 700; color: #0f172a;">महोदय/महोदया,</p>
-              <p style="margin: 0 0 8px 0; text-indent: 40px;">हमें यह बताते हुए प्रसन्नता हो रही है कि आपके द्वारा प्रस्तुत आवेदन, पहचान दस्तावेजों, शैक्षणिक प्रमाण-पत्रों एवं अन्य आवश्यक अभिलेखों के सत्यापन उपरांत आपको The Desi Andaz Media Network में Official Reporter के पद पर नियुक्त किया जाता है।</p>
-              <p style="margin: 0 0 0 0; text-indent: 40px;">आपको <strong>${reporter.block}</strong> क्षेत्र के लिए संस्था के अधिकृत प्रतिनिधि एवं संवाददाता के रूप में नियुक्त किया जाता है। आप अपने क्षेत्र से समाचार संकलन, जनहित से जुड़े विषयों की रिपोर्टिंग, सामाजिक एवं प्रशासनिक गतिविधियों का कवरेज तथा स्थानीय समस्याओं एवं विकास कार्यों की जानकारी संगठन तक पहुँचाने का कार्य करेंगे।</p>
-            </div>
-
-            <!-- Probation Period -->
-            <h4 style="margin: 12px 0 6px 0; padding-bottom: 4px; border-bottom: 1.5px solid #e2d9c2; font-size: 12px; font-weight: 800; color: #6c0d1b; letter-spacing: 0.5px; text-align: left; display: flex; align-items: center; gap: 6px; font-family: 'Montserrat', sans-serif;">
-              <div style="width: 4px; height: 12px; background: #b89748; display: block; flex-shrink: 0; border-radius: 1px;"></div>
-              प्रोबेशन अवधि (Probation Period)
-            </h4>
-            <div style="font-size: 10.5px; line-height: 1.55; color: #2d3748; text-align: left; margin-bottom: 12px;">
-              <p style="margin: 0 0 4px 0;">• आपकी नियुक्ति प्रारंभिक रूप से 03 (तीन) माह की प्रोबेशन अवधि के लिए की जाती है, जो दिनांक <strong>${probationDate}</strong> से प्रभावी होगी।</p>
-              <p style="margin: 0 0 4px 0;">• प्रोबेशन अवधि के दौरान आपके कार्य प्रदर्शन, समाचार संकलन क्षमता, अनुशासन, व्यवहार एवं संगठन के प्रति समर्पण का मूल्यांकन किया जाएगा।</p>
-              <p style="margin: 0 0 0 0;">• संतोषजनक प्रदर्शन के आधार पर आपको नियमित रूप से कार्य करने की अनुमति प्रदान की जा सकती है।</p>
-            </div>
-
-            <!-- Duties -->
-            <h4 style="margin: 12px 0 6px 0; padding-bottom: 4px; border-bottom: 1.5px solid #e2d9c2; font-size: 12px; font-weight: 800; color: #6c0d1b; letter-spacing: 0.5px; text-align: left; display: flex; align-items: center; gap: 6px; font-family: 'Montserrat', sans-serif;">
-              <div style="width: 4px; height: 12px; background: #b89748; display: block; flex-shrink: 0; border-radius: 1px;"></div>
-              कर्तव्य एवं जिम्मेदारियाँ
-            </h4>
-            <div style="font-size: 10.5px; line-height: 1.55; color: #2d3748; text-align: left;">
-              <table style="width: 100%; border-collapse: collapse;">
-                <tr>
-                  <td style="width: 20px; font-weight: 700; color: #6c0d1b; vertical-align: top; padding: 2px 0;">1.</td>
-                  <td style="padding: 2px 0;">अपने कार्यक्षेत्र से सत्य, निष्पक्ष एवं तथ्यात्मक समाचार संकलित करना।</td>
-                </tr>
-                <tr>
-                  <td style="font-weight: 700; color: #6c0d1b; vertical-align: top; padding: 2px 0;">2.</td>
-                  <td style="padding: 2px 0;">किसी भी समाचार को प्रकाशित अथवा प्रेषित करने से पूर्व उसकी सत्यता सुनिश्चित करना।</td>
-                </tr>
-                <tr>
-                  <td style="font-weight: 700; color: #6c0d1b; vertical-align: top; padding: 2px 0;">3.</td>
-                  <td style="padding: 2px 0;">स्थानीय प्रशासन, शिक्षा, health, खेल, सामाजिक एवं जनहित से जुड़े समाचारों को प्राथमिकता देना।</td>
-                </tr>
-                <tr>
-                  <td style="font-weight: 700; color: #6c0d1b; vertical-align: top; padding: 2px 0;">4.</td>
-                  <td style="padding: 2px 0;">संस्था द्वारा जारी पत्रकारिता नीति एवं आचार संहिता का पालन करना।</td>
-                </tr>
-                <tr>
-                  <td style="font-weight: 700; color: #6c0d1b; vertical-align: top; padding: 2px 0;">5.</td>
-                  <td style="padding: 2px 0;">संस्था की प्रतिष्ठा एवं विश्वसनीयता बनाए रखना।</td>
-                </tr>
-                <tr>
-                  <td style="font-weight: 700; color: #6c0d1b; vertical-align: top; padding: 2px 0;">6.</td>
-                  <td style="padding: 2px 0;">समय-समय पर संस्था द्वारा दिए गए निर्देशों का पालन करना।</td>
-                </tr>
-              </table>
-            </div>
-          </div>
-
-          <!-- Footer -->
-          <div style="text-align: center; font-size: 9.5px; color: #888888; font-family: 'Montserrat', sans-serif; border-top: 1px solid #e2d9c2; padding-top: 8px; z-index: 2; font-weight: 600; letter-spacing: 1px;">
-            PAGE 1 OF 2
-          </div>
         </div>
-      </div>
-    `;
 
-    const page2Html = `
-      <div id="appointment-page-2" style="width: 794px; height: 1123px; padding: 25px; box-sizing: border-box; background: #ffffff; color: #1e293b; font-family: 'Mukta', sans-serif; position: relative; display: flex; flex-direction: column; justify-content: space-between; margin-top: 20px;">
-        <!-- Inner Border Frame -->
-        <div style="border: 2px solid #b89748; height: 100%; box-sizing: border-box; padding: 35px 40px; position: relative; display: flex; flex-direction: column; justify-content: space-between; background: #ffffff;">
-          <!-- Double border inset -->
-          <div style="position: absolute; top: 4px; left: 4px; right: 4px; bottom: 4px; border: 1px solid #6c0d1b; pointer-events: none; z-index: 1;"></div>
-          
-          <!-- Corner Accents -->
-          <div style="position: absolute; top: 8px; left: 8px; width: 24px; height: 24px; border-top: 4px solid #6c0d1b; border-left: 4px solid #6c0d1b; z-index: 2; box-sizing: border-box; pointer-events: none;">
-            <div style="position: absolute; top: 2px; left: 2px; width: 4px; height: 4px; background: #b89748;"></div>
-          </div>
-          <div style="position: absolute; top: 8px; right: 8px; width: 24px; height: 24px; border-top: 4px solid #6c0d1b; border-right: 4px solid #6c0d1b; z-index: 2; box-sizing: border-box; pointer-events: none;">
-            <div style="position: absolute; top: 2px; right: 2px; width: 4px; height: 4px; background: #b89748;"></div>
-          </div>
-          <div style="position: absolute; bottom: 8px; left: 8px; width: 24px; height: 24px; border-bottom: 4px solid #6c0d1b; border-left: 4px solid #6c0d1b; z-index: 2; box-sizing: border-box; pointer-events: none;">
-            <div style="position: absolute; bottom: 2px; left: 2px; width: 4px; height: 4px; background: #b89748;"></div>
-          </div>
-          <div style="position: absolute; bottom: 8px; right: 8px; width: 24px; height: 24px; border-bottom: 4px solid #6c0d1b; border-right: 4px solid #6c0d1b; z-index: 2; box-sizing: border-box; pointer-events: none;">
-            <div style="position: absolute; bottom: 2px; right: 2px; width: 4px; height: 4px; background: #b89748;"></div>
-          </div>
-
-          <!-- Watermark Crest -->
-          <div style="position: absolute; top: 52%; left: 50%; transform: translate(-50%, -50%); opacity: 0.035; pointer-events: none; z-index: 0; text-align: center; font-family: 'Cinzel', serif; user-select: none;">
-            <div style="font-size: 80px; font-weight: 900; color: #6c0d1b; letter-spacing: 6px; line-height: 1;">TDA</div>
-            <div style="font-size: 16px; font-weight: 700; color: #b89748; letter-spacing: 12px; margin-top: 5px; font-family: 'Montserrat', sans-serif;">MEDIA</div>
-            <div style="border-top: 1px solid #b89748; width: 120px; margin: 10px auto 0 auto; opacity: 0.5;"></div>
-          </div>
-
-          <!-- Content Wrap -->
-          <div style="position: relative; z-index: 2;">
-            <!-- Redesigned Mini Letterhead -->
-            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #b89748; padding-bottom: 8px; font-size: 10px; color: #475569; font-family: 'Montserrat', sans-serif; font-weight: 600; margin-bottom: 15px;">
-              <div style="display: flex; align-items: center; gap: 8px;">
-                <img src="/logo.png" style="height: 25px; width: 25px; object-fit: contain;" alt="TDA Mini Logo" />
-                <span style="color: #6c0d1b; font-weight: 900; font-family: 'Cinzel', serif; font-size: 11px;">THE DESI ANDAZ MEDIA NETWORK</span>
-                <span style="color: #cbd5e1;">|</span>
-                <span style="font-size: 9.5px; color: #b89748; font-weight: 700; text-transform: uppercase;">Official Appointment Letter</span>
-              </div>
-              <div style="color: #6c0d1b; font-weight: 700; font-size: 9.5px;">RNI: JHBIL/26/A3245</div>
-            </div>
-
-            <!-- Terms and Conditions -->
-            <h4 style="margin: 10px 0 6px 0; padding-bottom: 4px; border-bottom: 1.5px solid #e2d9c2; font-size: 12px; font-weight: 800; color: #6c0d1b; letter-spacing: 0.5px; text-align: left; display: flex; align-items: center; gap: 6px; font-family: 'Montserrat', sans-serif;">
-              <div style="width: 4px; height: 12px; background: #b89748; display: block; flex-shrink: 0; border-radius: 1px;"></div>
-              नियम एवं शर्तें (Terms & Conditions)
-            </h4>
-            <div style="font-size: 10.5px; line-height: 1.6; color: #2d3748; text-align: left; margin-bottom: 15px;">
-              <table style="width: 100%; border-collapse: collapse;">
-                <tr>
-                  <td style="width: 20px; font-weight: 700; color: #6c0d1b; vertical-align: top; padding: 2.5px 0;">1.</td>
-                  <td style="padding: 2.5px 0;">Reporter ID केवल आधिकारिक कार्य हेतु मान्य होगी।</td>
-                </tr>
-                <tr>
-                  <td style="font-weight: 700; color: #6c0d1b; vertical-align: top; padding: 2.5px 0;">2.</td>
-                  <td style="padding: 2.5px 0;">संस्था के नाम, लोगो अथवा पहचान पत्र का दुरुपयोग पूर्णतः प्रतिबंधित रहेगा।</td>
-                </tr>
-                <tr>
-                  <td style="font-weight: 700; color: #6c0d1b; vertical-align: top; padding: 2.5px 0;">3.</td>
-                  <td style="padding: 2.5px 0;">संस्था के नाम पर किसी भी प्रकार का आर्थिक लेन-देन बिना लिखित अनुमति के नहीं किया जाएगा।</td>
-                </tr>
-                <tr>
-                  <td style="font-weight: 700; color: #6c0d1b; vertical-align: top; padding: 2.5px 0;">4.</td>
-                  <td style="padding: 2.5px 0;">फर्जी, भ्रामक अथवा अपुष्ट समाचार प्रकाशित या प्रसारित करना गंभीर अनुशासनहीनता माना जाएगा।</td>
-                </tr>
-                <tr>
-                  <td style="font-weight: 700; color: #6c0d1b; vertical-align: top; padding: 2.5px 0;">5.</td>
-                  <td style="padding: 2.5px 0;">संस्था के नियमों के उल्लंघन अथवा संस्था की छवि को नुकसान पहुँचाने की स्थिति में नियुक्ति तत्काल प्रभाव से समाप्त की जा सकती है।</td>
-                </tr>
-                <tr>
-                  <td style="font-weight: 700; color: #6c0d1b; vertical-align: top; padding: 2.5px 0;">6.</td>
-                  <td style="padding: 2.5px 0;">संस्था आवश्यकता अनुसार कार्यक्षेत्र अथवा दायित्वों में परिवर्तन करने का अधिकार सुरक्षित रखती है।</td>
-                </tr>
-              </table>
-            </div>
-
-            <!-- Work Area -->
-            <h4 style="margin: 15px 0 8px 0; padding-bottom: 4px; border-bottom: 1.5px solid #e2d9c2; font-size: 12px; font-weight: 800; color: #6c0d1b; letter-spacing: 0.5px; text-align: left; display: flex; align-items: center; gap: 6px; font-family: 'Montserrat', sans-serif;">
-              <div style="width: 4px; height: 12px; background: #b89748; display: block; flex-shrink: 0; border-radius: 1px;"></div>
-              अधिकृत कार्य क्षेत्र (Authorized Jurisdiction)
-            </h4>
-            <div style="display: flex; gap: 15px; margin-bottom: 15px;">
-              <div style="flex: 1; background: #faf8f3; border: 1px solid #e2d9c2; border-top: 3px solid #b89748; border-radius: 4px; padding: 8px 12px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
-                <div style="font-size: 9px; color: #64748b; font-family: 'Montserrat', sans-serif; font-weight: 750; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px;">BLOCK (प्रखंड)</div>
-                <div style="font-size: 13px; font-weight: 800; color: #6c0d1b;">Block, ${reporter.block || 'N/A'}, ${reporter.district}, ${reporter.state}</div>
-              </div>
-              <div style="flex: 1; background: #faf8f3; border: 1px solid #e2d9c2; border-top: 3px solid #6c0d1b; border-radius: 4px; padding: 8px 12px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
-                <div style="font-size: 9px; color: #64748b; font-family: 'Montserrat', sans-serif; font-weight: 750; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px;">DISTRICT (जिला)</div>
-                <div style="font-size: 13px; font-weight: 800; color: #6c0d1b;">${reporter.district}</div>
-              </div>
-              <div style="flex: 1; background: #faf8f3; border: 1px solid #e2d9c2; border-top: 3px solid #b89748; border-radius: 4px; padding: 8px 12px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
-                <div style="font-size: 9px; color: #64748b; font-family: 'Montserrat', sans-serif; font-weight: 750; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px;">STATE (राज्य)</div>
-                <div style="font-size: 13px; font-weight: 800; color: #6c0d1b;">${reporter.state}</div>
-              </div>
-            </div>
-
-            <!-- Declaration -->
-            <h4 style="margin: 15px 0 6px 0; padding-bottom: 4px; border-bottom: 1.5px solid #e2d9c2; font-size: 12px; font-weight: 800; color: #6c0d1b; letter-spacing: 0.5px; text-align: left; display: flex; align-items: center; gap: 6px; font-family: 'Montserrat', sans-serif;">
-              <div style="width: 4px; height: 12px; background: #b89748; display: block; flex-shrink: 0; border-radius: 1px;"></div>
-              घोषणा (Declaration)
-            </h4>
-            <div style="font-size: 10.5px; line-height: 1.6; color: #2d3748; text-align: justify; margin-bottom: 20px;">
-              The Desi Andaz Media Network निष्पक्ष, निर्भीक एवं जनहित पत्रकारिता के सिद्धांतों पर कार्य करता है। आपसे अपेक्षा की जाती है कि आप पत्रकारिता की गरिमा एवं नैतिक मूल्यों का पालन करते हुए संस्था के उद्देश्यों के अनुरूप कार्य करेंगे। हम आपके उज्ज्वल भविष्य एवं सफल कार्यकाल की कामना करते हैं।
-            </div>
-
-            <!-- Sign-off Block -->
-            <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: 20px; font-size: 10.5px; line-height: 1.5; color: #1e293b; position: relative;">
-              <div style="text-align: left; padding-bottom: 10px;">
-                <span style="color: #64748b; font-size: 9px; font-family: 'Montserrat', sans-serif; font-weight: 600; display: block; margin-bottom: 2px;">Issued on behalf of:</span>
-                <strong style="color: #6c0d1b; font-size: 11px;">The Desi Andaz Media Network</strong>
-              </div>
-              <div style="text-align: right; position: relative; width: 220px; padding-right: 10px;">
-                <!-- Digital Signature Block -->
-                <div style="position: absolute; bottom: 35px; left: -75px; width: 140px; border: 1px solid #10b981; background: rgba(240, 253, 244, 0.96); border-radius: 6px; padding: 5px 8px; text-align: left; font-family: 'Montserrat', sans-serif; box-shadow: 0 2px 8px rgba(16, 185, 129, 0.1); font-size: 6.5px; line-height: 1.35; color: #065f46; pointer-events: none; z-index: 10; box-sizing: border-box;">
-                  <div style="display: flex; align-items: center; gap: 4px; border-bottom: 1px solid #a7f3d0; padding-bottom: 3px; margin-bottom: 3px;">
-                    <span style="color: #10b981; font-weight: 900; font-size: 8px; line-height: 1;">✔</span>
-                    <span style="font-weight: 800; text-transform: uppercase; color: #047857; letter-spacing: 0.2px;">Digitally Signed</span>
-                  </div>
-                  <div><strong>Signed By:</strong> Sonu Kumar Saha</div>
-                  <div><strong>Designation:</strong> Managing Director</div>
-                  <div><strong>Date:</strong> ${probationDate}</div>
-                  <div style="color: #059669; font-weight: 600; font-size: 5.2px; margin-top: 1px; font-family: monospace;">AUTH ID: TDA-SEC-${reporter.reporterCode || 'PENDING'}</div>
-                </div>
-
-                <div style="margin-bottom: 25px; color: #64748b; font-family: 'Montserrat', sans-serif; font-size: 8px; font-style: italic; letter-spacing: 0.5px;">Verified Digital Signature</div>
-                <strong style="font-size: 12px; color: #6c0d1b;">सोनू कुमार साहा</strong><br/>
-                <span style="font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 9.5px; color: #334155;">Founder & Managing Director</span><br/>
-                <span style="color: #64748b; font-size: 9px; font-family: 'Montserrat', sans-serif;">The Desi Andaz Media Network</span>
-              </div>
-            </div>
-
-            <!-- Employee Acceptance -->
-            <h4 style="margin: 20px 0 6px 0; padding-bottom: 4px; border-bottom: 1.5px solid #e2d9c2; font-size: 12px; font-weight: 800; color: #6c0d1b; letter-spacing: 0.5px; text-align: left; display: flex; align-items: center; gap: 6px; font-family: 'Montserrat', sans-serif;">
-              <div style="width: 4px; height: 12px; background: #b89748; display: block; flex-shrink: 0; border-radius: 1px;"></div>
-              कर्मचारी स्वीकृति (Employee Acceptance)
-            </h4>
-            <div style="font-size: 10.5px; line-height: 1.6; color: #2d3748; background: #faf8f3; border: 1px solid #e2d9c2; border-left: 4px solid #b89748; padding: 12px 18px; border-radius: 6px; text-align: left; position: relative; z-index: 2;">
-              <p style="margin: 0 0 10px 0;">मैं, <strong>____________________________</strong>, इस नियुक्ति पत्र में उल्लिखित सभी नियमों एवं शर्तों को पढ़कर, समझकर एवं स्वीकार करता/करती हूँ।</p>
-              <table style="width: 100%; font-size: 10px; border-collapse: collapse; margin-top: 8px; text-align: left; line-height: 1.6;">
-                <tr>
-                  <td style="width: 50%; padding: 3px 0; color: #475569;"><strong>हस्ताक्षर:</strong> ___________________</td>
-                  <td style="padding: 3px 0; color: #475569;"><strong>Official Reporter ID:</strong> <span style="font-family: 'Montserrat', sans-serif; font-weight: 700; color: #6c0d1b;">${reporter.reporterCode || '__________'}</span></td>
-                </tr>
-                <tr>
-                  <td style="padding: 3px 0; color: #475569;"><strong>नाम:</strong> _______________________</td>
-                  <td style="padding: 3px 0; color: #475569;"><strong>दिनांक:</strong> _____________________</td>
-                </tr>
-                <tr>
-                  <td style="padding: 3px 0; color: #475569;"><strong>स्थान:</strong> ______________________</td>
-                  <td></td>
-                </tr>
-              </table>
-            </div>
-          </div>
-
-          <!-- Footer -->
-          <div style="text-align: center; font-size: 9.5px; color: #888888; font-family: 'Montserrat', sans-serif; border-top: 1px solid #e2d9c2; padding-top: 8px; z-index: 2; font-weight: 600; letter-spacing: 1px;">
-            PAGE 2 OF 2
-          </div>
+        <div class="address-bar">
+            <div><strong>HEAD OFFICE ADDRESS:</strong><br>Near Everett Mission School, D.S.M Hospital, Dhanushpuja, Pakur, Jharkhand – 816107</div>
+            <div style="text-align:right;"><strong>CONTACT INFORMATION:</strong><br>Mob: +91-8409659560, +91-6203868383<br>Email: info@thedesiandaz.com | Web: www.thedesiandaz.com</div>
         </div>
-      </div>
-    `;
 
-    tempContainer.innerHTML = page1Html + page2Html;
+        <div class="title-band">
+            <h2>नियुक्ति पत्र</h2>
+            <div class="eng">Appointment Letter</div>
+        </div>
+
+        <div class="section-head">RECIPIENT DOSSIER DETAILS · प्राप्तकर्ता प्रोफ़ाइल विवरण</div>
+        <table class="dossier-table">
+            <tr>
+                <td class="label">श्री/श्रीमती:</td>
+                <td class="value">${reporter.fullName}</td>
+                <td class="label">Official ID:</td>
+                <td class="value" style="color:var(--dark-red); font-weight:700;">${reporter.reporterCode || 'NO ID ASSIGNED'}</td>
+            </tr>
+            <tr>
+                <td class="label">पिता/पति:</td>
+                <td class="value">${parentName}</td>
+                <td class="label">प्रखंड:</td>
+                <td class="value">${reporter.block}</td>
+            </tr>
+            <tr>
+                <td class="label">ग्राम/पता:</td>
+                <td class="value" colspan="3">${reporter.fullAddress || ''}</td>
+            </tr>
+            <tr>
+                <td class="label">जिला:</td>
+                <td class="value">${reporter.district}</td>
+                <td class="label">राज्य:</td>
+                <td class="value">${reporter.state}</td>
+            </tr>
+        </table>
+
+        <div class="section">
+            <div class="sec-title">विषय: The Desi Andaz Media Network में Official Reporter के पद पर नियुक्ति।</div>
+        </div>
+
+        <div class="section">
+            <p class="body-text"><strong>महोदय/महोदया,</strong></p>
+            <p class="body-text" style="margin-top:2mm;">
+                हमें यह बताते हुए प्रसन्नता हो रही है कि आपके द्वारा प्रस्तुत आवेदन, पहचान दस्तावेजों, शैक्षणिक प्रमाण-पत्रों एवं अन्य आवश्यक अभिलेखों के सत्यापन उपरांत आपको The Desi Andaz Media Network में <strong>Official Reporter</strong> के पद पर नियुक्त किया जाता है।
+            </p>
+            <p class="body-text" style="margin-top:2mm;">
+                आपको <strong>${reporter.block}</strong> क्षेत्र के लिए संस्था के अधिकृत प्रतिनिधि एवं संवाददाता के रूप में नियुक्त किया जाता है। आप अपने क्षेत्र से समाचार संकलन, जनहित से जुड़े विषयों की रिपोर्टिंग, सामाजिक एवं प्रशासनिक गतिविधियों का कवरेज तथा स्थानीय समस्याओं एवं विकास कार्यों की जानकारी संगठन तक पहुँचाने का कार्य करेंगे।
+            </p>
+        </div>
+
+        <div class="section">
+            <div class="sec-title">प्रोबेशन अवधि (Probation Period)</div>
+            <ul class="bullet-list">
+                <li>आपकी नियुक्ति प्रारंभिक रूप से 03 (तीन) माह की प्रोबेशन अवधि के लिए की जाती है, जो दिनांक <strong>${probationDate}</strong> से प्रभावी होगी।</li>
+                <li>प्रोबेशन अवधि के दौरान आपके कार्य प्रदर्शन, समाचार संकलन क्षमता, अनुशासन, व्यवहार एवं संगठन के प्रति समर्पण का मूल्यांकन किया जाएगा।</li>
+                <li>संतोषजनक प्रदर्शन के आधार पर आपको नियमित रूप से कार्य करने की अनुमति प्रदान की जा सकती है।</li>
+                <li>प्रोबेशन अवधि के दौरान संस्था को बिना किसी पूर्व सूचना के नियुक्ति रद्द करने का अधिकार होगा यदि कार्य प्रदर्शन संतोषजनक नहीं पाया जाता।</li>
+            </ul>
+        </div>
+
+        <div class="page-footer">PAGE 1 OF 4</div>
+    </div>
+</div>`;
+    const page2Html = `<!-- ═══════════════════ PAGE 2 ═══════════════════ -->
+<div id="appointment-page-2" class="page">
+    <div class="corner-tl"></div><div class="corner-tr"></div><div class="corner-bl"></div><div class="corner-br"></div>
+    <div class="watermark">TDA</div>
+    <div class="top-strip"></div>
+    <div class="page-inner">
+
+        <div class="mini-header">
+            <div class="mini-header-left">
+                <img src="data:image/png;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/2wBDAQUFBQcGBw4ICA4eFBEUHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCABpAMEDASIAAhEBAxEB/8QAHQABAAIDAQEBAQAAAAAAAAAAAAcIBAUGAwkBAv/EAEcQAAEDAwICBAkICQIGAwAAAAECAwQABREGBxIhCBMxQRQVFyJRVoGRlCUyVGFxoaLRFhgjQlJigpKVsdIkM3KTwdNDg6X/xAAbAQEAAgMBAQAAAAAAAAAAAAAABQYDBAcCAf/EADURAAEDAgIHBQcFAQEAAAAAAAEAAgMEEQUhBhITMUFTkRQVUXGhIjJCYYGxwaLR4fDxI3L/2gAMAwEAAhEDEQA/ALl0pSiJSlKIlK5fX2vNOaHaiOX+S614WpQZS20VqVw4ycDuGR765Py/bc/TZ/waq15KuCN2q94B81IQYVW1DBJFE5zTxANlKlKivy/bc/TZ/wAGqnl+25+mz/g1V47fTcwdVl7ixLkO6FSpSor8v23P02f8Gqnl+25+mz/g1U7fTcwdU7ixLkO6FSpSor8v23P02f8ABqp5ftufps/4NVO303MHVO4sS5DuhUqUqK/L9tz9Nn/Bqp5ftufps/4NVO303MHVO4sS5DuhUqUqK/L9tz9Nn/Bqp5ftufps/wCDVTt9NzB1TuLEuQ7oVKlKivy/bc/TZ/waqeX7bn6bP+DVTt9NzB1TuLEuQ7oVKlKivy/bc/TZ/wAGqnl+25+mz/g1U7fTcwdU7ixLkO6FSpSor8v23P02f8Gqnl+25+mz/g1U7fTcwdU7ixLkO6FSpSsWzz2LraolzihwMSmUvNdYnhVwqGRkd3I1lVtAgi4UW5paSDvCUpSvq+JSlKIlKVhX+5x7NY512lnDEOOt9z7EpJ9/KvhIAuV6a0vcGt3lVO6U2ofHG5jluad4o9pZTHAHZ1h85Z+3JCf6ai6BDlz5SIkGK/KkLzwNMtla1YGTgDmeQJr+7vPk3W6y7nMXxyZby3nVelSiSfvNS50RrQmbuJKujiCU26EpSD6HFkJH4eOqIAa2r/8AR9P8XcXFuC4Ve19m3qf5KjNWkdVpSVK0xe0pAySYDoAH9tYdrs14uocNrtU6cG8Bwxo63ODPZnhBx2Gr66te8H0rd5AOC1BeX7kE1GfRNtHgG2S7itsBy4zHHArvKEYQB70q99ST8FaJ2xB28E9FXItMpHUUlS6MAtLQBffe/wCAqsXSx3u1tJeudnuEFtauFK5EZbYUe3AKgMmslnSeqXmkOs6avLja0hSFpgukKB7CDw8xU69Kh5d61vpLR7CzxOrClpHpdcDaT7OFXvqwkZluPGajspCG2kBCEjsAAwBXyHB2STPZrZNsvdXpdLTUkExiGtJc2vuANh1VCP0P1b6rXz4B3/bXgrTuoEz029ViugmKb6xMcxHOsKM44gnGcZ76+gOR6RUP6UmG9dJ3UkpB449qtSYSVehXEgkf3cfur3NgrIy0B59o2WGj0ynqGyuMQAY0u3nxAA+pKrBM0zqSFGXKmafu0ZhsZW67DcQhI+skYFeNrsl6ura3bXaLhOQg8K1Roy3Ak+glIODVuuk5NTD2eujZVhUp1llH1nrEqP3JNenRv0+LDtXb1LbKJFxKpr2f5+SPwBNY+52mp2Idla5KzjS54w3tjoxcu1QL78rkqn91s13tQbN0tU6AHc9X4THW3x47ccQGe0e+sqPpXU8lhuRH05eHmXEhbbjcJxSVJPMEEJwRU69J1l3Ue5ekNIR/nuJyT6OtcCSfYGyasAlMS12sJSEMRIjOAByShtCf9ABSHB2ySyM1sm2zSr0ukp6WCXZgvkubX3AGw6r58z4cy3ylxJ8R+JIRjiaebKFpyMjIPMcq2lo0hqq7sB+16cusxlQyHGYi1IP9WMVOWzOkGNwtY3ncjUjBkQ1zl+Ax3RlKyDyKh3pQnhSB2ZBz2VP7s23RJMaA7Lix338iOwpxKVOYHMJT2nA9FKTBhM3aOdZp3eJX3FNL3Ucggjj1nge1nkDa5A8bcVQS82K9WVaUXi0TrepXzRJjqb4vsyOddQ3YbKqzttlgiUshBVxq64AtdZ1+OLh6vt/d+b+9mrjaysVv1JpqdZ7kwh5h9pQHEOaFY5KHoIPPNUMXcbkiKq3+MJXgwyjqetVwYznGM4xnnWCtom0Lhf2gVu4NjL8bjNhqOYRexyN932OXqsOt7t9Yl6l1rabGkHhlyUpcI7Q2Oaz7EgmtFU7dD/T/AIVqW56jdQergsBhkkci452kH0hKfxVpUUG3nazxPopjGK3sVDJPxAy8zkPVWeaQhttLbaQlCQEpA7ABX9UpXQFwVKUpREpSlESog6V2ofFO3KbS05wyLs+GsDt6pGFLPv4B/VUv1UTpVahN33JNradUqNaWEsBOfN61XnLI96Un/pqMxefY0rrbzl/forJopRdrxJl9zPaP03etlElWm6H1oMXRVzvC2+FU6Z1aD/EhtPL8SlD2VVmrzbLWcWPa3T8EZ4lREyF5HMKd/aEewqx7Kg8Ci1qgu8ArvpvU7LDxEN73DoM/vZZ+5iy3txqVxJwU2mUR/wBpVfu3FoNh0HZLSpIS5HhNpcA/jKcq/ETW0u8KPdrTKtz+FMSW1Muj0pPJQ92RXpc5bVvtkmc8QlqMyt1ZPYEpBJ/0q06g2m0PhZcvExNOIBxdf0sPyq+W0HVvS2kyEDjjWbi4gru6lHV8v/tVmpx15dvEWi7zdwtKFxYTrjZPZxhJ4R7VYFQt0SIj1xueqdWzMrkSXUtdZ6VKJcc+/gqernAg3SC5BuURiZFdx1jLyAtCsEEZB5HmAa0cOa59O6Qb3kn9lOaQPZFXxwOzbE1jT9Mz918+TMlkkmU+SeZ/aGrE9DOOosamnrBUVrjthR7TgOE/6iuj3/0/o7Tm11zmQtMWaNMeKI7DrcNtKkqUoZIIGQeEKr+eiJDDG2sqUU+dJuLhz6QlCEj7wai6OidTVzWON7An8KzYvjTMRwOSVjNUFwbn8iCvbpMRHL5G0npVni6y53hIPCOYQlJClewLz7KlqJHaiRGYrCAhplCW0JHYEgYArkrnbPGm7tqmOpJZstsdeQe4Ovr4B+Ftf3V2QINT0Mf/AFkkPGw+gH73VFrJ70sFOPhBJ83H9gFEFtt/j7pO3W6LQFx9PW5plJPc64nI+5TnurbdJHUXiDa2ehtakybkoQmiPQrJX+AKHtFbrbS3BpWoL2tI6273d90K7y02rqmx9mEEj/qqBul3qHw7WUHT7SyWrZH43Rn/AOVzB+5IT7zWhUv7NRvfxcT6/wAKdw2DvDF4YvhiDf0jPq77qeNlYMe37VacYjfMXBQ8o+lTg41feo1Fe/bMzSu7di3DlwnrjaGEoQG0L4erdQFEJJwcAkhQ9OFVn9FbX0efY06KnuhE6EFKhlR/5zWclI/mTk8vRj0Gpl1FZrdqCyyrPdY6ZEOSjgcQfuI9BB5g9xFZGMbWUbdmbEWt8iFrSyyYRi8hqG3Di4H5tdxB8f8AFBEzpLxHYjzTWlJCHFtqSlRmAhJI5H5lVwJJJJ7TXS7maSlaK1hLsUlRcQ2QuO7jHWtK+ar7e4/WDXNVVqypnmdqznNq6fhGHUNJFtKIWa+x3k38N/mlXT6O2n/0f2rtiXEFMidma9ntyvHD+AJqo+g7G5qXWNqsaAoiXJQhwp7Ut5ytXsSCfZV+GGkMMoZaSEttpCUgdwAwBUtgEF3OlPDJVXTyt1Y46UHf7R+mQ/PRf3SlKtC5mlKUoiUpSiLDvdxj2izTbrLJEeGwt9zHbwpSVHHuqgF6uEi7XiZdJSip+W+t5w/zKUSf9atf0q9QeKdtvFbSyl+7PpZ5HB6tPnrP2ckp/qqotVTHp9aVsQ4fldS0FotnTPqTvcbDyH8/ZbLS1sXedTWy0tglUyW0xy/mUAT99fQFIajxwBwttNpwO4JSBVO+jDaPGm7UJ446u3suy1A9+BwJ/EsH2VZveK7ix7Y6guBJChDWy2R2hbn7NJ9hUDW1gjRFTvmP9sFG6ZvNViENI3+lxt+AvXa25KvGiIV2USfDHZD4z6FPuED3EVpukNdxaNpL0sK4XJTaYjf1lwgKH9vFWbsc31e0mm0+mElXvJP/AJqN+mDcnVW3T2nGMKVMkrfUkduUgIR7y4r3Vv1ExZQa536o9clBUFI2bHBENweT9Gkn8Lr+jNaDatpLc4tvgdnOOS1/WFKwk/2pTXIdJjcfUmldSWy0abuZhExC/IKW0LKuJRCQeIHGOE++ps05bW7Np+3WhklTcKK3HST3hCQnP3VD+6eyN01rrabqBOo40Zt9LaW2Vx1KLaUoCcZ4vSCfbXiqhnZRtig97IZGyzYZWUU2LSVNaRqHWOYuDc5C1jw+ygHVu4WsNV25u33+8rmRW3Q6lstNoAWAQD5qR3E1aro4wjC2esgIwp4Ovn+pxRH3YqrO6uinNBakbsj1zauDioyX1LbbKAniKgE4JPPzc+2rj7Yw1QNutOw1p4VtW1gLHoVwAn781HYOyTtTzL7wFs81P6XS03dsLaUAMc64sLDceGXitz1TEV6VPcWE8aQXFq5BKEDs+wecfaa1O31xdvGkol3dzmcp2QgHubU4otj+zhrnekJqH9HdrLo424ESZyRCY+suclfgCzXUaGieAaLskLGCxb2GyPrDYFTokvPqDgL9T/Co7oC2iEzvidYeTRn9x0WahMSz2bBUGosNjJUTyShIySfYKp9pLTkvePcy9PLn+L+uDs1Timy7wJ4wEoxkdygO3uqwHSX1D4i2tmMNrCZFzWIbYzz4Vc1n+0Ef1CuD6GMZrg1LMIBdzHbB7wnzyf8Ax7qi67VqKuOmO4ZlWfBDJQYVUYi33zYA/UXPU+i0esdnJe29hd1pF1gVSra424wluHwKKysJHPjPp58jyzVhNuNQnVWh7Vf1thpyWxxOIHYFglKsfVkGtDvvpC9a20Y1ZrJIjMuiYh10PrKUqQAoYyAe8g+yuk0HYEaX0da7AlwO+BMBC3AMBSu1R+wkmtqlpez1Dmxtsy3r/ijMSxIV+HxvqH602seABDbbjYDjmq+9MkRv0osJQB4T4EvrPTwcfm/fx1A1d9v9qZrVG5twlxXA5Di4iR1JOQpKM5UD6CoqP2GuBqq4hIJKl7m7rrqWA076bDoY377ffO30up06IGnvC9VXHUbzZLcBjqWVEcusc7cfWEg/3VaKo56OWnRp/ay3Fxsok3HM17P8/wAz8AT99SNVuwyDY0zQd5z6rk2ktb2zEpHg5D2R5DL73KUpSt9QSUpSiJSleUx5MaI9IUCUtNqWQO8AZoiqZ0rtQ+NdxxaWlKLFojpaIzyLq/PWR7Cgf01ENbO+3G23e9TrrJ1bp0vTJC33P+PHapRJ7vrrC+RvWzTnxw/KqPU01VPM6TZnM+C7XhuIYZRUkcAnZ7IHxDfx9VKXR311pbQkm7zb8iYqTKQ20wWGQvhQCorByR2nh91dBv1u/YNY6Lbsen/D0rclIckdeyEAtpBIHIn97hPsqDfkb1s058cPyp8jetmnPjh+VZ2mvbBsBGdXyK0pGYHLXCudOC8EH3hbIWGSstt/vjoexaIs1mlpunhEOG2y7wRgU8QSAcHi5jNR/rzcPT2pt6bLqVxMzxHbupylTQ6w8Cis+bnHNRA7eyop+RvWzTnxw/KnyN62ac+OH5V7klxCRjYzGbC3A8Fip6fAaeZ87JxrOBHvD4t9lbP9Yfb/APhvHwo/3U/WH2//AIbx8KP91VM+RvWzTnxw/KnyN62ac+OH5Vn7difL9Co/uXRvn/rC6XdfUsfV24Vzv0frREfcSGQ4MKDaUhIyO7sz7asVH6Qe3rMdtlKLuEoQEgCKnuGP4qqh8jetmnPjh+VPkb1s058cPyrWgfXwPc9sZu7fkVJ10WBVsUUUk4tGLCzh8h+FLW/u5ln13LssS1eGItkRSnJHWthKlLJA5DJzhIP9xqV2+kJt6htKEou4CQAB4Kn/AHVU75G9bNOfHD8qfI3rZpz44flWRk+IskdIIzd1r5HgsE1Fo/NBHA6carL29occzdSX0hNxYOvbvbU2cSE26EyrAeRwKLqz5xwCeWEpx7a1mym4r23t/efdjLl22YlKJTKCAoYPmrTnlkZPLvzXEhFnIz+lum/8gmv3gs/rbpr/ACKa1nMrjPt9Q63kpFk2CNouxbVpjta2sPG/W+at1H3824djB5dwmsrx/wApcNZUPdkffUd7sb/Iutpes2jo8qMiQgoenP4QsJPIhCQTjI/eJz9XfUE8Fn9bdNf5FNOCz+tumv8AIprclqsSkZq6hHkCoilwvRymlEu2DrbgXC349VjVudEWR3UerrXY2kkmZJQ2rHcjOVH2JBPsrX8Fn9bdNf5FNTL0SrTaJev5lxRerRcX4EIqaaiyg6pBWQkrwOwAZH9VR9Ph075WtewgXzyU7iGkNFDSyPilaXAGwBBN+CtJGZbjx247KAhppAQhI7AAMAV6UpV5XEyb5lKUpREpSlESlKURfLzpIaNOhd5tQWRtotw1yDLhebwpLLvnpCfSEklH2oNR1V8+mnszqPcR+wX3RttTOukVK4ktsvoayyTxoOVkDzVFY9Pn/VVcf1YN7PVBH+Sjf+yiLD6N9s0deLrqCPrDSiL1Dg2l+6rkKuDscxm2EKJSEtkcRWpTY5nl3Vs9D6M0jr7Tuu9StxbLoyM0qFDsqbldHvBo8hZy7lw5UtRQ2sgEEZX2cs1k2fo99IC0M3Bm26dMZFximJLCLjF/aslSVFB8/sJSk8vRXpF2B6QsaxpsjGnii3JnJuAj+MIhT4QlPClz5/MhJI9FEW2g7Y6KZ38uelZlvhmy6V0yJN2XInvNR5MpMdBU4t0ZU2kuup+aOQT83uqHN2Faf/TORH0za7Zb4EdCWsW64vTY7y+0uJddAUc5AxgDzami0bWdKa06jumorfDfZut25TpPh8NSnxnODlRGM45D0Vz1+6O+/t9vEm73bTQlTpS+N55VxigrV6cBYFEW9te323julo2nJmnJIvf6EK1LN1C3PcSIjqgpxptbR8wpKeBPcTxDHPnWp0zpXb+xbB2/VupLVYbpfLoZkhli4XqTEe6ltXVISy20CHCVpUfO4e0c/Ru9RbX9KrUFgTYLuxMkWpKUI8FFziNtqSjHAlQSscQGBgHOMCvM7W9KU6PTpDxc+LGlgx0wxNhBIbJyU54s4J+uiLS6K0PoidsLcL/HtkfUGqGIcqVcY712XDkWxpPJp5lnh4X2+xSiT34HPlXDa803abDtdoOaiNwXy9NS50xwuKJLHWhDA4c8IGErOQMnNSnL2w6VMnSaNHvxJ67IllLAjeM4gT1SexsqC+IpGB5pOK0N56P/AEgr34C1dNNOSU26IiFE47hFAaYQSUoGHOwZPvoi/NgNpI2qNG37VF/stwmxXYsqJaCylwIaktx1u+EOKTgBCVIS2M8lKXjupsvtJZ9e7SXiSX0s6sl3ExdPpccKUuqYaS683jPCeJC+09hSPrrZ23Z3pMQH7U/Csz8ZdlYcYt4TPhgMIc4usCRx4PFxqyTknNeVu2Y6SluYtDECySozdmlLl28N3CIOoeWRxLH7TmTwjtzyGKIitHaBte4m6Nyk6bFx0xo+OiMxb/Dnm+tmKcbZT+0CuPmpLp7+3s5Vi3baK3XbfO3ad0/arnBtb1oj3u623Kn5FtbU0HHY45cSl80pSCOLK01udMbW9KXTUq6S7Fb5cJ+7Oh6c4ifDKnlgqIUSVnnlSjy9Na47JdJJTV5bcs0tzx4Um5rcukVbkrhVxjjWXOI+dz7edEWt1RoS22vpMP6Ws+i3LpaQlp9FokzXY4abcjJcUXXuakJbKypRJ/dwa5DfCTt+5q1MPbuzog26GyGn30SnXkSn8+etBcJIQOxPZkDPfUrWjbPpU2i9PXq3QJLFwehtwXHxOhFSmGwEoQcr7AEgeytDqjYPpCamvT15vumlzZ7wSHHlz4gJCQAOQWB2AURQVUq9FLWZ0VvdY5jrxbgz3PF8z0FDuAkn6gvgV7Kzf1ZN7fU3/wDRi/8Asr9R0Zt7kLC0aOKVJOQRcY2Qf+5RF9JaVodvHb67oazK1PCVCvYhtonMqcSvDqRhR4kkggkZ5HvrfURKUpREpSlESlKURKUpREpSlESlKURKUpREpSlESlKURKUpREpSlESlKURKUpREpSlESlKURf/Z" alt="Logo">
+                <span class="mh-name">THE DESI ANDAZ MEDIA NETWORK</span>
+                <span class="mh-sub">| OFFICIAL APPOINTMENT LETTER</span>
+            </div>
+            <div class="mini-header-right">RNI: JHBIL/26/A3245</div>
+        </div>
+
+        <div class="section">
+            <div class="sec-title">कर्तव्य एवं जिम्मेदारियाँ</div>
+            <ol class="num-list">
+                <li>अपने कार्यक्षेत्र से सत्य, निष्पक्ष एवं तथ्यात्मक समाचार संकलित करना।</li>
+                <li>किसी भी समाचार को प्रकाशित अथवा प्रेषित करने से पूर्व उसकी सत्यता सुनिश्चित करना।</li>
+                <li>स्थानीय प्रशासन, शिक्षा, स्वास्थ्य, खेल, सामाजिक एवं जनहित से जुड़े समाचारों को प्राथमिकता देना।</li>
+                <li>संस्था द्वारा जारी पत्रकारिता नीति एवं आचार संहिता का पालन करना।</li>
+                <li>संस्था की प्रतिष्ठा एवं विश्वसनीयता बनाए रखना।</li>
+                <li>समय-समय पर संस्था द्वारा दिए गए निर्देशों का पालन करना।</li>
+                <li>संस्था के सोशल मीडिया एवं डिजिटल प्लेटफॉर्म पर समाचार अपडेट करना।</li>
+                <li>क्षेत्र में हो रहे विकास कार्यों एवं सरकारी योजनाओं की रिपोर्टिंग करना।</li>
+                <li>समाचार संकलन के दौरान निष्पक्षता एवं संतुलित दृष्टिकोण बनाए रखना।</li>
+                <li>संस्था द्वारा आयोजित बैठकों एवं कार्यक्रमों में सक्रिय भागीदारी करना।</li>
+            </ol>
+        </div>
+
+        <div class="section">
+            <div class="sec-title">नियम एवं शर्तें (Terms & Conditions)</div>
+            <ol class="num-list">
+                <li>Reporter ID केवल आधिकारिक कार्य हेतु मान्य होगी।</li>
+                <li>संस्था के नाम, लोगो अथवा पहचान पत्र का दुरुपयोग पूर्णतः प्रतिबंधित रहेगा।</li>
+                <li>संस्था के नाम पर किसी भी प्रकार का आर्थिक लेन-देन बिना लिखित अनुमति के नहीं किया जाएगा।</li>
+                <li>फर्जी, भ्रामक अथवा अपुष्ट समाचार प्रकाशित या प्रसारित करना गंभीर अनुशासनहीनता माना जाएगा।</li>
+                <li>संस्था के नियमों के उल्लंघन अथवा संस्था की छवि को नुकसान पहुँचाने की स्थिति में नियुक्ति तत्काल प्रभाव से समाप्त की जा सकती है।</li>
+                <li>संस्था आवश्यकता अनुसार कार्यक्षेत्र अथवा दायित्वों में परिवर्तन करने का अधिकार सुरक्षित रखती है।</li>
+                <li>नियुक्ति पत्र का उपयोग केवल संस्था से संबंधित कार्यों के लिए ही किया जा सकता है, व्यक्तिगत लाभ हेतु नहीं।</li>
+                <li>संस्था की गोपनीय सूचनाओं, रणनीतियों एवं आंतरिक मामलों को किसी तीसरे पक्ष के साथ साझा करना वर्जित है।</li>
+                <li>रिपोर्टर को किसी भी राजनीतिक दल अथवा संगठन का प्रचार संस्था के नाम पर करने की अनुमति नहीं होगी।</li>
+                <li>संस्था द्वारा निर्धारित समय-सीमा के भीतर समाचार एवं रिपोर्ट प्रस्तुत करना अनिवार्य होगा।</li>
+            </ol>
+        </div>
+
+        <div class="page-footer">PAGE 2 OF 4</div>
+    </div>
+</div>`;
+    const page3Html = `<!-- ═══════════════════ PAGE 3 ═══════════════════ -->
+<div id="appointment-page-3" class="page">
+    <div class="corner-tl"></div><div class="corner-tr"></div><div class="corner-bl"></div><div class="corner-br"></div>
+    <div class="watermark">TDA</div>
+    <div class="top-strip"></div>
+    <div class="page-inner">
+
+        <div class="mini-header">
+            <div class="mini-header-left">
+                <img src="data:image/png;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/2wBDAQUFBQcGBw4ICA4eFBEUHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCABpAMEDASIAAhEBAxEB/8QAHQABAAIDAQEBAQAAAAAAAAAAAAcIBAUGAwkBAv/EAEcQAAEDAwICBAkICQIGAwAAAAECAwQABREGBxIhCBMxQRQVFyJRVoGRlCUyVGFxoaLRFhgjQlJigpKVsdIkM3KTwdNDg6X/xAAbAQEAAgMBAQAAAAAAAAAAAAAABQYDBAcCAf/EADURAAEDAgIHBQcFAQEAAAAAAAEAAgMEEQUhBhITMUFTkRQVUXGhIjJCYYGxwaLR4fDxI3L/2gAMAwEAAhEDEQA/ALl0pSiJSlKIlK5fX2vNOaHaiOX+S614WpQZS20VqVw4ycDuGR765Py/bc/TZ/waq15KuCN2q94B81IQYVW1DBJFE5zTxANlKlKivy/bc/TZ/wAGqnl+25+mz/g1V47fTcwdVl7ixLkO6FSpSor8v23P02f8Gqnl+25+mz/g1U7fTcwdU7ixLkO6FSpSor8v23P02f8ABqp5ftufps/4NVO303MHVO4sS5DuhUqUqK/L9tz9Nn/Bqp5ftufps/4NVO303MHVO4sS5DuhUqUqK/L9tz9Nn/Bqp5ftufps/wCDVTt9NzB1TuLEuQ7oVKlKivy/bc/TZ/waqeX7bn6bP+DVTt9NzB1TuLEuQ7oVKlKivy/bc/TZ/wAGqnl+25+mz/g1U7fTcwdU7ixLkO6FSpSor8v23P02f8Gqnl+25+mz/g1U7fTcwdU7ixLkO6FSpSsWzz2LraolzihwMSmUvNdYnhVwqGRkd3I1lVtAgi4UW5paSDvCUpSvq+JSlKIlKVhX+5x7NY512lnDEOOt9z7EpJ9/KvhIAuV6a0vcGt3lVO6U2ofHG5jluad4o9pZTHAHZ1h85Z+3JCf6ai6BDlz5SIkGK/KkLzwNMtla1YGTgDmeQJr+7vPk3W6y7nMXxyZby3nVelSiSfvNS50RrQmbuJKujiCU26EpSD6HFkJH4eOqIAa2r/8AR9P8XcXFuC4Ve19m3qf5KjNWkdVpSVK0xe0pAySYDoAH9tYdrs14uocNrtU6cG8Bwxo63ODPZnhBx2Gr66te8H0rd5AOC1BeX7kE1GfRNtHgG2S7itsBy4zHHArvKEYQB70q99ST8FaJ2xB28E9FXItMpHUUlS6MAtLQBffe/wCAqsXSx3u1tJeudnuEFtauFK5EZbYUe3AKgMmslnSeqXmkOs6avLja0hSFpgukKB7CDw8xU69Kh5d61vpLR7CzxOrClpHpdcDaT7OFXvqwkZluPGajspCG2kBCEjsAAwBXyHB2STPZrZNsvdXpdLTUkExiGtJc2vuANh1VCP0P1b6rXz4B3/bXgrTuoEz029ViugmKb6xMcxHOsKM44gnGcZ76+gOR6RUP6UmG9dJ3UkpB449qtSYSVehXEgkf3cfur3NgrIy0B59o2WGj0ynqGyuMQAY0u3nxAA+pKrBM0zqSFGXKmafu0ZhsZW67DcQhI+skYFeNrsl6ura3bXaLhOQg8K1Roy3Ak+glIODVuuk5NTD2eujZVhUp1llH1nrEqP3JNenRv0+LDtXb1LbKJFxKpr2f5+SPwBNY+52mp2Idla5KzjS54w3tjoxcu1QL78rkqn91s13tQbN0tU6AHc9X4THW3x47ccQGe0e+sqPpXU8lhuRH05eHmXEhbbjcJxSVJPMEEJwRU69J1l3Ue5ekNIR/nuJyT6OtcCSfYGyasAlMS12sJSEMRIjOAByShtCf9ABSHB2ySyM1sm2zSr0ukp6WCXZgvkubX3AGw6r58z4cy3ylxJ8R+JIRjiaebKFpyMjIPMcq2lo0hqq7sB+16cusxlQyHGYi1IP9WMVOWzOkGNwtY3ncjUjBkQ1zl+Ax3RlKyDyKh3pQnhSB2ZBz2VP7s23RJMaA7Lix338iOwpxKVOYHMJT2nA9FKTBhM3aOdZp3eJX3FNL3Ucggjj1nge1nkDa5A8bcVQS82K9WVaUXi0TrepXzRJjqb4vsyOddQ3YbKqzttlgiUshBVxq64AtdZ1+OLh6vt/d+b+9mrjaysVv1JpqdZ7kwh5h9pQHEOaFY5KHoIPPNUMXcbkiKq3+MJXgwyjqetVwYznGM4xnnWCtom0Lhf2gVu4NjL8bjNhqOYRexyN932OXqsOt7t9Yl6l1rabGkHhlyUpcI7Q2Oaz7EgmtFU7dD/T/AIVqW56jdQergsBhkkci452kH0hKfxVpUUG3nazxPopjGK3sVDJPxAy8zkPVWeaQhttLbaQlCQEpA7ABX9UpXQFwVKUpREpSlESog6V2ofFO3KbS05wyLs+GsDt6pGFLPv4B/VUv1UTpVahN33JNradUqNaWEsBOfN61XnLI96Un/pqMxefY0rrbzl/forJopRdrxJl9zPaP03etlElWm6H1oMXRVzvC2+FU6Z1aD/EhtPL8SlD2VVmrzbLWcWPa3T8EZ4lREyF5HMKd/aEewqx7Kg8Ci1qgu8ArvpvU7LDxEN73DoM/vZZ+5iy3txqVxJwU2mUR/wBpVfu3FoNh0HZLSpIS5HhNpcA/jKcq/ETW0u8KPdrTKtz+FMSW1Muj0pPJQ92RXpc5bVvtkmc8QlqMyt1ZPYEpBJ/0q06g2m0PhZcvExNOIBxdf0sPyq+W0HVvS2kyEDjjWbi4gru6lHV8v/tVmpx15dvEWi7zdwtKFxYTrjZPZxhJ4R7VYFQt0SIj1xueqdWzMrkSXUtdZ6VKJcc+/gqernAg3SC5BuURiZFdx1jLyAtCsEEZB5HmAa0cOa59O6Qb3kn9lOaQPZFXxwOzbE1jT9Mz918+TMlkkmU+SeZ/aGrE9DOOosamnrBUVrjthR7TgOE/6iuj3/0/o7Tm11zmQtMWaNMeKI7DrcNtKkqUoZIIGQeEKr+eiJDDG2sqUU+dJuLhz6QlCEj7wai6OidTVzWON7An8KzYvjTMRwOSVjNUFwbn8iCvbpMRHL5G0npVni6y53hIPCOYQlJClewLz7KlqJHaiRGYrCAhplCW0JHYEgYArkrnbPGm7tqmOpJZstsdeQe4Ovr4B+Ftf3V2QINT0Mf/AFkkPGw+gH73VFrJ70sFOPhBJ83H9gFEFtt/j7pO3W6LQFx9PW5plJPc64nI+5TnurbdJHUXiDa2ehtakybkoQmiPQrJX+AKHtFbrbS3BpWoL2tI6273d90K7y02rqmx9mEEj/qqBul3qHw7WUHT7SyWrZH43Rn/AOVzB+5IT7zWhUv7NRvfxcT6/wAKdw2DvDF4YvhiDf0jPq77qeNlYMe37VacYjfMXBQ8o+lTg41feo1Fe/bMzSu7di3DlwnrjaGEoQG0L4erdQFEJJwcAkhQ9OFVn9FbX0efY06KnuhE6EFKhlR/5zWclI/mTk8vRj0Gpl1FZrdqCyyrPdY6ZEOSjgcQfuI9BB5g9xFZGMbWUbdmbEWt8iFrSyyYRi8hqG3Di4H5tdxB8f8AFBEzpLxHYjzTWlJCHFtqSlRmAhJI5H5lVwJJJJ7TXS7maSlaK1hLsUlRcQ2QuO7jHWtK+ar7e4/WDXNVVqypnmdqznNq6fhGHUNJFtKIWa+x3k38N/mlXT6O2n/0f2rtiXEFMidma9ntyvHD+AJqo+g7G5qXWNqsaAoiXJQhwp7Ut5ytXsSCfZV+GGkMMoZaSEttpCUgdwAwBUtgEF3OlPDJVXTyt1Y46UHf7R+mQ/PRf3SlKtC5mlKUoiUpSiLDvdxj2izTbrLJEeGwt9zHbwpSVHHuqgF6uEi7XiZdJSip+W+t5w/zKUSf9atf0q9QeKdtvFbSyl+7PpZ5HB6tPnrP2ckp/qqotVTHp9aVsQ4fldS0FotnTPqTvcbDyH8/ZbLS1sXedTWy0tglUyW0xy/mUAT99fQFIajxwBwttNpwO4JSBVO+jDaPGm7UJ446u3suy1A9+BwJ/EsH2VZveK7ix7Y6guBJChDWy2R2hbn7NJ9hUDW1gjRFTvmP9sFG6ZvNViENI3+lxt+AvXa25KvGiIV2USfDHZD4z6FPuED3EVpukNdxaNpL0sK4XJTaYjf1lwgKH9vFWbsc31e0mm0+mElXvJP/AJqN+mDcnVW3T2nGMKVMkrfUkduUgIR7y4r3Vv1ExZQa536o9clBUFI2bHBENweT9Gkn8Lr+jNaDatpLc4tvgdnOOS1/WFKwk/2pTXIdJjcfUmldSWy0abuZhExC/IKW0LKuJRCQeIHGOE++ps05bW7Np+3WhklTcKK3HST3hCQnP3VD+6eyN01rrabqBOo40Zt9LaW2Vx1KLaUoCcZ4vSCfbXiqhnZRtig97IZGyzYZWUU2LSVNaRqHWOYuDc5C1jw+ygHVu4WsNV25u33+8rmRW3Q6lstNoAWAQD5qR3E1aro4wjC2esgIwp4Ovn+pxRH3YqrO6uinNBakbsj1zauDioyX1LbbKAniKgE4JPPzc+2rj7Yw1QNutOw1p4VtW1gLHoVwAn781HYOyTtTzL7wFs81P6XS03dsLaUAMc64sLDceGXitz1TEV6VPcWE8aQXFq5BKEDs+wecfaa1O31xdvGkol3dzmcp2QgHubU4otj+zhrnekJqH9HdrLo424ESZyRCY+suclfgCzXUaGieAaLskLGCxb2GyPrDYFTokvPqDgL9T/Co7oC2iEzvidYeTRn9x0WahMSz2bBUGosNjJUTyShIySfYKp9pLTkvePcy9PLn+L+uDs1Timy7wJ4wEoxkdygO3uqwHSX1D4i2tmMNrCZFzWIbYzz4Vc1n+0Ef1CuD6GMZrg1LMIBdzHbB7wnzyf8Ax7qi67VqKuOmO4ZlWfBDJQYVUYi33zYA/UXPU+i0esdnJe29hd1pF1gVSra424wluHwKKysJHPjPp58jyzVhNuNQnVWh7Vf1thpyWxxOIHYFglKsfVkGtDvvpC9a20Y1ZrJIjMuiYh10PrKUqQAoYyAe8g+yuk0HYEaX0da7AlwO+BMBC3AMBSu1R+wkmtqlpez1Dmxtsy3r/ijMSxIV+HxvqH602seABDbbjYDjmq+9MkRv0osJQB4T4EvrPTwcfm/fx1A1d9v9qZrVG5twlxXA5Di4iR1JOQpKM5UD6CoqP2GuBqq4hIJKl7m7rrqWA076bDoY377ffO30up06IGnvC9VXHUbzZLcBjqWVEcusc7cfWEg/3VaKo56OWnRp/ay3Fxsok3HM17P8/wAz8AT99SNVuwyDY0zQd5z6rk2ktb2zEpHg5D2R5DL73KUpSt9QSUpSiJSleUx5MaI9IUCUtNqWQO8AZoiqZ0rtQ+NdxxaWlKLFojpaIzyLq/PWR7Cgf01ENbO+3G23e9TrrJ1bp0vTJC33P+PHapRJ7vrrC+RvWzTnxw/KqPU01VPM6TZnM+C7XhuIYZRUkcAnZ7IHxDfx9VKXR311pbQkm7zb8iYqTKQ20wWGQvhQCorByR2nh91dBv1u/YNY6Lbsen/D0rclIckdeyEAtpBIHIn97hPsqDfkb1s058cPyp8jetmnPjh+VZ2mvbBsBGdXyK0pGYHLXCudOC8EH3hbIWGSstt/vjoexaIs1mlpunhEOG2y7wRgU8QSAcHi5jNR/rzcPT2pt6bLqVxMzxHbupylTQ6w8Cis+bnHNRA7eyop+RvWzTnxw/KnyN62ac+OH5V7klxCRjYzGbC3A8Fip6fAaeZ87JxrOBHvD4t9lbP9Yfb/APhvHwo/3U/WH2//AIbx8KP91VM+RvWzTnxw/KnyN62ac+OH5Vn7difL9Co/uXRvn/rC6XdfUsfV24Vzv0frREfcSGQ4MKDaUhIyO7sz7asVH6Qe3rMdtlKLuEoQEgCKnuGP4qqh8jetmnPjh+VPkb1s058cPyrWgfXwPc9sZu7fkVJ10WBVsUUUk4tGLCzh8h+FLW/u5ln13LssS1eGItkRSnJHWthKlLJA5DJzhIP9xqV2+kJt6htKEou4CQAB4Kn/AHVU75G9bNOfHD8qfI3rZpz44flWRk+IskdIIzd1r5HgsE1Fo/NBHA6carL29occzdSX0hNxYOvbvbU2cSE26EyrAeRwKLqz5xwCeWEpx7a1mym4r23t/efdjLl22YlKJTKCAoYPmrTnlkZPLvzXEhFnIz+lum/8gmv3gs/rbpr/ACKa1nMrjPt9Q63kpFk2CNouxbVpjta2sPG/W+at1H3824djB5dwmsrx/wApcNZUPdkffUd7sb/Iutpes2jo8qMiQgoenP4QsJPIhCQTjI/eJz9XfUE8Fn9bdNf5FNOCz+tumv8AIprclqsSkZq6hHkCoilwvRymlEu2DrbgXC349VjVudEWR3UerrXY2kkmZJQ2rHcjOVH2JBPsrX8Fn9bdNf5FNTL0SrTaJev5lxRerRcX4EIqaaiyg6pBWQkrwOwAZH9VR9Ph075WtewgXzyU7iGkNFDSyPilaXAGwBBN+CtJGZbjx247KAhppAQhI7AAMAV6UpV5XEyb5lKUpREpSlESlKURfLzpIaNOhd5tQWRtotw1yDLhebwpLLvnpCfSEklH2oNR1V8+mnszqPcR+wX3RttTOukVK4ktsvoayyTxoOVkDzVFY9Pn/VVcf1YN7PVBH+Sjf+yiLD6N9s0deLrqCPrDSiL1Dg2l+6rkKuDscxm2EKJSEtkcRWpTY5nl3Vs9D6M0jr7Tuu9StxbLoyM0qFDsqbldHvBo8hZy7lw5UtRQ2sgEEZX2cs1k2fo99IC0M3Bm26dMZFximJLCLjF/aslSVFB8/sJSk8vRXpF2B6QsaxpsjGnii3JnJuAj+MIhT4QlPClz5/MhJI9FEW2g7Y6KZ38uelZlvhmy6V0yJN2XInvNR5MpMdBU4t0ZU2kuup+aOQT83uqHN2Faf/TORH0za7Zb4EdCWsW64vTY7y+0uJddAUc5AxgDzami0bWdKa06jumorfDfZut25TpPh8NSnxnODlRGM45D0Vz1+6O+/t9vEm73bTQlTpS+N55VxigrV6cBYFEW9te323julo2nJmnJIvf6EK1LN1C3PcSIjqgpxptbR8wpKeBPcTxDHPnWp0zpXb+xbB2/VupLVYbpfLoZkhli4XqTEe6ltXVISy20CHCVpUfO4e0c/Ru9RbX9KrUFgTYLuxMkWpKUI8FFziNtqSjHAlQSscQGBgHOMCvM7W9KU6PTpDxc+LGlgx0wxNhBIbJyU54s4J+uiLS6K0PoidsLcL/HtkfUGqGIcqVcY712XDkWxpPJp5lnh4X2+xSiT34HPlXDa803abDtdoOaiNwXy9NS50xwuKJLHWhDA4c8IGErOQMnNSnL2w6VMnSaNHvxJ67IllLAjeM4gT1SexsqC+IpGB5pOK0N56P/AEgr34C1dNNOSU26IiFE47hFAaYQSUoGHOwZPvoi/NgNpI2qNG37VF/stwmxXYsqJaCylwIaktx1u+EOKTgBCVIS2M8lKXjupsvtJZ9e7SXiSX0s6sl3ExdPpccKUuqYaS683jPCeJC+09hSPrrZ23Z3pMQH7U/Csz8ZdlYcYt4TPhgMIc4usCRx4PFxqyTknNeVu2Y6SluYtDECySozdmlLl28N3CIOoeWRxLH7TmTwjtzyGKIitHaBte4m6Nyk6bFx0xo+OiMxb/Dnm+tmKcbZT+0CuPmpLp7+3s5Vi3baK3XbfO3ad0/arnBtb1oj3u623Kn5FtbU0HHY45cSl80pSCOLK01udMbW9KXTUq6S7Fb5cJ+7Oh6c4ifDKnlgqIUSVnnlSjy9Na47JdJJTV5bcs0tzx4Um5rcukVbkrhVxjjWXOI+dz7edEWt1RoS22vpMP6Ws+i3LpaQlp9FokzXY4abcjJcUXXuakJbKypRJ/dwa5DfCTt+5q1MPbuzog26GyGn30SnXkSn8+etBcJIQOxPZkDPfUrWjbPpU2i9PXq3QJLFwehtwXHxOhFSmGwEoQcr7AEgeytDqjYPpCamvT15vumlzZ7wSHHlz4gJCQAOQWB2AURQVUq9FLWZ0VvdY5jrxbgz3PF8z0FDuAkn6gvgV7Kzf1ZN7fU3/wDRi/8Asr9R0Zt7kLC0aOKVJOQRcY2Qf+5RF9JaVodvHb67oazK1PCVCvYhtonMqcSvDqRhR4kkggkZ5HvrfURKUpREpSlESlKURKUpREpSlESlKURKUpREpSlESlKURKUpREpSlESlKURKUpREpSlESlKURf/Z" alt="Logo">
+                <span class="mh-name">THE DESI ANDAZ MEDIA NETWORK</span>
+                <span class="mh-sub">| OFFICIAL APPOINTMENT LETTER</span>
+            </div>
+            <div class="mini-header-right">RNI: JHBIL/26/A3245</div>
+        </div>
+
+        <div class="section">
+            <div class="sec-title">अधिकृत कार्य क्षेत्र (Authorized Jurisdiction)</div>
+            <div class="juris-head">
+                <div>BLOCK (प्रखंड)</div>
+                <div>DISTRICT (जिला)</div>
+                <div>STATE (राज्य)</div>
+            </div>
+            <div class="juris-grid">
+                <div class="juris-cell">
+                    <div class="jvalue">Block, ${reporter.block || 'N/A'}, ${reporter.district}, ${reporter.state}</div>
+                </div>
+                <div class="juris-cell">
+                    <div class="jvalue">${reporter.district}</div>
+                </div>
+                <div class="juris-cell">
+                    <div class="jvalue">${reporter.state}</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="sec-title">सुविधाएँ एवं अधिकार (Facilities & Rights)</div>
+            <ul class="bullet-list">
+                <li>संस्था द्वारा आधिकारिक Reporter ID Card प्रदान किया जाएगा जो आपकी पहचान एवं प्रमाणिकता का प्रतीक होगा।</li>
+                <li>संस्था के डिजिटल प्लेटफॉर्म, वेबसाइट एवं सोशल मीडिया पेज पर आपकी प्रोफाइल प्रकाशित की जाएगी।</li>
+                <li>समय-समय पर संस्था द्वारा आयोजित प्रशिक्षण कार्यक्रमों एवं कार्यशालाओं में भाग लेने का अवसर दिया जाएगा।</li>
+                <li>क्षेत्रीय एवं राष्ट्रीय स्तर के पत्रकारिता कार्यक्रमों में संस्था के प्रतिनिधि के रूप में भाग लेने का अवसर प्राप्त होगा।</li>
+                <li>उत्कृष्ट कार्य प्रदर्शन पर संस्था द्वारा प्रोत्साहन एवं पुरस्कार दिया जा सकता है।</li>
+                <li>संस्था के आधिकारिक कार्यक्रमों, प्रेस कॉन्फ्रेंस एवं सरकारी कार्यक्रमों में भाग लेने का अधिकार होगा।</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <div class="sec-title">रिपोर्टिंग संरचना (Reporting Structure)</div>
+            <ul class="bullet-list">
+                <li>आप सीधे संस्था के ब्यूरो चीफ / क्षेत्रीय प्रमुख को रिपोर्ट करेंगे।</li>
+                <li>समाचार एवं रिपोर्ट संस्था के संपादकीय विभाग को प्रेषित की जाएगी।</li>
+                <li>किसी भी विवादास्पद अथवा संवेदनशील समाचार को प्रकाशित करने से पूर्व संपादकीय विभाग की अनुमति अनिवार्य होगी।</li>
+                <li>मासिक कार्य प्रगति रिपोर्ट संस्था के प्रबंधन को प्रस्तुत करनी होगी।</li>
+                <li>आपातकालीन स्थिति में सीधे संस्था के प्रबंध निदेशक से संपर्क किया जा सकता है।</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <div class="sec-title">व्यावसायिक आचरण (Professional Conduct)</div>
+            <ol class="num-list">
+                <li>रिपोर्टर को सदैव शालीन, विनम्र एवं पेशेवर व्यवहार बनाए रखना होगा।</li>
+                <li>समाचार संकलन के दौरान किसी भी व्यक्ति, समुदाय अथवा संगठन के प्रति पक्षपातपूर्ण व्यवहार नहीं किया जाएगा।</li>
+                <li>संस्था के नाम पर किसी भी प्रकार की धमकी, दबाव अथवा अनुचित व्यवहार करना पूर्णतः प्रतिबंधित है।</li>
+                <li>रिपोर्टर को पत्रकारिता के उच्चतम मानदंडों एवं नैतिक सिद्धांतों का पालन करना अनिवार्य होगा।</li>
+                <li>किसी भी प्रकार के भ्रष्टाचार, रिश्वतखोरी अथवा अनैतिक गतिविधि में संलिप्त पाए जाने पर कड़ी कार्रवाई की जाएगी।</li>
+                <li>संस्था के सभी सहकर्मियों के साथ सम्मानजनक एवं सहयोगात्मक व्यवहार अनिवार्य है।</li>
+            </ol>
+        </div>
+
+        <div class="page-footer">PAGE 3 OF 4</div>
+    </div>
+</div>`;
+    const page4Html = `<!-- ═══════════════════ PAGE 4 ═══════════════════ -->
+<div id="appointment-page-4" class="page">
+    <div class="corner-tl"></div><div class="corner-tr"></div><div class="corner-bl"></div><div class="corner-br"></div>
+    <div class="watermark">TDA</div>
+    <div class="top-strip"></div>
+    <div class="page-inner">
+
+        <div class="mini-header">
+            <div class="mini-header-left">
+                <img src="data:image/png;base64,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" alt="Logo">
+                <span class="mh-name">THE DESI ANDAZ MEDIA NETWORK</span>
+                <span class="mh-sub">| OFFICIAL APPOINTMENT LETTER</span>
+            </div>
+            <div class="mini-header-right">RNI: JHBIL/26/A3245</div>
+        </div>
+
+        <div class="section">
+            <div class="sec-title">घोषणा (Declaration)</div>
+            <p class="body-text">
+                The Desi Andaz Media Network निष्पक्ष, निर्भीक एवं जनहित पत्रकारिता के सिद्धांतों पर कार्य करता है। आपसे अपेक्षा की जाती है कि आप पत्रकारिता की गरिमा एवं नैतिक मूल्यों का पालन करते हुए संस्था के उद्देश्यों के अनुरूप कार्य करेंगे। हम आपके उज्ज्वल भविष्य एवं सफल कार्यकाल की कामना करते हैं।
+            </p>
+        </div>
+
+        <div class="sig-section">
+            <div>
+                <div style="font-size:12px; color:var(--warm-gray); margin-bottom:4mm;">Issued on behalf of:<br><strong style="color:var(--dark);">The Desi Andaz Media Network</strong></div>
+            </div>
+            <div style="margin-left:auto; text-align:center;">
+                <div class="sig-digital">
+                    <div class="sig-check">✓ DIGITALLY SIGNED</div>
+                    Signed By: Sonu Kumar Saha<br>
+                    Designation: Managing Director<br>
+                    Date: ${probationDate}<br>
+                    AUTH ID: TDA-SEC-${reporter.reporterCode || 'PENDING'}
+                </div>
+                <div class="verified-text">Verified Digital Signature</div>
+                <div class="sig-name-hi">सोनू कुमार साहा</div>
+                <div class="sig-name">Sonu Kumar Saha</div>
+                <div class="sig-desig">Founder & Managing Director</div>
+                <div class="sig-org">The Desi Andaz Media Network</div>
+            </div>
+        </div>
+
+        <div class="acceptance-box">
+            <div class="acc-title">कर्मचारी स्वीकृति (Employee Acceptance)</div>
+            <p class="acc-text">
+                मैं, <strong>${reporter.fullName}</strong>, इस नियुक्ति पत्र में उल्लिखित सभी नियमों एवं शर्तों को पढ़कर, समझकर एवं स्वीकार करता/करती हूँ।
+            </p>
+            <div class="acc-fields">
+                <div class="acc-field">
+                    <div class="af-label">हस्ताक्षर:</div>
+                    <div class="af-line"></div>
+                </div>
+                <div class="acc-field">
+                    <div class="af-label">Official Reporter ID: ${reporter.reporterCode || 'PENDING'}</div>
+                    <div class="af-line"></div>
+                </div>
+                <div class="acc-field">
+                    <div class="af-label">नाम:</div>
+                    <div class="af-line"></div>
+                </div>
+                <div class="acc-field">
+                    <div class="af-label">दिनांक:</div>
+                    <div class="af-line"></div>
+                </div>
+                <div class="acc-field">
+                    <div class="af-label">स्थान:</div>
+                    <div class="af-line"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="page-footer">PAGE 4 OF 4</div>
+    </div>
+</div>`;
+
+    tempContainer.innerHTML = stylesHtml + page1Html + page2Html + page3Html + page4Html;
     document.body.appendChild(tempContainer);
 
     const generatePdfPromise = (async (): Promise<Blob | null> => {
       try {
         const page1El = tempContainer.querySelector('#appointment-page-1') as HTMLElement;
         const page2El = tempContainer.querySelector('#appointment-page-2') as HTMLElement;
+        const page3El = tempContainer.querySelector('#appointment-page-3') as HTMLElement;
+        const page4El = tempContainer.querySelector('#appointment-page-4') as HTMLElement;
 
-        // Await image loading
+        // Await image loading (including base64 logo icons)
         const images = tempContainer.getElementsByTagName('img');
         const imgPromises = Array.from(images).map((img) => {
           if (img.complete) return Promise.resolve();
@@ -494,21 +647,17 @@ export default function ReportersClient({ initialList }: { initialList: any[] })
         });
         await Promise.all(imgPromises);
 
-        const canvas1 = await html2canvas(page1El, {
-          scale: 1.5,
-          useCORS: false,
-          logging: false,
-          imageTimeout: 3000
-        });
+        const canvas1 = await html2canvas(page1El, { scale: 1.5, useCORS: false, logging: false, imageTimeout: 3000 });
         const imgData1 = canvas1.toDataURL('image/jpeg', 0.95);
 
-        const canvas2 = await html2canvas(page2El, {
-          scale: 1.5,
-          useCORS: false,
-          logging: false,
-          imageTimeout: 3000
-        });
+        const canvas2 = await html2canvas(page2El, { scale: 1.5, useCORS: false, logging: false, imageTimeout: 3000 });
         const imgData2 = canvas2.toDataURL('image/jpeg', 0.95);
+
+        const canvas3 = await html2canvas(page3El, { scale: 1.5, useCORS: false, logging: false, imageTimeout: 3000 });
+        const imgData3 = canvas3.toDataURL('image/jpeg', 0.95);
+
+        const canvas4 = await html2canvas(page4El, { scale: 1.5, useCORS: false, logging: false, imageTimeout: 3000 });
+        const imgData4 = canvas4.toDataURL('image/jpeg', 0.95);
 
         const pdf = new jsPDF('p', 'mm', 'a4');
         const pdfWidth = pdf.internal.pageSize.getWidth();
@@ -517,6 +666,10 @@ export default function ReportersClient({ initialList }: { initialList: any[] })
         pdf.addImage(imgData1, 'JPEG', 0, 0, pdfWidth, pdfHeight);
         pdf.addPage();
         pdf.addImage(imgData2, 'JPEG', 0, 0, pdfWidth, pdfHeight);
+        pdf.addPage();
+        pdf.addImage(imgData3, 'JPEG', 0, 0, pdfWidth, pdfHeight);
+        pdf.addPage();
+        pdf.addImage(imgData4, 'JPEG', 0, 0, pdfWidth, pdfHeight);
 
         return pdf.output('blob');
       } catch (e) {
