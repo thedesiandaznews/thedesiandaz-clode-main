@@ -18,6 +18,7 @@ export default function RegisterClient() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [fullName, setFullName] = useState('');
+  const [fatherHusbandName, setFatherHusbandName] = useState('');
   const [mobile, setMobile] = useState('');
   const [bloodGroup, setBloodGroup] = useState('');
 
@@ -160,7 +161,7 @@ function compressImage(file: File, maxWidth = 1000, maxHeight = 1000, quality = 
   const validateStep = () => {
     setError('');
     if (step === 1) {
-      if (!fullName.trim() || !email.trim() || !password.trim() || !mobile.trim()) {
+      if (!fullName.trim() || !fatherHusbandName.trim() || !email.trim() || !password.trim() || !mobile.trim()) {
         setError('Please fill out all required fields.');
         return false;
       }
@@ -205,6 +206,7 @@ function compressImage(file: File, maxWidth = 1000, maxHeight = 1000, quality = 
         email,
         password,
         fullName,
+        fatherHusbandName,
         mobile,
         bloodGroup: bloodGroup || undefined,
         state,
@@ -292,6 +294,18 @@ function compressImage(file: File, maxWidth = 1000, maxHeight = 1000, quality = 
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
                   placeholder="e.g. Sonu Kumar"
+                  required
+                />
+              </div>
+
+              <div className={styles.formGroup}>
+                <label className={styles.label}>Father/Husband Name <span style={{ color: 'red' }}>*</span></label>
+                <input 
+                  type="text" 
+                  className={styles.input} 
+                  value={fatherHusbandName}
+                  onChange={(e) => setFatherHusbandName(e.target.value)}
+                  placeholder="e.g. Ramesh Kumar"
                   required
                 />
               </div>

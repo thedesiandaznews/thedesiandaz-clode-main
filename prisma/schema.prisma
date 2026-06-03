@@ -54,6 +54,7 @@ model Reporter {
   email         String    @unique
   password      String
   fullName      String
+  fatherHusbandName String?
   mobile        String
   bloodGroup    String?
   state         String

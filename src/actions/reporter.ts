@@ -21,6 +21,7 @@ function hashPassword(password: string): string {
 export async function registerReporter(data: {
   email: string;
   fullName: string;
+  fatherHusbandName?: string;
   mobile: string;
   bloodGroup?: string;
   state: string;
@@ -82,6 +83,7 @@ export async function registerReporter(data: {
         email: data.email.toLowerCase().trim(),
         password: hashedPassword,
         fullName: data.fullName.trim(),
+        fatherHusbandName: data.fatherHusbandName?.trim() || null,
         mobile: data.mobile.trim(),
         bloodGroup: data.bloodGroup || null,
         state: data.state,
