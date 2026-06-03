@@ -168,16 +168,16 @@ export default function ReportersClient({ initialList }: { initialList: any[] })
           <div style="position: relative; z-index: 2;">
             <!-- Letterhead -->
             <div style="text-align: center;">
-              <h2 style="margin: 0; color: #6c0d1b; font-size: 24px; font-weight: 900; letter-spacing: 1px; font-family: 'Cinzel', serif;">THE DESI ANDAZ MEDIA NETWORK</h2>
+              <h2 style="margin: 0; color: #6c0d1b; font-size: 24px; font-weight: 900; font-family: 'Cinzel', serif;">THE DESI ANDAZ MEDIA NETWORK</h2>
               
               <div style="display: flex; justify-content: center; margin-top: 5px;">
-                <div style="background: #faf8f3; border: 1px solid #e2d9c2; color: #b89748; font-size: 9.5px; font-weight: 800; letter-spacing: 1.5px; padding: 4px 16px; border-radius: 20px; font-family: 'Montserrat', sans-serif; text-transform: uppercase; display: flex; align-items: center; justify-content: center; box-sizing: border-box; line-height: 1;">
+                <div style="background: #faf8f3; border: 1px solid #e2d9c2; color: #b89748; font-size: 9.5px; font-weight: 800; padding: 4px 16px; border-radius: 20px; font-family: 'Montserrat', sans-serif; text-transform: uppercase; display: flex; align-items: center; justify-content: center; box-sizing: border-box; line-height: 1;">
                   Print • Digital • Electronic Media
                 </div>
               </div>
               
               <div style="display: flex; justify-content: center; margin-top: 8px;">
-                <div style="background: #6c0d1b; color: #faf8f3; font-size: 9px; font-weight: 700; letter-spacing: 0.5px; padding: 5px 16px; border-radius: 4px; font-family: 'Montserrat', sans-serif; display: flex; align-items: center; justify-content: center; box-sizing: border-box; line-height: 1;">
+                <div style="background: #6c0d1b; color: #faf8f3; font-size: 9px; font-weight: 700; padding: 5px 16px; border-radius: 4px; font-family: 'Montserrat', sans-serif; display: flex; align-items: center; justify-content: center; box-sizing: border-box; line-height: 1;">
                   RNI Registration Number: JHBIL/26/A3245
                 </div>
               </div>
