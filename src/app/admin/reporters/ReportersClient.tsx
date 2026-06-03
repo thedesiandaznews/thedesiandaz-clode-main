@@ -169,15 +169,17 @@ export default function ReportersClient({ initialList }: { initialList: any[] })
             <!-- Letterhead -->
             <div style="text-align: center;">
               <h2 style="margin: 0; color: #6c0d1b; font-size: 24px; font-weight: 900; letter-spacing: 1px; font-family: 'Cinzel', serif;">THE DESI ANDAZ MEDIA NETWORK</h2>
-              <div style="margin: 5px 0 0 0;">
-                <span style="background: #faf8f3; border: 1px solid #e2d9c2; color: #b89748; font-size: 9.5px; font-weight: 800; letter-spacing: 1.5px; padding: 3px 12px; border-radius: 20px; font-family: 'Montserrat', sans-serif; text-transform: uppercase;">
+              
+              <div style="display: flex; justify-content: center; margin-top: 5px;">
+                <div style="background: #faf8f3; border: 1px solid #e2d9c2; color: #b89748; font-size: 9.5px; font-weight: 800; letter-spacing: 1.5px; padding: 4px 16px; border-radius: 20px; font-family: 'Montserrat', sans-serif; text-transform: uppercase; display: flex; align-items: center; justify-content: center; box-sizing: border-box; line-height: 1;">
                   Print • Digital • Electronic Media
-                </span>
+                </div>
               </div>
-              <div style="margin: 8px 0 0 0;">
-                <span style="background: #6c0d1b; color: #faf8f3; font-size: 9px; font-weight: 700; letter-spacing: 0.5px; padding: 4px 14px; border-radius: 4px; font-family: 'Montserrat', sans-serif; display: inline-block;">
+              
+              <div style="display: flex; justify-content: center; margin-top: 8px;">
+                <div style="background: #6c0d1b; color: #faf8f3; font-size: 9px; font-weight: 700; letter-spacing: 0.5px; padding: 5px 16px; border-radius: 4px; font-family: 'Montserrat', sans-serif; display: flex; align-items: center; justify-content: center; box-sizing: border-box; line-height: 1;">
                   RNI Registration Number: JHBIL/26/A3245
-                </span>
+                </div>
               </div>
             </div>
 
@@ -249,7 +251,7 @@ export default function ReportersClient({ initialList }: { initialList: any[] })
 
             <!-- Probation Period -->
             <h4 style="margin: 15px 0 6px 0; padding-bottom: 4px; border-bottom: 1.5px solid #e2d9c2; font-size: 12px; font-weight: 800; color: #6c0d1b; letter-spacing: 0.5px; text-align: left; display: flex; align-items: center; gap: 6px;">
-              <span style="display: inline-block; width: 4px; height: 12px; background: #b89748;"></span>
+              <div style="width: 4px; height: 12px; background: #b89748; display: block; flex-shrink: 0;"></div>
               प्रोबेशन अवधि (Probation Period)
             </h4>
             <div style="font-size: 10.5px; line-height: 1.55; color: #2d3748; text-align: left; margin-bottom: 12px;">
@@ -260,7 +262,7 @@ export default function ReportersClient({ initialList }: { initialList: any[] })
 
             <!-- Duties -->
             <h4 style="margin: 15px 0 6px 0; padding-bottom: 4px; border-bottom: 1.5px solid #e2d9c2; font-size: 12px; font-weight: 800; color: #6c0d1b; letter-spacing: 0.5px; text-align: left; display: flex; align-items: center; gap: 6px;">
-              <span style="display: inline-block; width: 4px; height: 12px; background: #b89748;"></span>
+              <div style="width: 4px; height: 12px; background: #b89748; display: block; flex-shrink: 0;"></div>
               कर्तव्य एवं जिम्मेदारियाँ
             </h4>
             <div style="font-size: 10.5px; line-height: 1.55; color: #2d3748; text-align: left;">
@@ -343,7 +345,7 @@ export default function ReportersClient({ initialList }: { initialList: any[] })
 
             <!-- Terms and Conditions -->
             <h4 style="margin: 10px 0 6px 0; padding-bottom: 4px; border-bottom: 1.5px solid #e2d9c2; font-size: 12px; font-weight: 800; color: #6c0d1b; letter-spacing: 0.5px; text-align: left; display: flex; align-items: center; gap: 6px;">
-              <span style="display: inline-block; width: 4px; height: 12px; background: #b89748;"></span>
+              <div style="width: 4px; height: 12px; background: #b89748; display: block; flex-shrink: 0;"></div>
               नियम एवं शर्तें (Terms & Conditions)
             </h4>
             <div style="font-size: 10.5px; line-height: 1.6; color: #2d3748; text-align: left; margin-bottom: 15px;">
@@ -377,7 +379,7 @@ export default function ReportersClient({ initialList }: { initialList: any[] })
 
             <!-- Work Area -->
             <h4 style="margin: 15px 0 8px 0; padding-bottom: 4px; border-bottom: 1.5px solid #e2d9c2; font-size: 12px; font-weight: 800; color: #6c0d1b; letter-spacing: 0.5px; text-align: left; display: flex; align-items: center; gap: 6px;">
-              <span style="display: inline-block; width: 4px; height: 12px; background: #b89748;"></span>
+              <div style="width: 4px; height: 12px; background: #b89748; display: block; flex-shrink: 0;"></div>
               अधिकृत कार्य क्षेत्र (Authorized Jurisdiction)
             </h4>
             <div style="display: flex; gap: 15px; margin-bottom: 15px;">
@@ -397,7 +399,7 @@ export default function ReportersClient({ initialList }: { initialList: any[] })
 
             <!-- Declaration -->
             <h4 style="margin: 15px 0 6px 0; padding-bottom: 4px; border-bottom: 1.5px solid #e2d9c2; font-size: 12px; font-weight: 800; color: #6c0d1b; letter-spacing: 0.5px; text-align: left; display: flex; align-items: center; gap: 6px;">
-              <span style="display: inline-block; width: 4px; height: 12px; background: #b89748;"></span>
+              <div style="width: 4px; height: 12px; background: #b89748; display: block; flex-shrink: 0;"></div>
               घोषणा (Declaration)
             </h4>
             <div style="font-size: 10.5px; line-height: 1.6; color: #2d3748; text-align: justify; margin-bottom: 20px;">
@@ -432,7 +434,7 @@ export default function ReportersClient({ initialList }: { initialList: any[] })
 
             <!-- Employee Acceptance -->
             <h4 style="margin: 20px 0 6px 0; padding-bottom: 4px; border-bottom: 1.5px solid #e2d9c2; font-size: 12px; font-weight: 800; color: #6c0d1b; letter-spacing: 0.5px; text-align: left; display: flex; align-items: center; gap: 6px;">
-              <span style="display: inline-block; width: 4px; height: 12px; background: #b89748;"></span>
+              <div style="width: 4px; height: 12px; background: #b89748; display: block; flex-shrink: 0;"></div>
               कर्मचारी स्वीकृति (Employee Acceptance)
             </h4>
             <div style="font-size: 10.5px; line-height: 1.6; color: #2d3748; background: #faf8f3; border: 1px solid #e2d9c2; border-left: 4px solid #b89748; padding: 12px 18px; border-radius: 6px; text-align: left; position: relative; z-index: 2;">
