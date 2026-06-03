@@ -157,6 +157,9 @@ export default function ReportersClient({ initialList }: { initialList: any[] })
             font-size: 12px;
             -webkit-print-color-adjust: exact;
             print-color-adjust: exact;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            text-rendering: optimizeLegibility;
         }
 
         @page { size: A4; margin: 0; }
@@ -647,17 +650,17 @@ export default function ReportersClient({ initialList }: { initialList: any[] })
         });
         await Promise.all(imgPromises);
 
-        const canvas1 = await html2canvas(page1El, { scale: 1.5, useCORS: false, logging: false, imageTimeout: 3000 });
-        const imgData1 = canvas1.toDataURL('image/jpeg', 0.75);
+        const canvas1 = await html2canvas(page1El, { scale: 2.0, useCORS: false, logging: false, imageTimeout: 3000 });
+        const imgData1 = canvas1.toDataURL('image/jpeg', 0.7);
 
-        const canvas2 = await html2canvas(page2El, { scale: 1.5, useCORS: false, logging: false, imageTimeout: 3000 });
-        const imgData2 = canvas2.toDataURL('image/jpeg', 0.75);
+        const canvas2 = await html2canvas(page2El, { scale: 2.0, useCORS: false, logging: false, imageTimeout: 3000 });
+        const imgData2 = canvas2.toDataURL('image/jpeg', 0.7);
 
-        const canvas3 = await html2canvas(page3El, { scale: 1.5, useCORS: false, logging: false, imageTimeout: 3000 });
-        const imgData3 = canvas3.toDataURL('image/jpeg', 0.75);
+        const canvas3 = await html2canvas(page3El, { scale: 2.0, useCORS: false, logging: false, imageTimeout: 3000 });
+        const imgData3 = canvas3.toDataURL('image/jpeg', 0.7);
 
-        const canvas4 = await html2canvas(page4El, { scale: 1.5, useCORS: false, logging: false, imageTimeout: 3000 });
-        const imgData4 = canvas4.toDataURL('image/jpeg', 0.75);
+        const canvas4 = await html2canvas(page4El, { scale: 2.0, useCORS: false, logging: false, imageTimeout: 3000 });
+        const imgData4 = canvas4.toDataURL('image/jpeg', 0.7);
 
         const pdf = new jsPDF('p', 'mm', 'a4');
         const pdfWidth = pdf.internal.pageSize.getWidth();
