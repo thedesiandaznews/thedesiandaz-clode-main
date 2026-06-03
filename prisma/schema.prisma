@@ -64,6 +64,7 @@ model Reporter {
   fullAddress   String
   aadhaarNumber String?
   aadhaarUrl    String?
+  aadhaarBackUrl String?
   panUrl        String?
   voterIdUrl    String?
   photoUrl      String?

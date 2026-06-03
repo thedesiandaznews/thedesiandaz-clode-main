@@ -983,7 +983,7 @@ export default function ReportersClient({ initialList }: { initialList: any[] })
               </h4>
               
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '16px', marginBottom: '32px' }}>
-                {/* Aadhaar Card Card */}
+                {/* Aadhaar Card (Front) Card */}
                 {selectedReporter.aadhaarUrl ? (
                   <a 
                     href={selectedReporter.aadhaarUrl} 
@@ -1026,7 +1026,7 @@ export default function ReportersClient({ initialList }: { initialList: any[] })
                       <i className="fas fa-id-card"></i>
                     </div>
                     <div>
-                      <span style={{ fontSize: '13px', fontWeight: 700, color: '#1e293b', display: 'block' }}>Aadhaar Card</span>
+                      <span style={{ fontSize: '13px', fontWeight: 700, color: '#1e293b', display: 'block' }}>Aadhaar Card (Front)</span>
                       <span style={{ fontSize: '11px', color: '#64748b', fontWeight: 500 }}>View / Download File <i className="fas fa-external-link-alt" style={{ fontSize: '9px', marginLeft: '2px' }}></i></span>
                     </div>
                   </a>
@@ -1055,7 +1055,85 @@ export default function ReportersClient({ initialList }: { initialList: any[] })
                       <i className="fas fa-id-card"></i>
                     </div>
                     <div>
-                      <span style={{ fontSize: '13px', fontWeight: 700, color: '#64748b', display: 'block' }}>Aadhaar Card</span>
+                      <span style={{ fontSize: '13px', fontWeight: 700, color: '#64748b', display: 'block' }}>Aadhaar Card (Front)</span>
+                      <span style={{ fontSize: '11.5px', color: '#94a3b8', fontWeight: 500 }}>Not Uploaded</span>
+                    </div>
+                  </div>
+                )}
+
+                {/* Aadhaar Card (Back) Card */}
+                {selectedReporter.aadhaarBackUrl ? (
+                  <a 
+                    href={selectedReporter.aadhaarBackUrl} 
+                    target="_blank" 
+                    rel="noopener noreferrer" 
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '14px',
+                      padding: '16px',
+                      background: '#ffffff',
+                      border: '1px solid #e2e8f0',
+                      borderRadius: '12px',
+                      textDecoration: 'none',
+                      transition: 'all 0.2s',
+                      boxShadow: '0 1px 3px rgba(0,0,0,0.02)',
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.borderColor = '#4f46e5';
+                      e.currentTarget.style.transform = 'translateY(-2px)';
+                      e.currentTarget.style.boxShadow = '0 6px 16px rgba(79, 70, 229, 0.08)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.borderColor = '#e2e8f0';
+                      e.currentTarget.style.transform = 'translateY(0)';
+                      e.currentTarget.style.boxShadow = '0 1px 3px rgba(0,0,0,0.02)';
+                    }}
+                  >
+                    <div style={{
+                      width: '40px',
+                      height: '40px',
+                      borderRadius: '10px',
+                      background: '#fff7ed',
+                      color: '#ea580c',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: '18px',
+                    }}>
+                      <i className="fas fa-id-card"></i>
+                    </div>
+                    <div>
+                      <span style={{ fontSize: '13px', fontWeight: 700, color: '#1e293b', display: 'block' }}>Aadhaar Card (Back)</span>
+                      <span style={{ fontSize: '11px', color: '#64748b', fontWeight: 500 }}>View / Download File <i className="fas fa-external-link-alt" style={{ fontSize: '9px', marginLeft: '2px' }}></i></span>
+                    </div>
+                  </a>
+                ) : (
+                  <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '14px',
+                    padding: '16px',
+                    background: '#f8fafc',
+                    border: '1px dashed #cbd5e1',
+                    borderRadius: '12px',
+                    opacity: 0.6,
+                  }}>
+                    <div style={{
+                      width: '40px',
+                      height: '40px',
+                      borderRadius: '10px',
+                      background: '#f1f5f9',
+                      color: '#94a3b8',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: '18px',
+                    }}>
+                      <i className="fas fa-id-card"></i>
+                    </div>
+                    <div>
+                      <span style={{ fontSize: '13px', fontWeight: 700, color: '#64748b', display: 'block' }}>Aadhaar Card (Back)</span>
                       <span style={{ fontSize: '11.5px', color: '#94a3b8', fontWeight: 500 }}>Not Uploaded</span>
                     </div>
                   </div>

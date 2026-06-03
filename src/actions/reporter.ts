@@ -31,6 +31,7 @@ export async function registerReporter(data: {
   fullAddress: string;
   aadhaarNumber?: string;
   aadhaarUrl?: string;
+  aadhaarBackUrl?: string;
   panUrl?: string;
   voterIdUrl?: string;
   photoUrl?: string;
@@ -93,6 +94,7 @@ export async function registerReporter(data: {
         fullAddress: data.fullAddress.trim(),
         aadhaarNumber: data.aadhaarNumber?.trim() || null,
         aadhaarUrl: data.aadhaarUrl || null,
+        aadhaarBackUrl: data.aadhaarBackUrl || null,
         panUrl: data.panUrl || null,
         voterIdUrl: data.voterIdUrl || null,
         photoUrl: data.photoUrl || null,

@@ -32,6 +32,7 @@ export default function RegisterClient() {
   // Step 3: Documents Upload URLs
   const [aadhaarNumber, setAadhaarNumber] = useState('');
   const [aadhaarUrl, setAadhaarUrl] = useState('');
+  const [aadhaarBackUrl, setAadhaarBackUrl] = useState('');
   const [panUrl, setPanUrl] = useState('');
   const [voterIdUrl, setVoterIdUrl] = useState('');
   const [photoUrl, setPhotoUrl] = useState('');
@@ -41,6 +42,7 @@ export default function RegisterClient() {
   // File Upload Status States
   const [uploadStatus, setUploadStatus] = useState<Record<string, 'idle' | 'uploading' | 'success' | 'error'>>({
     aadhaar: 'idle',
+    aadhaarBack: 'idle',
     pan: 'idle',
     voterId: 'idle',
     photo: 'idle',
@@ -159,6 +161,7 @@ function compressImage(file: File, maxWidth = 1000, maxHeight = 1000, quality = 
           
           // Map to correct field
           if (type === 'aadhaar') setAadhaarUrl(res.url);
+          else if (type === 'aadhaarBack') setAadhaarBackUrl(res.url);
           else if (type === 'pan') setPanUrl(res.url);
           else if (type === 'voterId') setVoterIdUrl(res.url);
           else if (type === 'photo') setPhotoUrl(res.url);
@@ -217,8 +220,8 @@ function compressImage(file: File, maxWidth = 1000, maxHeight = 1000, quality = 
     }
 
     // Ensure all critical docs uploaded
-    if (!aadhaarUrl || !panUrl || !voterIdUrl || !photoUrl || !educationUrl || !videoUrl) {
-      setError('Please upload all documents (Aadhaar Card, PAN Card, Voter ID, Passport Photo, Education Certs, and Introduction Video).');
+    if (!aadhaarUrl || !aadhaarBackUrl || !panUrl || !voterIdUrl || !photoUrl || !educationUrl || !videoUrl) {
+      setError('Please upload all documents (Aadhaar Card Front, Aadhaar Card Back, PAN Card, Voter ID, Passport Photo, Education Certs, and Introduction Video).');
       return;
     }
 
@@ -239,6 +242,7 @@ function compressImage(file: File, maxWidth = 1000, maxHeight = 1000, quality = 
         fullAddress,
         aadhaarNumber: aadhaarNumber || undefined,
         aadhaarUrl,
+        aadhaarBackUrl,
         panUrl,
         voterIdUrl: voterIdUrl || undefined,
         photoUrl,
@@ -470,15 +474,26 @@ function compressImage(file: File, maxWidth = 1000, maxHeight = 1000, quality = 
               </div>
 
               <div className={styles.uploadGrid}>
-                {/* Aadhaar Card */}
+                {/* Aadhaar Card Front */}
                 <div 
                   className={`${styles.uploadZone} ${uploadStatus.aadhaar === 'success' ? styles.uploadSuccess : ''}`}
                   onClick={() => document.getElementById('aadhaarUpload')?.click()}
                 >
                   <i className={`fas ${uploadStatus.aadhaar === 'success' ? 'fa-check-circle' : uploadStatus.aadhaar === 'uploading' ? 'fa-spinner fa-spin' : 'fa-id-card'} ${styles.uploadIcon}`}></i>
-                  <span className={styles.uploadTitle}>Aadhaar Card <span style={{ color: 'red' }}>*</span></span>
+                  <span className={styles.uploadTitle}>Aadhaar Card (Front) <span style={{ color: 'red' }}>*</span></span>
                   <span className={styles.uploadSubtitle}>PDF, PNG or JPG supported</span>
                   <input type="file" id="aadhaarUpload" style={{ display: 'none' }} accept="image/*,application/pdf" onChange={(e) => handleFileUpload(e, 'aadhaar')} />
+                </div>
+
+                {/* Aadhaar Card Back */}
+                <div 
+                  className={`${styles.uploadZone} ${uploadStatus.aadhaarBack === 'success' ? styles.uploadSuccess : ''}`}
+                  onClick={() => document.getElementById('aadhaarBackUpload')?.click()}
+                >
+                  <i className={`fas ${uploadStatus.aadhaarBack === 'success' ? 'fa-check-circle' : uploadStatus.aadhaarBack === 'uploading' ? 'fa-spinner fa-spin' : 'fa-id-card'} ${styles.uploadIcon}`}></i>
+                  <span className={styles.uploadTitle}>Aadhaar Card (Back) <span style={{ color: 'red' }}>*</span></span>
+                  <span className={styles.uploadSubtitle}>PDF, PNG or JPG supported</span>
+                  <input type="file" id="aadhaarBackUpload" style={{ display: 'none' }} accept="image/*,application/pdf" onChange={(e) => handleFileUpload(e, 'aadhaarBack')} />
                 </div>
 
                 {/* PAN Card */}
