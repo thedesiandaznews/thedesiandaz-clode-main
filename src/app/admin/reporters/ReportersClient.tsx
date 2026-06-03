@@ -647,29 +647,29 @@ export default function ReportersClient({ initialList }: { initialList: any[] })
         });
         await Promise.all(imgPromises);
 
-        const canvas1 = await html2canvas(page1El, { scale: 1.5, useCORS: false, logging: false, imageTimeout: 3000 });
-        const imgData1 = canvas1.toDataURL('image/jpeg', 0.95);
+        const canvas1 = await html2canvas(page1El, { scale: 1.1, useCORS: false, logging: false, imageTimeout: 3000 });
+        const imgData1 = canvas1.toDataURL('image/jpeg', 0.8);
 
-        const canvas2 = await html2canvas(page2El, { scale: 1.5, useCORS: false, logging: false, imageTimeout: 3000 });
-        const imgData2 = canvas2.toDataURL('image/jpeg', 0.95);
+        const canvas2 = await html2canvas(page2El, { scale: 1.1, useCORS: false, logging: false, imageTimeout: 3000 });
+        const imgData2 = canvas2.toDataURL('image/jpeg', 0.8);
 
-        const canvas3 = await html2canvas(page3El, { scale: 1.5, useCORS: false, logging: false, imageTimeout: 3000 });
-        const imgData3 = canvas3.toDataURL('image/jpeg', 0.95);
+        const canvas3 = await html2canvas(page3El, { scale: 1.1, useCORS: false, logging: false, imageTimeout: 3000 });
+        const imgData3 = canvas3.toDataURL('image/jpeg', 0.8);
 
-        const canvas4 = await html2canvas(page4El, { scale: 1.5, useCORS: false, logging: false, imageTimeout: 3000 });
-        const imgData4 = canvas4.toDataURL('image/jpeg', 0.95);
+        const canvas4 = await html2canvas(page4El, { scale: 1.1, useCORS: false, logging: false, imageTimeout: 3000 });
+        const imgData4 = canvas4.toDataURL('image/jpeg', 0.8);
 
         const pdf = new jsPDF('p', 'mm', 'a4');
         const pdfWidth = pdf.internal.pageSize.getWidth();
         const pdfHeight = pdf.internal.pageSize.getHeight();
 
-        pdf.addImage(imgData1, 'JPEG', 0, 0, pdfWidth, pdfHeight);
+        pdf.addImage(imgData1, 'JPEG', 0, 0, pdfWidth, pdfHeight, undefined, 'FAST');
         pdf.addPage();
-        pdf.addImage(imgData2, 'JPEG', 0, 0, pdfWidth, pdfHeight);
+        pdf.addImage(imgData2, 'JPEG', 0, 0, pdfWidth, pdfHeight, undefined, 'FAST');
         pdf.addPage();
-        pdf.addImage(imgData3, 'JPEG', 0, 0, pdfWidth, pdfHeight);
+        pdf.addImage(imgData3, 'JPEG', 0, 0, pdfWidth, pdfHeight, undefined, 'FAST');
         pdf.addPage();
-        pdf.addImage(imgData4, 'JPEG', 0, 0, pdfWidth, pdfHeight);
+        pdf.addImage(imgData4, 'JPEG', 0, 0, pdfWidth, pdfHeight, undefined, 'FAST');
 
         return pdf.output('blob');
       } catch (e) {
