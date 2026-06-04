@@ -18,6 +18,16 @@ const nextConfig: NextConfig = {
         destination: 'https://prgi.gov.in/registration-title-details-data/362243ff-eda1-4502-8134-db4efd89261d',
         permanent: true,
       },
+      {
+        source: '/affiliate',
+        destination: '/affiliates',
+        permanent: true,
+      },
+      {
+        source: '/affiliate/:path*',
+        destination: '/affiliates/:path*',
+        permanent: true,
+      },
     ];
   },
 };

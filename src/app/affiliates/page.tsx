@@ -47,7 +47,7 @@ export default function AffiliatePage() {
     if (typeof window !== 'undefined') {
       const affiliateId = localStorage.getItem('affiliateId');
       if (affiliateId) {
-        window.location.href = '/affiliate/dashboard';
+        window.location.href = '/affiliates/dashboard';
       }
     }
   }, []);
@@ -68,7 +68,7 @@ export default function AffiliatePage() {
         localStorage.setItem('affiliateEmail', res.affiliate.email);
         localStorage.setItem('affiliateStatus', res.affiliate.status);
         alert('लॉगिन सफल!');
-        window.location.href = '/affiliate/dashboard';
+        window.location.href = '/affiliates/dashboard';
       } else {
         alert(res.message || 'लॉगिन विफल। कृपया क्रेडेंशियल्स जांचें।');
       }
@@ -184,7 +184,7 @@ export default function AffiliatePage() {
         <div style={{ maxWidth: '1200px', margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <Link href="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '8px' }}>
             <span style={{ fontSize: '20px', fontWeight: 900, color: '#fff', letterSpacing: '-0.5px' }}>
-              THE DESI ANDAZ <span style={{ color: '#ef4444' }}>AFFILIATE</span>
+              THE DESI ANDAZ <span style={{ color: '#ef4444' }}>AFFILIATES</span>
             </span>
           </Link>
           <div style={{ display: 'flex', gap: '12px' }}>
@@ -325,7 +325,7 @@ export default function AffiliatePage() {
                 ))}
               </div>
               <p style={{ fontSize: '12.5px', color: '#64748b', marginTop: '20px', fontStyle: 'italic' }}>
-                *नोट: उच्चतम स्लैब दर पूरे महीने के सभी सेल्स पर लागू होती है। कमीशन की गणना GST और करों को छोड़कर केवल शुद्ध बेस वैल्यू पर की जाती है।
+                *नोट:  कमीशन की गणना GST और करों को छोड़कर केवल शुद्ध बेस वैल्यू पर की जाती है।
               </p>
             </div>
           </div>

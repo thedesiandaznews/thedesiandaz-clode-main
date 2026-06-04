@@ -24,7 +24,7 @@ export default function AffiliateDashboard() {
     if (typeof window !== 'undefined') {
       const id = localStorage.getItem('affiliateId');
       if (!id) {
-        window.location.href = '/affiliate';
+        window.location.href = '/affiliates';
       } else {
         setAffiliateId(id);
         loadDashboardData(id);
@@ -55,7 +55,7 @@ export default function AffiliateDashboard() {
   const handleLogout = () => {
     if (typeof window !== 'undefined') {
       localStorage.clear();
-      window.location.href = '/affiliate';
+      window.location.href = '/affiliates';
     }
   };
 
@@ -163,7 +163,7 @@ export default function AffiliateDashboard() {
           <tr><th>Lifetime Earnings</th><td>₹${data.totalLifetimeEarnings.toLocaleString('en-IN')}</td><th>Wallet Balance</th><td>₹${data.walletBalance.toLocaleString('en-IN')}</td></tr>
           <tr><th>Approved Commissions</th><td>₹${data.approvedCommission.toLocaleString('en-IN')}</td><th>Paid Commissions</th><td>₹${data.paidCommission.toLocaleString('en-IN')}</td></tr>
         </table>
-
+ 
         <h2>Sales History</h2>
         <table>
           <thead>
@@ -665,7 +665,7 @@ export default function AffiliateDashboard() {
               {/* Transactions Log */}
               <div style={{
                 background: 'rgba(15, 23, 42, 0.6)',
-                border: '1px solid rgba(255, 255, 255, 0.06)',
+                border: '1px solid rgba(25, 25, 25, 0.06)',
                 borderRadius: '16px',
                 padding: '24px'
               }}>

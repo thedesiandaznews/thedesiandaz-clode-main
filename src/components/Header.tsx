@@ -281,6 +281,7 @@ export default function Header() {
 
               <Link href="/livetv" className="nav-link">LIVE TV</Link>
               <Link href="/advertise" className="nav-link">ADVERTISE</Link>
+              <Link href="/affiliates" className="nav-link">AFFILIATES</Link>
               <Link href="/about" className="nav-link">ABOUT US</Link>
               <Link href="/contact" className="nav-link">CONTACT US</Link>
             </nav>
@@ -343,6 +344,7 @@ export default function Header() {
           <Link href="https://prgi.gov.in/registration-title-details-data/362243ff-eda1-4502-8134-db4efd89261d" className="mm-link" target="_blank" rel="noopener noreferrer" onClick={() => document.getElementById('mobileMenu')?.classList.remove('active')}>CERTIFICATE</Link>
           <Link href="/livetv" className="mm-link" onClick={() => document.getElementById('mobileMenu')?.classList.remove('active')}>LIVE TV</Link>
           <Link href="/advertise" className="mm-link" onClick={() => document.getElementById('mobileMenu')?.classList.remove('active')}>ADVERTISE WITH US</Link>
+          <Link href="/affiliates" className="mm-link" onClick={() => document.getElementById('mobileMenu')?.classList.remove('active')}>AFFILIATES</Link>
 
           <Link href="/epaper" className="mm-link" onClick={() => document.getElementById('mobileMenu')?.classList.remove('active')}>E-Paper</Link>
           <Link href="/about" className="mm-link" onClick={() => document.getElementById('mobileMenu')?.classList.remove('active')}>ABOUT US</Link>
