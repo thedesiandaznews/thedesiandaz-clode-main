@@ -151,17 +151,14 @@ export default function AffiliatePage() {
   return (
     <div className={styles.pageWrapper}>
       
-      {/* Background Aurora Glows */}
-      <div className={`${styles.glowOrb} ${styles.orbPurple}`} />
-      <div className={`${styles.glowOrb} ${styles.orbRed}`} />
-      <div className={`${styles.glowOrb} ${styles.orbCyan}`} />
+      {/* Background Aurora Glows removed for clean light theme */}
 
       {/* Header */}
       <header className={styles.header}>
         <div className={styles.headerInner}>
           <Link href="/" className={styles.logoLink}>
             <span className={styles.logoText}>
-              THE DESI ANDAZ <span className={styles.logoHighlight}>AFFILIATES</span>
+              <span className={styles.logoDesi}>THE DESI</span> <span className={styles.logoAndaz}>ANDAZ</span> <span className={styles.logoHighlight}>AFFILIATES</span>
             </span>
           </Link>
           <div className={styles.navActionGroup}>
@@ -224,15 +221,15 @@ export default function AffiliatePage() {
               <h3 className={styles.cardTitle}>📈 Performance Commission Slabs (मासिक स्लैब दरें)</h3>
               <div className={styles.slabsGrid}>
                 {[
-                  { range: '₹0 – ₹1,00,000', comm: '15% Commission', desc: 'Starting Slab' },
-                  { range: '₹1,00,001 – ₹2,00,000', comm: '18% Commission', desc: 'Achiever Slab' },
-                  { range: '₹2,00,001 – ₹5,00,000', comm: '20% Commission', desc: 'Leader Slab' },
-                  { range: 'Above ₹5,00,000', comm: '25% Commission', desc: 'Elite / VIP Slab' }
+                  { range: '₹0 – ₹1,00,000', comm: '15% Commission', desc: 'Starting Slab', color: '#FF6B00' },
+                  { range: '₹1,00,001 – ₹2,00,000', comm: '18% Commission', desc: 'Achiever Slab', color: '#F97316' },
+                  { range: '₹2,00,001 – ₹5,00,000', comm: '20% Commission', desc: 'Leader Slab', color: '#CC2200' },
+                  { range: 'Above ₹5,00,000', comm: '25% Commission', desc: 'Elite / VIP Slab', color: '#D4A017' }
                 ].map((s, idx) => (
-                  <div key={idx} className={styles.slabCard}>
-                    <span className={styles.slabDesc}>{s.desc}</span>
+                  <div key={idx} className={styles.slabCard} style={{ borderLeft: `4px solid ${s.color}` }}>
+                    <span className={styles.slabDesc} style={{ color: s.color }}>{s.desc}</span>
                     <span className={styles.slabRange}>{s.range}</span>
-                    <span className={styles.slabComm}>{s.comm}</span>
+                    <span className={styles.slabComm} style={{ color: s.color }}>{s.comm}</span>
                   </div>
                 ))}
               </div>
