@@ -13,6 +13,7 @@ const PACKAGES = [
     pricing: {
       week: 5000,
       month: 10000,
+      '2month': 0,
       '3month': 26000,
       '6month': 48000,
       '12month': 85000
@@ -27,6 +28,7 @@ const PACKAGES = [
     pricing: {
       week: 9000,
       month: 20000,
+      '2month': 0,
       '3month': 52000,
       '6month': 95000,
       '12month': 170000
@@ -41,6 +43,7 @@ const PACKAGES = [
     pricing: {
       week: 16000,
       month: 35000,
+      '2month': 0,
       '3month': 90000,
       '6month': 165000,
       '12month': 300000
@@ -55,6 +58,7 @@ const PACKAGES = [
     pricing: {
       week: 12000,
       month: 25000,
+      '2month': 0,
       '3month': 65000,
       '6month': 0, // Not available
       '12month': 0
@@ -69,9 +73,40 @@ const PACKAGES = [
     pricing: {
       week: 28000,
       month: 65000,
+      '2month': 0,
       '3month': 175000,
       '6month': 320000,
       '12month': 580000
+    }
+  },
+  {
+    id: 'launch_2month',
+    name: '2 Months Visibility (Launch Offer)',
+    badge: 'Launch Offer',
+    color: '#CC2200',
+    glow: 'rgba(204, 34, 0, 0.15)',
+    pricing: {
+      week: 0,
+      month: 0,
+      '2month': 10000,
+      '3month': 0,
+      '6month': 0,
+      '12month': 0
+    }
+  },
+  {
+    id: 'launch_6month',
+    name: '6 Months Visibility (Launch Offer)',
+    badge: 'Launch Offer',
+    color: '#FF6B00',
+    glow: 'rgba(255, 107, 0, 0.15)',
+    pricing: {
+      week: 0,
+      month: 0,
+      '2month': 0,
+      '3month': 0,
+      '6month': 25000,
+      '12month': 0
     }
   }
 ];
@@ -83,7 +118,7 @@ interface AdvertiserClient {
   email: string;
   phone: string;
   packageId: string;
-  duration: 'week' | 'month' | '3month' | '6month' | '12month';
+  duration: 'week' | 'month' | '2month' | '3month' | '6month' | '12month';
   targetCity: string;
   paidAmount: number;
   paymentStatus: 'Paid' | 'Partial' | 'Pending';
@@ -96,7 +131,7 @@ interface AdvertiserClient {
 }
 
 // Helper to calculate Campaign Expiration Date based on Start Date and Duration (Pure function)
-const calculateEndDateStr = (startStr: string, dur: 'week' | 'month' | '3month' | '6month' | '12month') => {
+const calculateEndDateStr = (startStr: string, dur: 'week' | 'month' | '2month' | '3month' | '6month' | '12month') => {
   if (!startStr) return '';
   const date = new Date(startStr);
   if (isNaN(date.getTime())) return '';
@@ -105,6 +140,8 @@ const calculateEndDateStr = (startStr: string, dur: 'week' | 'month' | '3month' 
     date.setDate(date.getDate() + 7);
   } else if (dur === 'month') {
     date.setMonth(date.getMonth() + 1);
+  } else if (dur === '2month') {
+    date.setMonth(date.getMonth() + 2);
   } else if (dur === '3month') {
     date.setMonth(date.getMonth() + 3);
   } else if (dur === '6month') {
@@ -128,7 +165,7 @@ export default function AdvertiserDashboard() {
   const [formEmail, setFormEmail] = useState('');
   const [formPhone, setFormPhone] = useState('');
   const [formPackage, setFormPackage] = useState('local_startup');
-  const [formDuration, setFormDuration] = useState<'week' | 'month' | '3month' | '6month' | '12month'>('month');
+  const [formDuration, setFormDuration] = useState<'week' | 'month' | '2month' | '3month' | '6month' | '12month'>('month');
   const [formCity, setFormCity] = useState('Pakur');
   const [formPaid, setFormPaid] = useState('');
   const [formPaymentStatus, setFormPaymentStatus] = useState<'Paid' | 'Partial' | 'Pending'>('Paid');
@@ -1071,6 +1108,7 @@ export default function AdvertiserDashboard() {
                   <select value={formDuration} onChange={e => setFormDuration(e.target.value as any)} style={{ padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1', background: '#fff' }}>
                     <option value="week">1 Week Trial</option>
                     <option value="month">1 Month</option>
+                    <option value="2month">2 Months (Launch Offer)</option>
                     <option value="3month">3 Months</option>
                     <option value="6month">6 Months</option>
                     <option value="12month">12 Months (Annual)</option>
@@ -1205,6 +1243,7 @@ export default function AdvertiserDashboard() {
                   <select value={formDuration} onChange={e => setFormDuration(e.target.value as any)} style={{ padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1', background: '#fff' }}>
                     <option value="week">1 Week Trial</option>
                     <option value="month">1 Month</option>
+                    <option value="2month">2 Months (Launch Offer)</option>
                     <option value="3month">3 Months</option>
                     <option value="6month">6 Months</option>
                     <option value="12month">12 Months (Annual)</option>
