@@ -219,19 +219,34 @@ export default function AffiliatePage() {
             {/* Commissions slabs description */}
             <div className={styles.glassCard}>
               <h3 className={styles.cardTitle}>📈 Performance Commission Slabs (मासिक स्लैब दरें)</h3>
-              <div className={styles.slabsGrid}>
-                {[
-                  { range: '₹0 – ₹1,00,000', comm: '15% Commission', desc: 'Starting Slab', color: '#FF6B00' },
-                  { range: '₹1,00,001 – ₹2,00,000', comm: '18% Commission', desc: 'Achiever Slab', color: '#F97316' },
-                  { range: '₹2,00,001 – ₹5,00,000', comm: '20% Commission', desc: 'Leader Slab', color: '#CC2200' },
-                  { range: 'Above ₹5,00,000', comm: '25% Commission', desc: 'Elite / VIP Slab', color: '#D4A017' }
-                ].map((s, idx) => (
-                  <div key={idx} className={styles.slabCard} style={{ borderLeft: `4px solid ${s.color}` }}>
-                    <span className={styles.slabDesc} style={{ color: s.color }}>{s.desc}</span>
-                    <span className={styles.slabRange}>{s.range}</span>
-                    <span className={styles.slabComm} style={{ color: s.color }}>{s.comm}</span>
-                  </div>
-                ))}
+              <div className={styles.tableContainer}>
+                <table className={styles.slabsTable}>
+                  <thead>
+                    <tr>
+                      <th>Slab Level (मासिक स्तर)</th>
+                      <th>Sales Target Range (शुद्ध सेल सीमा)</th>
+                      <th>Your Commission (आपका कमीशन)</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {[
+                      { range: '₹0 – ₹1,00,000', comm: '15% Commission', desc: 'Starting Slab', color: '#FF6B00' },
+                      { range: '₹1,00,001 – ₹2,00,000', comm: '18% Commission', desc: 'Achiever Slab', color: '#F97316' },
+                      { range: '₹2,00,001 – ₹5,00,000', comm: '20% Commission', desc: 'Leader Slab', color: '#CC2200' },
+                      { range: 'Above ₹5,00,000', comm: '25% Commission', desc: 'Elite / VIP Slab', color: '#D4A017' }
+                    ].map((s, idx) => (
+                      <tr key={idx} style={{ borderLeft: `4px solid ${s.color}` }}>
+                        <td>
+                          <span className={styles.slabLevelBadge} style={{ background: `${s.color}12`, color: s.color }}>
+                            {s.desc}
+                          </span>
+                        </td>
+                        <td className={styles.slabRangeText}>{s.range}</td>
+                        <td className={styles.slabCommText} style={{ color: s.color }}>{s.comm}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
               <p className={styles.slabNote}>
                 *नोट: कमीशन की गणना GST और करों को छोड़कर केवल शुद्ध बेस वैल्यू पर की जाती है।
@@ -241,19 +256,27 @@ export default function AffiliatePage() {
             {/* How It Works */}
             <div className={styles.glassCard}>
               <h3 className={styles.cardTitle}>🛠️ Join in 3 Simple Steps (पार्टनर बनने की प्रक्रिया)</h3>
-              <div className={styles.stepsGrid}>
+              <div className={styles.stepsFlow}>
                 <div className={styles.stepBlock}>
-                  <div className={`${styles.stepNum} ${styles.stepNum1}`}>1</div>
+                  <div className={styles.stepHeader}>
+                    <div className={`${styles.stepNum} ${styles.stepNum1}`}>1</div>
+                    <div className={styles.stepLineConnector} />
+                  </div>
                   <h4 className={styles.stepTitle}>1. Register Account</h4>
                   <p className={styles.stepText}>पार्टनर रजिस्ट्रेशन फॉर्म भरकर अपना खाता तुरंत बनाएं। बैंक, यूपीआई और केवाईसी विवरण दर्ज करें।</p>
                 </div>
                 <div className={styles.stepBlock}>
-                  <div className={`${styles.stepNum} ${styles.stepNum2}`}>2</div>
+                  <div className={styles.stepHeader}>
+                    <div className={`${styles.stepNum} ${styles.stepNum2}`}>2</div>
+                    <div className={styles.stepLineConnector} />
+                  </div>
                   <h4 className={styles.stepTitle}>2. Share Referral Links</h4>
                   <p className={styles.stepText}>डैशबोर्ड से सामान्य या विशिष्ट सेवा का रेफरल लिंक कॉपी करें और अपने नेटवर्क/व्हाट्सएप ग्रुप्स में साझा करें।</p>
                 </div>
                 <div className={styles.stepBlock}>
-                  <div className={`${styles.stepNum} ${styles.stepNum3}`}>3</div>
+                  <div className={styles.stepHeader}>
+                    <div className={`${styles.stepNum} ${styles.stepNum3}`}>3</div>
+                  </div>
                   <h4 className={styles.stepTitle}>3. Earn Commissions</h4>
                   <p className={styles.stepText}>आपके रेफरल से होने वाली प्रत्येक B2B विज्ञापन खरीद पर 15% से 25% तक का बेस कमीशन प्राप्त करें।</p>
                 </div>
@@ -263,18 +286,23 @@ export default function AffiliatePage() {
             {/* Why Join Us / Core Benefits */}
             <div className={styles.glassCard}>
               <h3 className={styles.cardTitle}>🌟 Platform Features & Benefits (मुख्य विशेषताएं)</h3>
-              <div className={styles.benefitsGrid}>
+              <div className={styles.featuresListGrid}>
                 {[
-                  { title: '🍪 90-Day Cookies', desc: 'यदि कोई ग्राहक आपके लिंक पर क्लिक करके 90 दिनों के भीतर कभी भी विज्ञापन पैकेज खरीदता है, तो कमीशन आपका है।' },
-                  { title: '📊 Live Dashboard Tracking', desc: 'क्लिक, लीड, सेल्स, कमीशन और पेंडिंग राशि को रियल-टाइम में सीधे अपने डैशबोर्ड से ट्रैक करें।' },
-                  { title: '📈 Retrospective Slab Rates', desc: 'मासिक सेल बढ़ने पर आपका कमीशन 15% से 25% तक अपग्रेड हो जाता है, जो पूरे महीने की कुल सेल पर लागू होता है।' },
-                  { title: '🏆 Performance Leaderboard', desc: 'सर्वश्रेष्ठ परफॉर्मर्स को प्रत्येक माह अतिरिक्त नकद बोनस और विशेष रिवार्ड्स प्रदान किए जाते हैं।' },
-                  { title: '📁 Marketing Materials', desc: 'प्रचार के लिए प्री-डिजाइन किए गए बैनर्स, पोस्टर्स, वीडियो और पीडीएफ गाइड बिल्कुल फ्री प्राप्त करें।' },
-                  { title: '🔒 Bank / UPI Payouts', desc: 'अर्जित बैलेंस को महीने के अंत में संसाधित कर सीधे आपके बैंक खाते या UPI आईडी में सुरक्षित रूप से ट्रांसफर किया जाता है।' }
+                  { title: '🍪 90-Day Cookies', desc: 'यदि कोई ग्राहक आपके लिंक पर क्लिक करके 90 दिनों के भीतर कभी भी विज्ञापन पैकेज खरीदता है, तो कमीशन आपका है।', icon: 'fa-cookie-bite', color: '#FF6B00' },
+                  { title: '📊 Live Dashboard Tracking', desc: 'क्लिक, लीड, सेल्स, कमीशन और पेंडिंग राशि को रियल-टाइम में सीधे अपने डैशबोर्ड से ट्रैक करें।', icon: 'fa-desktop', color: '#CC2200' },
+                  { title: '📈 Retrospective Slab Rates', desc: 'मासिक सेल बढ़ने पर आपका कमीशन 15% से 25% तक अपग्रेड हो जाता है, जो पूरे महीने की कुल सेल पर लागू होता है।', icon: 'fa-chart-line', color: '#D4A017' },
+                  { title: '🏆 Performance Leaderboard', desc: 'सर्वश्रेष्ठ परफॉर्मर्स को प्रत्येक माह अतिरिक्त नकद बोनस और विशेष रिवार्ड्स प्रदान किए जाते हैं।', icon: 'fa-trophy', color: '#F97316' },
+                  { title: '📁 Marketing Materials', desc: 'प्रचार के लिए प्री-डिजाइन किए गए बैनर्स, पोस्टर्स, वीडियो और पीडीएफ गाइड बिल्कुल फ्री प्राप्त करें।', icon: 'fa-folder-open', color: '#0284c7' },
+                  { title: '🔒 Bank / UPI Payouts', desc: 'अर्जित बैलेंस को महीने के अंत में संसाधित कर सीधे आपके बैंक खाते या UPI आईडी में सुरक्षित रूप से ट्रांसफर किया जाता है।', icon: 'fa-credit-card', color: '#1B8A3C' }
                 ].map((item, idx) => (
-                  <div key={idx} className={styles.benefitCard}>
-                    <h4 className={styles.benefitTitle}>{item.title}</h4>
-                    <p className={styles.benefitText}>{item.desc}</p>
+                  <div key={idx} className={styles.featureItem}>
+                    <div className={styles.featureIconWrap} style={{ color: item.color, backgroundColor: `${item.color}12` }}>
+                      <i className={`fas ${item.icon}`} />
+                    </div>
+                    <div className={styles.featureTextContent}>
+                      <h4 className={styles.featureItemTitle}>{item.title}</h4>
+                      <p className={styles.featureItemText}>{item.desc}</p>
+                    </div>
                   </div>
                 ))}
               </div>
