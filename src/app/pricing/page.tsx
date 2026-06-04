@@ -6,114 +6,55 @@ import Link from 'next/link';
 // Detailed plan specifications and deliverables
 const PLAN_DATA = [
   {
-    id: 'local_startup',
-    name: 'Local Start-Up Combo',
-    badge: 'Local Targeting',
-    color: '#6366f1',
-    glow: 'rgba(99, 102, 241, 0.2)',
-    description: 'Ideal for small shops, local institutes, and new start-ups looking to capture regional customers dynamically.',
-    deliverables: [
-      '📰 Print: 1 Small Display Ad per week (4x5 cm) inside the Newspaper.',
-      '💻 Website: 1 Fixed Sidebar Banner Ad on category pages (24/7 with Local Filters).',
-      '📱 Social Media: 2 Premium Static Image Posts per week on Facebook & Instagram.',
-      '📺 YouTube News: 1 Scrolling Text Ticker below the breaking news bar for 15 Days/Month.'
-    ],
-    pricing: {
-      week: { base: 5000, gst: 900, total: 5900 },
-      month: { base: 10000, gst: 1800, total: 11800 },
-      '3month': { base: 26000, gst: 4680, total: 30680 },
-      '6month': { base: 48000, gst: 8640, total: 56640 },
-      '12month': { base: 85000, gst: 15300, total: 100300 }
-    }
-  },
-  {
-    id: 'market_leader',
-    name: 'Market Leader Combo',
-    badge: 'Branding Core',
-    color: '#10b981',
-    glow: 'rgba(16, 185, 129, 0.2)',
-    description: 'Perfect for mid-level showrooms, private hospitals, and regional brands looking for consistent daily market penetration.',
+    id: 'launch_2month',
+    name: '2 Months Complete Visibility (Launch Offer)',
+    badge: 'LIMITED TIME OFFER!',
+    color: '#CC2200',
+    glow: 'rgba(204, 34, 0, 0.2)',
+    description: 'Power-packed digital + print visibility to boost your brand where it matters most! 2 months of consistent exposure. MAXIMUM LOCAL IMPACT!',
     deliverables: [
       '📰 Print: 1 Medium Display Ad per week (8x5 cm) in Paper.',
-      '💻 Website: 1 Premium Sidebar Banner Ad fixed directly on the main Homepage (24/7 high-traffic).',
-      '📱 Social Media: 2 Static Image Posts per week + Brand Logo watermarked on 5 Viral Reels.',
-      '📺 YouTube News: 1 L-Shape Graphical Banner Ad (15 Days) + 1 Daily Scrolling Ticker (30 Days).'
+      '💻 Website: 1 Premium Sidebar Banner Ad feed directly on main Homepage (24/7 high-traffic).',
+      '📱 Social Media: 2 Premium Static Image Posts per week + Brand Logo watermarked on 5 Viral Reels.',
+      '📺 YouTube News: 1 L-Shape Graphical Banner Ad (15 Days).',
+      '📺 Live News: 1 Daily Scrolling Ticker (30 Days).'
     ],
     pricing: {
-      week: { base: 9000, gst: 1620, total: 10620 },
-      month: { base: 20000, gst: 3600, total: 23600 },
-      '3month': { base: 52000, gst: 9360, total: 61360 },
-      '6month': { base: 95000, gst: 17100, total: 112100 },
-      '12month': { base: 170000, gst: 30600, total: 200600 }
+      week: { base: 0, gst: 0, total: 0 },
+      month: { base: 0, gst: 0, total: 0 },
+      '2month': { base: 10000, gst: 1800, total: 11800 },
+      '3month': { base: 0, gst: 0, total: 0 },
+      '6month': { base: 0, gst: 0, total: 0 },
+      '12month': { base: 0, gst: 0, total: 0 }
     }
   },
   {
-    id: 'dhamaka_visibility',
-    name: 'Dhamaka Visibility Combo',
-    badge: 'Most Popular',
-    color: '#ef4444',
-    glow: 'rgba(239, 68, 68, 0.25)',
-    description: 'Our most popular plan! Ideal for brands wanting complete dominance, maximum local reach, and immediate market impact.',
+    id: 'launch_6month',
+    name: '6 Months Complete Visibility (Launch Offer)',
+    badge: 'LIMITED SLOTS AVAILABLE!',
+    color: '#FF6B00',
+    glow: 'rgba(255, 107, 0, 0.2)',
+    description: 'Perfect for established local brands wanting long-term dominant regional authority. 6 months of consistent exposure.',
     deliverables: [
-      '📰 Print: 1 Large Display Ad per week + 1 Dedicated Event/Photo Feature page in Paper.',
-      '💻 Website: 1 Mega Top Header Banner Ad (The highest-viewed billboard slot on the entire site).',
-      '📱 Social Media: 3 Static Image Posts per week + Permanent "Powered By [Logo]" on ALL reels.',
-      '📺 YouTube News: 1 Permanent Daily L-Shape Graphical Banner + 1 Continuous Daily Scrolling Ticker.'
+      '📰 Print: 1 Medium Display Ad per week (8x5 cm) in Paper.',
+      '💻 Website: 1 Premium Sidebar Banner Ad feed directly on main Homepage (24/7 high-traffic).',
+      '📱 Social Media: 2 Premium Static Image Posts per week + Brand Logo watermarked on 5 Viral Reels.',
+      '📺 YouTube News: 1 L-Shape Graphical Banner Ad (15 Days).',
+      '📺 Live News (YouTube & Website): 1 Daily Scrolling Ticker (30 Days).'
     ],
     pricing: {
-      week: { base: 16000, gst: 2880, total: 18880 },
-      month: { base: 35000, gst: 6300, total: 41300 },
-      '3month': { base: 90000, gst: 16200, total: 106200 },
-      '6month': { base: 165000, gst: 29700, total: 194700 },
-      '12month': { base: 300000, gst: 54000, total: 354000 }
-    }
-  },
-  {
-    id: 'festival_special',
-    name: 'Festival & Season Combo',
-    badge: 'Sales Booster',
-    color: '#f59e0b',
-    glow: 'rgba(245, 158, 11, 0.2)',
-    description: 'Designed specifically to drive massive immediate sales during peak festive seasons like Durga Puja, Diwali, or Weddings.',
-    deliverables: [
-      '📰 Print: 1 Large Premium Color Ad on our Dedicated Special Festival Page.',
-      '💻 Website: 1 Full Website Skin / Watermark Background Ad Takeover wrapper.',
-      '📱 Social Media: Your Logo integrated onto 10 Special Festival Greeting Posts & 5 Reels.',
-      '📺 YouTube News: 1 Featured L-Shape Banner Ad + 1 Scrolling Ticker on all Festival updates.'
-    ],
-    pricing: {
-      week: { base: 12000, gst: 2160, total: 14160 },
-      month: { base: 25000, gst: 4500, total: 29500 },
-      '3month': { base: 65000, gst: 11700, total: 76700 },
-      '6month': { base: 120000, gst: 21600, total: 141600 },
-      '12month': { base: 210000, gst: 37800, total: 247800 }
-    }
-  },
-  {
-    id: 'kingmaker_corporate',
-    name: 'Kingmaker Corporate Combo',
-    badge: 'Ultimate Power',
-    color: '#ec4899',
-    glow: 'rgba(236, 72, 153, 0.2)',
-    description: 'The ultimate partnership plan for elite builders, universities, or corporate brands wanting complete takeover.',
-    deliverables: [
-      '📰 Print: 1 Weekly Half-Page Premium Color Ad in the Newspaper Main Edition (4 Ads/Month).',
-      '💻 Website: 1 Mega Homepage Banner + Fixed Banner Ads on 100% of Inside Article Pages.',
-      '📱 Social Media: 5 Static Image Posts per week + Logo pinned as "Main Sponsor" on Cover Banners.',
-      '📺 YouTube News: Permanent Daily L-Shape Banner & Ticker + Logo on Channel Art + 1 Exclusive Interview.'
-    ],
-    pricing: {
-      week: { base: 28000, gst: 5040, total: 33040 },
-      month: { base: 65000, gst: 11700, total: 76700 },
-      '3month': { base: 175000, gst: 31500, total: 206500 },
-      '6month': { base: 320000, gst: 57600, total: 377600 },
-      '12month': { base: 580000, gst: 104400, total: 684400 }
+      week: { base: 0, gst: 0, total: 0 },
+      month: { base: 0, gst: 0, total: 0 },
+      '2month': { base: 0, gst: 0, total: 0 },
+      '3month': { base: 0, gst: 0, total: 0 },
+      '6month': { base: 25000, gst: 4500, total: 29500 },
+      '12month': { base: 0, gst: 0, total: 0 }
     }
   }
 ];
 
 export default function PricingPage() {
-  const [duration, setDuration] = useState<'week' | 'month' | '3month' | '6month' | '12month'>('month');
+  const [duration, setDuration] = useState<'week' | 'month' | '2month' | '3month' | '6month' | '12month'>('2month');
 
   return (
     <div style={{ background: '#03050c', color: '#f1f5f9', minHeight: '100vh', fontFamily: "'Outfit', 'Inter', sans-serif", paddingBottom: '80px', overflowX: 'hidden' }}>
@@ -240,50 +181,14 @@ export default function PricingPage() {
           <p style={{ fontSize: '16.5px', color: '#94a3b8', maxWidth: '650px', margin: '0 auto 36px auto', lineHeight: '1.6' }}>
             Choose a plan that fits your business goals. Grow your local offline store sales using our hyper-targeted print, web portal, and viral YouTube news placements!
           </p>
-
-          {/* Interactive Duration Switcher */}
-          <div className="glass-panel" style={{ 
-            display: 'inline-flex',
-            padding: '6px',
-            gap: '4px',
-            borderRadius: '30px',
-            background: 'rgba(13, 18, 36, 0.85)',
-            border: '1px solid rgba(255, 255, 255, 0.08)'
-          }}>
-            {[
-              { id: 'week', label: '1 Week Trial' },
-              { id: 'month', label: '1 Month Base' },
-              { id: '3month', label: '3 Months Plan' },
-              { id: '6month', label: '6 Months Plan' },
-              { id: '12month', label: '12 Months Plan' }
-            ].map(tab => (
-              <button
-                key={tab.id}
-                onClick={() => setDuration(tab.id as any)}
-                className={duration === tab.id ? 'active-tab' : ''}
-                style={{
-                  background: 'transparent',
-                  border: 'none',
-                  color: '#94a3b8',
-                  padding: '10px 20px',
-                  borderRadius: '24px',
-                  fontSize: '13px',
-                  fontWeight: 700,
-                  cursor: 'pointer',
-                  transition: 'all 0.25s'
-                }}
-              >
-                {tab.label}
-              </button>
-            ))}
-          </div>
         </header>
 
         {/* Dynamic Pricing Cards Grid */}
         <section className="pricing-grid" style={{ marginTop: '24px' }}>
           {PLAN_DATA.map(plan => {
-            const priceInfo = plan.pricing[duration];
-            const isDhamaka = plan.id === 'dhamaka_visibility';
+            const activeDur = Object.keys(plan.pricing).find(key => (plan.pricing as any)[key].base > 0) || '2month';
+            const priceInfo = (plan.pricing as any)[activeDur];
+            const isDhamaka = plan.id === 'launch_2month';
 
             return (
               <div 
