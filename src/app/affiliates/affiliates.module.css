@@ -857,11 +857,11 @@
 }
 
 /* ==========================================================================
-   RESPONSIVE MEDIA QUERIES
+   RESPONSIVE MEDIA QUERIES FOR LANDING PAGE
    ========================================================================== */
 
 @media (max-width: 768px) {
-  .heroTitle { font-size: 32px; letter-spacing: -0.5px; }
+  .heroTitle { font-size: 28px; letter-spacing: -0.5px; }
   .heroSubtitle { font-size: 14.5px; }
   .heroCtaGroup { flex-direction: column; gap: 12px; align-items: stretch; max-width: 320px; margin: 0 auto; }
   .glassCard { padding: 20px; }
@@ -870,4 +870,915 @@
   .stepper { margin-bottom: 20px; }
   .stepLabel { display: none; }
   .formCard { padding: 20px; }
+  .stepsFlow { flex-direction: column; gap: 24px; }
+  .stepBlock { align-items: flex-start; text-align: left; }
+  .stepHeader { justify-content: flex-start; width: auto; }
+  .stepLineConnector { display: none; }
+  .featuresListGrid { grid-template-columns: 1fr; gap: 24px; }
+}
+
+@media (max-width: 480px) {
+  .header { padding: 12px 16px; }
+  .headerInner { flex-direction: column; gap: 12px; text-align: center; }
+  .navActionGroup { width: 100%; justify-content: center; }
+  .logoHighlight { display: none; }
+}
+
+/* ==========================================================================
+   PARTNER DASHBOARD CLASS SYSTEM
+   ========================================================================== */
+
+.dbWrapper {
+  background: #F5F7FA;
+  color: #2A343D;
+  min-height: 100vh;
+  font-family: 'Munshi Devanagari Semibold', 'Mukta', 'Poppins', sans-serif;
+}
+
+.dbNavbar {
+  background: #ffffff;
+  border-bottom: 1px solid #e2e8f0;
+  padding: 14px 24px;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+}
+
+.dbNavbarInner {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.dbNavBrand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.dbBrandTag {
+  background: linear-gradient(135deg, #CC2200 0%, #B31E00 100%);
+  color: #fff;
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 0.5px;
+}
+
+.dbBrandTitle {
+  font-size: 16px;
+  font-weight: 900;
+  color: #0f172a;
+}
+
+.dbNavUser {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.dbUserInfo {
+  display: flex;
+  flex-direction: column;
+  text-align: right;
+}
+
+.dbUserTitle {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.dbUserSub {
+  font-size: 11px;
+  color: #64748b;
+  font-weight: 600;
+}
+
+.dbLogoutBtn {
+  background: #fff;
+  border: 1px solid #cbd5e1;
+  color: #475569;
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-size: 12.5px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.dbLogoutBtn:hover {
+  background: #f1f5f9;
+  color: #0f172a;
+}
+
+.dbContainer {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 32px 24px;
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  gap: 30px;
+}
+
+.dbSidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-self: start;
+}
+
+.dbSidebarBtn {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border-radius: 8px;
+  border: none;
+  background: transparent;
+  color: #475569;
+  font-size: 13.5px;
+  font-weight: 700;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  width: 100%;
+}
+
+.dbSidebarBtn:hover {
+  background: #cbd5e1;
+  color: #0f172a;
+}
+
+.dbSidebarBtnActive {
+  background: linear-gradient(135deg, #CC2200 0%, #B31E00 100%);
+  color: #fff !important;
+}
+
+.dbStatementBtn {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border-radius: 8px;
+  border: 1px dashed #cbd5e1;
+  background: #f0fdf4;
+  color: #16a34a;
+  font-size: 13px;
+  font-weight: 700;
+  text-align: left;
+  cursor: pointer;
+  margin-top: 20px;
+  transition: all 0.2s ease;
+  width: 100%;
+}
+
+.dbStatementBtn:hover {
+  background: #dcfce7;
+  border-color: #86efac;
+}
+
+.dbViewport {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  min-width: 0;
+}
+
+.dbOverview {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.dbNotice {
+  background: rgba(245, 158, 11, 0.08);
+  border: 1px solid rgba(245, 158, 11, 0.2);
+  padding: 16px 20px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.dbNoticeIcon {
+  color: #d97706;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.dbNoticeText {
+  font-size: 13.5px;
+  color: #b45309;
+  line-height: 1.5;
+}
+
+.dbStatsGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+
+.dbStatsCard {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  padding: 24px;
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.01);
+}
+
+.dbStatsCardLabel {
+  font-size: 11.5px;
+  color: #64748b;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.dbStatsCardVal {
+  font-size: 24px;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.dbStatsCardIcon {
+  position: absolute;
+  right: 16px;
+  bottom: 16px;
+  font-size: 28px;
+  opacity: 0.12;
+}
+
+.dbWalletGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+
+.dbWalletCard {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  padding: 20px;
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.01);
+}
+
+.dbWalletCardLabel {
+  font-size: 11px;
+  color: #64748b;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.dbWalletCardVal {
+  font-size: 20px;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.dbSlabCard {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  padding: 28px;
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.01);
+}
+
+.dbSlabHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.dbSlabTitle {
+  font-size: 16px;
+  font-weight: 800;
+  margin: 0;
+  color: #0f172a;
+}
+
+.dbSlabSubtitle {
+  font-size: 12.5px;
+  color: #475569;
+  margin-top: 4px;
+  display: inline-block;
+}
+
+.dbSlabBadge {
+  background: rgba(204, 34, 0, 0.08);
+  color: #CC2200;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.dbProgressBarTrack {
+  width: 100%;
+  height: 12px;
+  background: #e2e8f0;
+  border-radius: 20px;
+  overflow: hidden;
+  position: relative;
+}
+
+.dbProgressBarFill {
+  height: 100%;
+  background: linear-gradient(90deg, #CC2200 0%, #FF6B00 100%);
+  border-radius: 20px;
+  transition: width 0.5s ease-in-out;
+}
+
+.dbSlabLegend {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: #64748b;
+  font-weight: 700;
+}
+
+.dbSlabAlert {
+  font-size: 13px;
+  padding: 12px 16px;
+  border-radius: 8px;
+  line-height: 1.5;
+}
+
+.dbSlabAlertPending {
+  background: #FFF7ED;
+  color: #5C2C00;
+  border: 1px solid #FFDBB5;
+}
+
+.dbSlabAlertSuccess {
+  color: #065F46;
+  background: #ECFDF5;
+  border: 1px solid #A7F3D0;
+}
+
+.dbLinkGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+.dbLinkCard {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  padding: 24px;
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.01);
+}
+
+.dbLinkTitle {
+  font-size: 15px;
+  font-weight: 800;
+  margin: 0;
+  color: #0f172a;
+}
+
+.dbInputRow {
+  display: flex;
+  gap: 10px;
+}
+
+.dbLinkInput {
+  background: #f8fafc;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  color: #0f172a;
+  padding: 10px 12px;
+  font-size: 13px;
+  flex: 1;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.dbLinkInput:focus {
+  border-color: #CC2200;
+  background: #fff;
+}
+
+.dbActionBtn {
+  background: #CC2200;
+  color: #fff;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.dbActionBtn:hover {
+  background: #b31e00;
+}
+
+.dbWhatsappBtn {
+  background: #25D366;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.dbWhatsappBtn:hover {
+  background: #20ba5a;
+}
+
+.dbCustomLinkBox {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-top: 8px;
+  background: #f1f5f9;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+}
+
+.dbCustomLinkLabel {
+  font-size: 11.5px;
+  color: #475569;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+  font-weight: 600;
+}
+
+.dbCopyTextBtn {
+  background: none;
+  border: none;
+  color: #16a34a;
+  font-weight: 700;
+  font-size: 12px;
+  cursor: pointer;
+  padding: 4px;
+}
+
+.dbCopyTextBtn:hover {
+  text-decoration: underline;
+}
+
+.dbPanelCard {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 28px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.01);
+}
+
+.dbPanelHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.dbPanelTitle {
+  font-size: 18px;
+  font-weight: 800;
+  margin: 0;
+  color: #0f172a;
+}
+
+.dbFilterRow {
+  display: flex;
+  gap: 6px;
+  background: #f1f5f9;
+  padding: 4px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+}
+
+.dbFilterBtn {
+  background: transparent;
+  color: #475569;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 11.5px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.dbFilterBtnActive {
+  background: #ffffff;
+  color: #CC2200;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+
+.dbTableWrapper {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.dbTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13.5px;
+  text-align: left;
+  min-width: 700px;
+}
+
+.dbTable th {
+  color: #475569;
+  border-bottom: 1px solid #e2e8f0;
+  padding: 12px 10px;
+  font-weight: 700;
+}
+
+.dbTable td {
+  padding: 14px 10px;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.dbTable tr:last-child td {
+  border-bottom: none;
+}
+
+.dbTable tr:hover {
+  background: #f8fafc;
+}
+
+.dbStatusBadge {
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 800;
+  display: inline-block;
+  text-align: center;
+}
+
+.dbStatusPaid { background: rgba(27, 138, 60, 0.1); color: #1B8A3C; }
+.dbStatusApproved { background: rgba(37, 99, 235, 0.1); color: #2563EB; }
+.dbStatusReversed { background: rgba(220, 38, 38, 0.1); color: #DC2626; }
+.dbStatusPending { background: rgba(217, 119, 6, 0.1); color: #D97706; }
+
+.dbMarketingGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 20px;
+}
+
+.dbMarketingCard {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  padding: 16px;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  transition: all 0.2s ease;
+}
+
+.dbMarketingCard:hover {
+  border-color: #cbd5e1;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+}
+
+.dbMarketingVisual {
+  height: 140px;
+  background: #f1f5f9;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #CC2200;
+  font-size: 32px;
+}
+
+.dbMarketingType {
+  font-size: 11px;
+  color: #FF6B00;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.dbMarketingTitle {
+  font-size: 14px;
+  font-weight: 750;
+  margin: 4px 0;
+  color: #0f172a;
+}
+
+.dbMarketingDesc {
+  font-size: 12px;
+  color: #64748b;
+  margin: 0;
+  line-height: 1.4;
+}
+
+.dbMarketingDownloadBtn {
+  background: linear-gradient(135deg, #CC2200 0%, #B31E00 100%);
+  color: #fff;
+  text-align: center;
+  padding: 8px;
+  border-radius: 6px;
+  font-size: 12.5px;
+  font-weight: 700;
+  text-decoration: none;
+  margin-top: auto;
+  box-shadow: 0 2px 4px rgba(204, 34, 0, 0.15);
+  transition: all 0.2s ease;
+}
+
+.dbMarketingDownloadBtn:hover {
+  box-shadow: 0 4px 8px rgba(204, 34, 0, 0.25);
+  transform: translateY(-0.5px);
+}
+
+.dbLeaderboardRewardCard {
+  background: linear-gradient(135deg, rgba(255, 107, 0, 0.08) 0%, rgba(204, 34, 0, 0.08) 100%);
+  border: 1px solid rgba(204, 34, 0, 0.15);
+  padding: 28px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.dbRewardTitle {
+  font-size: 18px;
+  font-weight: 800;
+  margin: 0;
+  color: #CC2200;
+}
+
+.dbRewardText {
+  font-size: 13.5px;
+  color: #475569;
+  margin-top: 6px;
+  max-width: 600px;
+  line-height: 1.5;
+}
+
+.dbRewardBadgeGroup {
+  display: flex;
+  gap: 12px;
+}
+
+.dbRewardBadge {
+  background: #ffffff;
+  border: 1px solid rgba(204, 34, 0, 0.15);
+  padding: 10px 16px;
+  border-radius: 8px;
+  text-align: center;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+}
+
+.dbRewardBadgeLabel {
+  font-size: 11px;
+  color: #FF6B00;
+  display: block;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.dbRewardBadgeVal {
+  font-size: 15px;
+  font-weight: 800;
+  color: #0f172a;
+  margin-top: 2px;
+  display: inline-block;
+}
+
+.dbLeaderboardList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.dbLeaderboardRow {
+  padding: 14px 20px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: all 0.2s ease;
+}
+
+.dbLeaderboardRowSelf {
+  background: rgba(204, 34, 0, 0.04);
+  border: 1px solid rgba(204, 34, 0, 0.2);
+}
+
+.dbLeaderboardRowOther {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+}
+
+.dbRankCircle {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 12px;
+}
+
+/* ==========================================================================
+   MOBILE MEDIA QUERIES FOR DASHBOARD
+   ========================================================================== */
+
+@media (max-width: 768px) {
+  .dbContainer {
+    grid-template-columns: 1fr;
+    gap: 24px;
+    padding: 16px;
+  }
+  
+  .dbSidebar {
+    flex-direction: row;
+    overflow-x: auto;
+    padding: 4px;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
+    width: 100%;
+    scrollbar-width: none;
+  }
+
+  .dbSidebar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .dbSidebarBtn {
+    padding: 8px 14px;
+    font-size: 12px;
+    border-radius: 6px;
+    flex-shrink: 0;
+    text-align: center;
+    justify-content: center;
+    width: auto;
+  }
+
+  .dbStatementBtn {
+    display: none !important;
+  }
+
+  .dbStatsGrid {
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .dbStatsCard {
+    padding: 16px;
+  }
+
+  .dbStatsCardVal {
+    font-size: 20px;
+  }
+
+  .dbWalletGrid {
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .dbWalletCard {
+    padding: 14px;
+  }
+
+  .dbWalletCardVal {
+    font-size: 17px;
+  }
+
+  .dbSlabCard {
+    padding: 18px;
+  }
+
+  .dbSlabHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .dbSlabBadge {
+    align-self: flex-start;
+  }
+
+  .dbSlabLegend {
+    font-size: 10.5px;
+  }
+
+  .dbLinkGrid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .dbLinkCard {
+    padding: 18px;
+  }
+
+  .dbInputRow {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .dbActionBtn {
+    width: 100%;
+    text-align: center;
+  }
+
+  .dbPanelCard {
+    padding: 18px;
+  }
+
+  .dbPanelHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .dbFilterRow {
+    width: 100%;
+    overflow-x: auto;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  
+  .dbFilterRow::-webkit-scrollbar {
+    display: none;
+  }
+
+  .dbFilterBtn {
+    flex-shrink: 0;
+    font-size: 11px;
+  }
+
+  .dbLeaderboardRewardCard {
+    padding: 18px;
+  }
+
+  .dbRewardBadgeGroup {
+    width: 100%;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .dbRewardBadge {
+    width: 100%;
+    text-align: left;
+  }
+}
+
+@media (max-width: 480px) {
+  .dbNavbar {
+    padding: 12px 16px;
+  }
+  
+  .dbNavbarInner {
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+  }
+
+  .dbNavUser {
+    width: 100%;
+    justify-content: space-between;
+    border-top: 1px solid #f1f5f9;
+    padding-top: 10px;
+  }
 }
