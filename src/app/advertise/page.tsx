@@ -9,7 +9,7 @@ export default function AdvertisePage() {
   const [authMode, setAuthMode] = useState<'signup' | 'login'>('signup');
   const [slideIndex, setSlideIndex] = useState(0);
   const [selectedPackage, setSelectedPackage] = useState<any>(null);
-  const [selectedDuration, setSelectedDuration] = useState<'week' | 'month' | '3month' | '6month' | '12month'>('month');
+  const [selectedDuration, setSelectedDuration] = useState<'week' | 'month' | '2month' | '3month' | '6month' | '12month'>('2month');
   
   // Auth & Details state
   const [accountForm, setAccountForm] = useState({ name: '', email: '', password: '', phone: '' });
@@ -56,7 +56,9 @@ export default function AdvertisePage() {
   };
 
   const handleSelectPackage = (pkg: any) => {
+    const activeDur = Object.keys(pkg.pricing).find(key => pkg.pricing[key].base > 0) || '2month';
     setSelectedPackage(pkg);
+    setSelectedDuration(activeDur as any);
     setShowLiveIframe(false);
     setCurrentStep('payment');
   };
@@ -78,6 +80,8 @@ export default function AdvertisePage() {
         start.setDate(start.getDate() + 7);
       } else if (selectedDuration === 'month') {
         start.setMonth(start.getMonth() + 1);
+      } else if (selectedDuration === '2month') {
+        start.setMonth(start.getMonth() + 2);
       } else if (selectedDuration === '3month') {
         start.setMonth(start.getMonth() + 3);
       } else if (selectedDuration === '6month') {
@@ -165,123 +169,66 @@ export default function AdvertisePage() {
 
   const packages = [
     {
-      id: 'local_startup',
-      name: 'Local Start-Up Combo',
-      badge: 'Local Targeting',
-      description: 'Ideal for small shops, local institutes, and new start-ups looking to capture regional customers dynamically.',
+      id: 'launch_2month',
+      name: '2 Months Complete Visibility (Launch Offer)',
+      badge: 'LIMITED TIME OFFER!',
+      description: 'Power-packed digital + print visibility to boost your brand where it matters most! 2 months of consistent exposure. MAXIMUM LOCAL IMPACT!',
       deliverables: [
-        '📰 Print: 1 Small Display Ad per week (Size: 4x5 cm) inside the Newspaper.',
-        '💻 Website: 1 Fixed Sidebar Banner Ad on category pages (Visible 24/7 with Local Filters).',
-        '📱 Social Media: 2 Premium Static Image Posts per week on Facebook & Instagram.',
-        '📺 YouTube News: 1 Scrolling Text Ticker running below the breaking news bar on our videos for 15 Days/Month (Targeted to Local Viewers).'
+        '📰 Print: 1 Medium Display Ad per week (8x5 cm) in Paper.',
+        '💻 Website: 1 Premium Sidebar Banner Ad feed directly on main Homepage (24/7 high-traffic).',
+        '📱 Social Media: 2 Premium Static Image Posts per week + Brand Logo watermarked on 5 Viral Reels.',
+        '📺 YouTube News: 1 L-Shape Graphical Banner Ad (15 Days).',
+        '📺 Live News: 1 Daily Scrolling Ticker (30 Days).'
       ],
       pricing: {
-        week: { base: 5000, gst: 900, total: 5900 },
-        month: { base: 10000, gst: 1800, total: 11800 },
-        '3month': { base: 26000, gst: 4680, total: 30680 },
-        '6month': { base: 48000, gst: 8640, total: 56640 },
-        '12month': { base: 85000, gst: 15300, total: 100300 }
-      },
-      paymentLinks: {
-        week: 'https://rzp.io/rzp/677JWIJ',
-        month: 'https://rzp.io/rzp/ixaH0ZJL',
-        '3month': 'https://rzp.io/rzp/eRW3U1QL',
-        '6month': 'https://rzp.io/rzp/O8TifPeZ',
-        '12month': 'https://rzp.io/rzp/nFYiyWj'
-      },
-      color: '#6366f1',
-      glow: 'rgba(99, 102, 241, 0.15)'
-    },
-    {
-      id: 'market_leader',
-      name: 'Market Leader Combo',
-      badge: 'Branding Core',
-      description: 'Perfect for mid-level showrooms, private hospitals, and regional brands looking for consistent daily market penetration.',
-      deliverables: [
-        '📰 Print: 1 Medium Display Ad per week (Total 4 Ads/Month, Size: 8x5 cm) in Paper.',
-        '💻 Website: 1 Premium Sidebar Banner Ad fixed directly on the main Homepage (24/7 high-traffic slot).',
-        '📱 Social Media: 2 Static Image Posts per week + Your Brand Logo watermarked on 5 Main Viral Reels of the month.',
-        '📺 YouTube News: 1 L-Shape Graphical Banner Ad on news videos for 15 Days/Month + 1 Scrolling Ticker running Daily (30 Days).'
-      ],
-      pricing: {
-        week: { base: 9000, gst: 1620, total: 10620 },
-        month: { base: 20000, gst: 3600, total: 23600 },
-        '3month': { base: 52000, gst: 9360, total: 61360 },
-        '6month': { base: 95000, gst: 17100, total: 112100 },
-        '12month': { base: 170000, gst: 30600, total: 200600 }
-      },
-      paymentLinks: {
-        week: 'https://rzp.io/rzp/YYAZfxoM',
-        month: 'https://rzp.io/rzp/A5dttn4',
-        '3month': 'https://rzp.io/rzp/nA0irxFi',
-        '6month': 'https://rzp.io/rzp/6EjBIok',
-        '12month': 'https://rzp.io/rzp/kCISLNJU'
-      },
-      color: '#10b981',
-      glow: 'rgba(16, 185, 129, 0.15)'
-    },
-    {
-      id: 'dhamaka_visibility',
-      name: 'Dhamaka Visibility Combo',
-      badge: 'Most Popular',
-      description: 'Our most popular plan! Ideal for brands wanting complete dominance, maximum local reach, and immediate market impact.',
-      deliverables: [
-        '📰 Print: 1 Large Display Ad per week (Total 4 Ads/Month) + 1 Dedicated Event/Photo Feature page in our Newspaper.',
-        '💻 Website: 1 Mega Top Header Banner Ad (The highest-viewed billboard slot on the entire website).',
-        '📱 Social Media: 3 Static Image Posts per week (Total 12 posts/month) + Permanent "Powered By: [Your Logo]" on ALL reels published.',
-        '📺 YouTube News: 1 Permanent Daily L-Shape Graphical Banner + 1 Continuous Daily Scrolling Ticker on 100% of our YouTube video news bulletins.'
-      ],
-      pricing: {
-        week: { base: 16000, gst: 2880, total: 18880 },
-        month: { base: 35000, gst: 6300, total: 41300 },
-        '3month': { base: 90000, gst: 16200, total: 106200 },
-        '6month': { base: 165000, gst: 29700, total: 194700 },
-        '12month': { base: 300000, gst: 54000, total: 354000 }
-      },
-      color: '#ef4444',
-      glow: 'rgba(239, 68, 68, 0.15)'
-    },
-    {
-      id: 'festival_special',
-      name: 'Festival & Special Season Combo',
-      badge: 'Sales Booster',
-      description: 'Designed specifically to drive massive immediate sales during peak periods like Durga Puja, Diwali, New Year, or Wedding Seasons.',
-      deliverables: [
-        '📰 Print: 1 Large Premium Color Ad on our Dedicated Special Festival Page.',
-        '💻 Website: 1 Full Website Skin / Watermark Background Ad Takeover (Your brand wraps around our website background!).',
-        '📱 Social Media: Your Logo integrated onto 10 Special Festival Greeting Posts & 5 Seasonal Greeting Reels.',
-        '📺 YouTube News: 1 Featured L-Shape Banner Ad + 1 Scrolling Ticker on all Festival Special Video updates.'
-      ],
-      pricing: {
-        week: { base: 12000, gst: 2160, total: 14160 },
-        month: { base: 25000, gst: 4500, total: 29500 },
-        '3month': { base: 65000, gst: 11700, total: 76700 },
+        week: { base: 0, gst: 0, total: 0 },
+        month: { base: 0, gst: 0, total: 0 },
+        '2month': { base: 10000, gst: 1800, total: 11800 },
+        '3month': { base: 0, gst: 0, total: 0 },
         '6month': { base: 0, gst: 0, total: 0 },
         '12month': { base: 0, gst: 0, total: 0 }
       },
-      color: '#f59e0b',
-      glow: 'rgba(245, 158, 11, 0.15)'
+      paymentLinks: {
+        week: '',
+        month: '',
+        '2month': 'https://rzp.io/rzp/QTLq1Kev',
+        '3month': '',
+        '6month': '',
+        '12month': ''
+      },
+      color: '#CC2200',
+      glow: 'rgba(204, 34, 0, 0.15)'
     },
     {
-      id: 'kingmaker_corporate',
-      name: 'Kingmaker Corporate Combo',
-      badge: 'Ultimate Power',
-      description: 'The ultimate partnership plan for top real estate builders, elite universities, or major corporate brands wanting full digital & print takeover.',
+      id: 'launch_6month',
+      name: '6 Months Complete Visibility (Launch Offer)',
+      badge: 'LIMITED SLOTS AVAILABLE!',
+      description: 'Perfect for established local brands wanting long-term dominant regional authority. 6 months of consistent exposure.',
       deliverables: [
-        '📰 Print: 1 Weekly Half-Page Premium Color Ad in the Newspaper Main Edition (Total 4 Half-Pages/Month).',
-        '💻 Website: 1 Mega Homepage Banner + Fixed Banner Ads on 100% of Inside Article Pages (Full site takeover).',
-        '📱 Social Media: 5 Static Image Posts per week (Total 20 posts/month) + Your Logo pinned as "Main Sponsor" on Cover Banners + Logo on all Reels.',
-        '📺 YouTube News: Permanent Daily L-Shape Banner & Ticker on ALL YouTube video news bulletins + Logo on our YouTube Channel Cover Art + 1 Exclusive Studio Interview.'
+        '📰 Print: 1 Medium Display Ad per week (8x5 cm) in Paper.',
+        '💻 Website: 1 Premium Sidebar Banner Ad feed directly on main Homepage (24/7 high-traffic).',
+        '📱 Social Media: 2 Premium Static Image Posts per week + Brand Logo watermarked on 5 Viral Reels.',
+        '📺 YouTube News: 1 L-Shape Graphical Banner Ad (15 Days).',
+        '📺 Live News (YouTube & Website): 1 Daily Scrolling Ticker (30 Days).'
       ],
       pricing: {
-        week: { base: 28000, gst: 5040, total: 33040 },
-        month: { base: 65000, gst: 11700, total: 76700 },
-        '3month': { base: 175000, gst: 31500, total: 206500 },
-        '6month': { base: 320000, gst: 57600, total: 377600 },
-        '12month': { base: 580000, gst: 104400, total: 684400 }
+        week: { base: 0, gst: 0, total: 0 },
+        month: { base: 0, gst: 0, total: 0 },
+        '2month': { base: 0, gst: 0, total: 0 },
+        '3month': { base: 0, gst: 0, total: 0 },
+        '6month': { base: 25000, gst: 4500, total: 29500 },
+        '12month': { base: 0, gst: 0, total: 0 }
       },
-      color: '#ec4899',
-      glow: 'rgba(236, 72, 153, 0.15)'
+      paymentLinks: {
+        week: '',
+        month: '',
+        '2month': '',
+        '3month': '',
+        '6month': 'https://rzp.io/rzp/SVWX8m6R',
+        '12month': ''
+      },
+      color: '#FF6B00',
+      glow: 'rgba(255, 107, 0, 0.15)'
     }
   ];
 
@@ -1515,44 +1462,16 @@ export default function AdvertisePage() {
                 Select Your Ad Package
               </h3>
               <p style={{ fontSize: '14.5px', color: '#94a3b8', marginTop: '8px' }}>
-                Choose the pricing duration combo that matches your marketing goals. All rates transparently stated.
+                Choose the visibility offer package that matches your local marketing targets.
               </p>
-              
-              {/* Duration Switcher bar */}
-              <div style={{ display: 'inline-flex', background: 'rgba(8, 12, 26, 0.8)', padding: '6px', borderRadius: '35px', border: '1px solid rgba(255,255,255,0.06)', marginTop: '24px' }}>
-                {[
-                  { id: 'week', label: '1 Week Trial' },
-                  { id: 'month', label: '1 Month' },
-                  { id: '3month', label: '3 Months' },
-                  { id: '6month', label: '6 Months' },
-                  { id: '12month', label: '12 Months (Annual)' }
-                ].map(dur => (
-                  <button 
-                    key={dur.id}
-                    onClick={() => setSelectedDuration(dur.id as any)}
-                    style={{ 
-                      background: selectedDuration === dur.id ? 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)' : 'none',
-                      color: selectedDuration === dur.id ? '#fff' : '#cbd5e1',
-                      border: 'none',
-                      padding: '10px 20px',
-                      borderRadius: '25px',
-                      fontSize: '12.5px',
-                      fontWeight: 800,
-                      cursor: 'pointer',
-                      transition: 'all 0.2s'
-                    }}
-                  >
-                    {dur.label}
-                  </button>
-                ))}
-              </div>
             </div>
 
             {/* Premium pricing cards */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
               {packages.map(pkg => {
-                const plan = pkg.pricing[selectedDuration];
-                const notAvailable = plan.base === 0;
+                const activeDur = Object.keys(pkg.pricing).find(key => (pkg.pricing as any)[key].base > 0) || '2month';
+                const plan = (pkg.pricing as any)[activeDur];
+                const notAvailable = false;
 
                 return (
                   <div 
@@ -1567,9 +1486,8 @@ export default function AdvertisePage() {
                       position: 'relative',
                       border: `1px solid ${pkg.color}45`,
                       boxShadow: `0 10px 30px ${pkg.glow}`,
-                      notAvailable: plan.base === 0 ? 'true' : 'false',
-                      opacity: notAvailable ? 0.35 : 1,
-                      pointerEvents: notAvailable ? 'none' : 'auto',
+                      opacity: 1,
+                      pointerEvents: 'auto',
                       transition: 'all 0.3s'
                     } as any}
                   >

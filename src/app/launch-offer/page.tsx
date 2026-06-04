@@ -49,6 +49,11 @@ const LAUNCH_PACKAGES = [
   }
 ];
 
+const LAUNCH_PAYMENT_LINKS = {
+  launch_2month: 'https://rzp.io/rzp/QTLq1Kev',
+  launch_6month: 'https://rzp.io/rzp/SVWX8m6R'
+};
+
 export default function LaunchOfferPage() {
   const [selectedPkg, setSelectedPkg] = useState<typeof LAUNCH_PACKAGES[0] | null>(null);
   
@@ -323,7 +328,7 @@ export default function LaunchOfferPage() {
           background: #FFFFFF;
           border-radius: 20px;
           width: 100%;
-          max-width: 460px;
+          max-width: 520px;
           box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
           overflow: hidden;
           animation: scaleUp 0.3s ease-out;
@@ -850,45 +855,57 @@ export default function LaunchOfferPage() {
 
             {/* Modal Body */}
             {paymentStatus === 'idle' && (
-              <div style={{ padding: '28px' }}>
-                
-                {/* Billing Summary */}
-                <div style={{ background: '#FAFBFD', border: '1px solid #E2E8F0', borderRadius: '8px', padding: '16px', marginBottom: '24px' }}>
-                  <div style={{ fontSize: '11px', color: '#64748B', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.5px' }}>BILLING ITEM</div>
-                  <strong style={{ fontSize: '14.5px', color: '#0F172A', display: 'block', margin: '4px 0 12px 0' }}>{selectedPkg.name} ({selectedPkg.exposure})</strong>
+              <div style={{ padding: '24px' }}>
+                <div style={{ background: '#FAFBFD', border: '1px solid #E2E8F0', borderRadius: '8px', padding: '12px 16px', marginBottom: '16px', display: 'flex', justifyContent: 'space-between', fontSize: '13px' }}>
+                  <div>
+                    <span style={{ color: '#64748B', fontSize: '11px', display: 'block' }}>CAMPAIGN ORDER</span>
+                    <strong style={{ color: '#0F172A' }}>{selectedPkg.name}</strong>
+                  </div>
+                  <div style={{ textAlign: 'right' }}>
+                    <span style={{ color: '#64748B', fontSize: '11px', display: 'block' }}>TOTAL (INCL. GST)</span>
+                    <strong style={{ color: '#CC2200' }}>₹{selectedPkg.total.toLocaleString('en-IN')}</strong>
+                  </div>
+                </div>
+
+                {/* Razorpay Checkout Iframe */}
+                <div style={{ background: '#fff', borderRadius: '12px', overflow: 'hidden', border: '2.5px solid #CC2200', boxShadow: '0 8px 24px rgba(204, 34, 0, 0.08)', marginBottom: '16px' }}>
+                  <iframe 
+                    src={LAUNCH_PAYMENT_LINKS[selectedPkg.id as keyof typeof LAUNCH_PAYMENT_LINKS]}
+                    style={{ 
+                      width: '100%', 
+                      height: '480px', 
+                      border: 'none',
+                      display: 'block'
+                    }}
+                    title="Razorpay Secure Portal"
+                  />
+                </div>
+
+                {/* Complete Button & New Window Fallback */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                  <button 
+                    onClick={processSimulatedPayment}
+                    className="btn-primary"
+                    style={{ width: '100%', background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)', height: '48px' }}
+                  >
+                    <i className="fa-solid fa-circle-check" style={{ fontSize: '14px' }}></i>
+                    <span>Complete Booking & Sync Campaign (After Payment)</span>
+                  </button>
                   
-                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px', color: '#475569', margin: '4px 0' }}>
-                    <span>Base amount:</span>
-                    <strong>₹{selectedPkg.basePrice.toLocaleString('en-IN')}</strong>
-                  </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px', color: '#475569', margin: '4px 0' }}>
-                    <span>GST (18%):</span>
-                    <strong>₹{selectedPkg.gst.toLocaleString('en-IN')}</strong>
-                  </div>
-                  <div style={{ width: '100%', height: '1.5px', background: '#E2E8F0', margin: '10px 0' }}></div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '15px', color: '#CC2200', fontWeight: 850 }}>
-                    <span>Total Amount:</span>
-                    <span>₹{selectedPkg.total.toLocaleString('en-IN')}</span>
-                  </div>
+                  <a 
+                    href={LAUNCH_PAYMENT_LINKS[selectedPkg.id as keyof typeof LAUNCH_PAYMENT_LINKS]} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    style={{ 
+                      textAlign: 'center', 
+                      fontSize: '12px', 
+                      color: '#475569', 
+                      textDecoration: 'underline' 
+                    }}
+                  >
+                    Can't complete payment in frame? Click here to open checkout in a new window
+                  </a>
                 </div>
-
-                {/* Simulated Payment Credentials */}
-                <div style={{ border: '1.5px solid #FCD34D', background: '#FEF3C7', padding: '14px', borderRadius: '8px', display: 'flex', gap: '10px', marginBottom: '24px' }}>
-                  <span style={{ fontSize: '18px', marginTop: '-2px' }}>💡</span>
-                  <div style={{ fontSize: '12px', color: '#78350F', lineHeight: '1.5' }}>
-                    <strong>Developer Sandbox Sandbox Simulation Mode:</strong> No real money will be charged. Clicking below will authorize a simulated Razorpay credit card payment, record the referral affiliate commission, and sync the campaign registry instantly.
-                  </div>
-                </div>
-
-                {/* Checkout Trigger button */}
-                <button 
-                  onClick={processSimulatedPayment}
-                  className="btn-primary"
-                  style={{ width: '100%', background: '#CC2200', height: '48px' }}
-                >
-                  <i className="fa-solid fa-lock" style={{ fontSize: '12px' }}></i>
-                  <span>Authorize Razorpay Payment (₹{selectedPkg.total.toLocaleString('en-IN')})</span>
-                </button>
               </div>
             )}
 
