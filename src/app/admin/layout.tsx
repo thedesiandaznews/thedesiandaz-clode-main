@@ -105,6 +105,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             <i className="fas fa-bullhorn"></i>
             <span>Advertiser Panel</span>
           </Link>
+          <Link href="/admin/affiliates" className={`${styles.navItem} ${pathname?.includes('/admin/affiliates') ? styles.navItemActive : ''}`}>
+            <i className="fas fa-handshake"></i>
+            <span>Affiliates</span>
+          </Link>
           <Link href="/admin/epaper" className={`${styles.navItem} ${pathname?.includes('/admin/epaper') ? styles.navItemActive : ''}`}>
             <i className="fas fa-file-pdf"></i>
             <span>E-Paper</span>

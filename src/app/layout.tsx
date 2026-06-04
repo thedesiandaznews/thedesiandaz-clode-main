@@ -4,6 +4,7 @@ import ConditionalLayout from '@/components/ConditionalLayout';
 import ThemeScript from '@/components/ThemeScript';
 import ResponsiveBanner from '@/components/ResponsiveBanner';
 import SiteMetadata from '@/components/SiteMetadata';
+import ReferralTracker from '@/components/ReferralTracker';
 
 export const metadata: Metadata = {
   title: 'The Desi Andaz - देसी नज़रिया, सच्ची खबर',
@@ -32,6 +33,7 @@ export default function RootLayout({
       </head>
       <body suppressHydrationWarning>
         <ThemeScript />
+        <ReferralTracker />
         <SiteMetadata />
         <div className="flex flex-col min-h-screen">
           <ConditionalLayout>

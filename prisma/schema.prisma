@@ -232,3 +232,129 @@ model ReporterMessage {
   isRead     Boolean  @default(false)
   createdAt  DateTime @default(now())
 }
+
+model Affiliate {
+  id            String    @id @default(cuid())
+  affiliateCode String    @unique // e.g. TDA1001
+  email         String    @unique
+  password      String
+  fullName      String
+  mobile        String
+  dob           String
+  address       String
+  city          String
+  state         String
+  pinCode       String
+  aadhaarNumber String?
+  panNumber     String?
+  bankHolderName String?
+  bankAccountNumber String?
+  ifscCode      String?
+  upiId         String?
+  photoUrl      String?
+  status        String    @default("Pending") // Pending, Approved, Rejected, Suspended
+  kycVerified   Boolean   @default(false)
+  termsAccepted Boolean   @default(false)
+  clicks        ReferralClick[]
+  leads         ReferralLead[]
+  sales         ReferralSale[]
+  transactions  WalletTransaction[]
+  payouts       Payout[]
+  agreements    AffiliateAgreement[]
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model ReferralClick {
+  id          String    @id @default(cuid())
+  affiliateId String
+  affiliate   Affiliate @relation(fields: [affiliateId], references: [id], onDelete: Cascade)
+  ipAddress   String?
+  userAgent   String?
+  referrer    String?   // e.g. WhatsApp, Facebook, Direct
+  targetUrl   String?
+  createdAt   DateTime  @default(now())
+}
+
+model ReferralLead {
+  id            String    @id @default(cuid())
+  affiliateId   String
+  affiliate     Affiliate @relation(fields: [affiliateId], references: [id], onDelete: Cascade)
+  customerName  String
+  customerEmail String
+  customerPhone String
+  serviceName   String?
+  status        String    @default("Pending") // Pending, Converted, Rejected
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model ReferralSale {
+  id               String              @id @default(cuid())
+  affiliateId      String
+  affiliate        Affiliate           @relation(fields: [affiliateId], references: [id], onDelete: Cascade)
+  customerName     String
+  customerEmail    String
+  customerPhone    String
+  packageName      String
+  baseValue        Float
+  gstAmount        Float
+  totalPaid        Float
+  paymentStatus    String              @default("Paid") // Paid, Refunded
+  transactionId    String?
+  referralSource   String?             // WhatsApp, Facebook, Direct, etc.
+  commissionRate   Float               @default(0.15)
+  commissionEarned Float
+  commissionStatus String              @default("Pending") // Pending, Approved, Paid, Reversed
+  transactions     WalletTransaction[]
+  createdAt        DateTime            @default(now())
+  updatedAt        DateTime            @updatedAt
+}
+
+model WalletTransaction {
+  id          String        @id @default(cuid())
+  affiliateId String
+  affiliate   Affiliate     @relation(fields: [affiliateId], references: [id], onDelete: Cascade)
+  amount      Float
+  type        String        // Credit, Debit, Reversal
+  status      String        @default("Pending") // Pending, Approved, Paid, Cancelled
+  description String?
+  saleId      String?
+  sale        ReferralSale? @relation(fields: [saleId], references: [id], onDelete: SetNull)
+  payoutId    String?
+  payout      Payout?       @relation(fields: [payoutId], references: [id], onDelete: SetNull)
+  createdAt   DateTime      @default(now())
+}
+
+model Payout {
+  id              String              @id @default(cuid())
+  affiliateId     String
+  affiliate       Affiliate           @relation(fields: [affiliateId], references: [id], onDelete: Cascade)
+  amount          Float
+  payoutDate      DateTime            @default(now())
+  referenceNumber String?
+  paymentMethod   String              // Bank Transfer, UPI, NEFT, IMPS
+  status          String              @default("Pending") // Pending, Processing, Paid, Failed
+  transactions    WalletTransaction[]
+  createdAt       DateTime            @default(now())
+  updatedAt       DateTime            @updatedAt
+}
+
+model MarketingMaterial {
+  id           String   @id @default(cuid())
+  title        String
+  type         String   // Poster, Banner, Video, PDF, Guide
+  fileUrl      String
+  thumbnailUrl String?
+  description  String?
+  createdAt    DateTime @default(now())
+}
+
+model AffiliateAgreement {
+  id          String    @id @default(cuid())
+  affiliateId String
+  affiliate   Affiliate @relation(fields: [affiliateId], references: [id], onDelete: Cascade)
+  ipAddress   String?
+  userAgent   String?
+  acceptedAt  DateTime  @default(now())
+}

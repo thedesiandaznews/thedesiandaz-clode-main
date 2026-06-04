@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { trackReferralSale } from '@/actions/affiliate';
 
 export default function AdvertisePage() {
   const [currentStep, setCurrentStep] = useState<'welcome' | 'account' | 'details' | 'slides' | 'packages' | 'payment' | 'success'>('welcome');
@@ -118,6 +119,40 @@ export default function AdvertisePage() {
   const triggerRazorpayPayment = () => {
     // Persist new B2B client details to admin database on sign-up / payment completion!
     saveNewClientToAdminDatabase();
+
+    // Check for affiliate cookie to track referral sale
+    try {
+      const getCookie = (name: string) => {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) return parts.pop()?.split(';').shift();
+        return undefined;
+      };
+
+      const refCode = getCookie('tda_ref');
+      const refSource = getCookie('tda_ref_source') || 'Direct';
+
+      if (refCode) {
+        const planTotal = selectedPackage?.activePlan?.total || selectedPackage?.pricing?.[selectedDuration]?.total || 0;
+        trackReferralSale(refCode, {
+          customerName: accountForm.name || 'B2B Client',
+          customerEmail: accountForm.email || 'client@thedesiandaz.com',
+          customerPhone: accountForm.phone || '',
+          packageName: selectedPackage?.name || 'Local Start-Up Combo',
+          totalPaid: planTotal,
+          transactionId: 'pay_RPY_LIVE_' + Math.floor(10000000 + Math.random() * 90000000),
+          referralSource: refSource
+        }).then(res => {
+          if (res.success) {
+            console.log('Affiliate referral sale tracked successfully.');
+          } else {
+            console.warn('Affiliate tracking returned: ', res.message);
+          }
+        });
+      }
+    } catch (err) {
+      console.error('Error tracking affiliate sale during payment simulation:', err);
+    }
 
     setPaymentStatus('processing');
     setTimeout(() => {
