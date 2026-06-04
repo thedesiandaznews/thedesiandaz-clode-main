@@ -328,6 +328,142 @@ export default function AffiliatePage() {
                 *नोट:  कमीशन की गणना GST और करों को छोड़कर केवल शुद्ध बेस वैल्यू पर की जाती है।
               </p>
             </div>
+
+            {/* How It Works */}
+            <div style={{
+              background: 'rgba(15, 23, 42, 0.4)',
+              border: '1px solid rgba(255, 255, 255, 0.05)',
+              borderRadius: '24px',
+              padding: '36px',
+              maxWidth: '900px',
+              margin: '0 auto',
+              backdropFilter: 'blur(20px)',
+              textAlign: 'left'
+            }}>
+              <h3 style={{ fontSize: '20px', fontWeight: 800, marginBottom: '24px', textAlign: 'center' }}>🛠️ Join in 3 Simple Steps (पार्टनर बनने की प्रक्रिया)</h3>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '24px' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                  <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: '#4f46e5', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold' }}>1</div>
+                  <h4 style={{ fontSize: '15px', fontWeight: 700, margin: '4px 0 0 0' }}>1. Register Account</h4>
+                  <p style={{ fontSize: '13px', color: '#94a3b8', margin: 0 }}>पार्टनर रजिस्ट्रेशन फॉर्म भरकर अपना खाता तुरंत बनाएं। बैंक, यूपीआई और केवाईसी विवरण दर्ज करें।</p>
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                  <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: '#ef4444', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold' }}>2</div>
+                  <h4 style={{ fontSize: '15px', fontWeight: 700, margin: '4px 0 0 0' }}>2. Share Referral Links</h4>
+                  <p style={{ fontSize: '13px', color: '#94a3b8', margin: 0 }}>डैशबोर्ड से सामान्य या विशिष्ट सेवा का रेफरल लिंक कॉपी करें और अपने नेटवर्क/व्हाट्सएप ग्रुप्स में साझा करें।</p>
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                  <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: '#10b981', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold' }}>3</div>
+                  <h4 style={{ fontSize: '15px', fontWeight: 700, margin: '4px 0 0 0' }}>3. Earn High Commissions</h4>
+                  <p style={{ fontSize: '13px', color: '#94a3b8', margin: 0 }}>आपके रेफरल से होने वाली प्रत्येक B2B विज्ञापन खरीद पर 15% से 25% तक का बेस कमीशन प्राप्त करें।</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Why Join Us / Core Benefits */}
+            <div style={{
+              background: 'rgba(15, 23, 42, 0.4)',
+              border: '1px solid rgba(255, 255, 255, 0.05)',
+              borderRadius: '24px',
+              padding: '36px',
+              maxWidth: '900px',
+              margin: '0 auto',
+              backdropFilter: 'blur(20px)',
+              textAlign: 'left'
+            }}>
+              <h3 style={{ fontSize: '20px', fontWeight: 800, marginBottom: '24px', textAlign: 'center' }}>🌟 Platform Features & Benefits (मुख्य विशेषताएं)</h3>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '20px' }}>
+                {[
+                  { title: '🍪 90-Day Cookies', desc: 'यदि कोई ग्राहक आपके लिंक पर क्लिक करके 90 दिनों के भीतर कभी भी विज्ञापन पैकेज खरीदता है, तो कमीशन आपका है।' },
+                  { title: '📊 Live Dashboard Tracking', desc: 'क्लिक, लीड, सेल्स, कमीशन और पेंडिंग राशि को रियल-टाइम में सीधे अपने डैशबोर्ड से ट्रैक करें।' },
+                  { title: '📈 Retrospective Slab Rates', desc: 'मासिक सेल बढ़ने पर आपका कमीशन 15% से 25% तक अपग्रेड हो जाता है, जो पूरे महीने की कुल सेल पर लागू होता है।' },
+                  { title: '🏆 Performance Leaderboard', desc: 'सर्वश्रेष्ठ परफॉर्मर्स को प्रत्येक माह अतिरिक्त नकद बोनस और विशेष रिवार्ड्स प्रदान किए जाते हैं।' },
+                  { title: '📁 Marketing Materials', desc: 'प्रचार के लिए प्री-डिजाइन किए गए बैनर्स, पोस्टर्स, वीडियो और पीडीएफ गाइड बिल्कुल फ्री प्राप्त करें।' },
+                  { title: '🔒 Bank / UPI Payouts', desc: 'अर्जित बैलेंस को महीने के अंत में संसाधित कर सीधे आपके बैंक खाते या UPI आईडी में सुरक्षित रूप से ट्रांसफर किया जाता है।' }
+                ].map((item, idx) => (
+                  <div key={idx} style={{
+                    background: 'rgba(255, 255, 255, 0.02)',
+                    border: '1px solid rgba(255, 255, 255, 0.04)',
+                    padding: '20px',
+                    borderRadius: '12px'
+                  }}>
+                    <h4 style={{ fontSize: '14.5px', fontWeight: 750, color: '#ef4444', margin: '0 0 6px 0' }}>{item.title}</h4>
+                    <p style={{ fontSize: '12.5px', color: '#94a3b8', margin: 0, lineHeight: 1.5 }}>{item.desc}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Clear Rules Explanation */}
+            <div style={{
+              background: 'rgba(15, 23, 42, 0.4)',
+              border: '1px solid rgba(255, 255, 255, 0.05)',
+              borderRadius: '24px',
+              padding: '36px',
+              maxWidth: '900px',
+              margin: '0 auto',
+              backdropFilter: 'blur(20px)',
+              textAlign: 'left'
+            }}>
+              <h3 style={{ fontSize: '20px', fontWeight: 800, marginBottom: '24px', textAlign: 'center' }}>📌 Essential Rules & Transparency (पारदर्शी नियम और नीतियां)</h3>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', fontSize: '13.5px', color: '#cbd5e1', lineHeight: '1.6' }}>
+                <div>
+                  <strong style={{ color: '#fff' }}>• Commission Base Calculation (कमीशन बेस वैल्यू):</strong> 
+                  कमीशन की गणना केवल शुद्ध बेस वैल्यू (विज्ञापन पैकेज मूल्य - 18% GST) पर की जाती है। 
+                  <div style={{ fontSize: '12px', color: '#64748b', marginTop: '4px', background: '#00000040', padding: '8px 12px', borderRadius: '6px' }}>
+                    उदाहरण: यदि एक ग्राहक ₹11,800 (₹10,000 बेस + 18% GST) का पैकेज खरीदता है, तो कमीशन की गणना ₹10,000 की बेस वैल्यू पर की जाएगी। 15% दर पर आपका कमीशन ₹1,500 होगा।
+                  </div>
+                </div>
+                <div>
+                  <strong style={{ color: '#fff' }}>• Payout Threshold & Process (भुगतान सीमा और चक्र):</strong> 
+                  न्यूनतम भुगतान राशि ₹500 है। पेंडिंग या अप्रूव्ड राशि ₹500 से कम होने पर वह अगले महीने में कैरी फॉरवर्ड हो जाएगी। भुगतान प्रति माह 1 से 7 तारीख के बीच आपके बैंक/UPI पर ट्रांसफर किया जाता है।
+                </div>
+                <div>
+                  <strong style={{ color: '#fff' }}>• Self-Purchasing Policy (स्व-खरीद निषेध):</strong> 
+                  खुद के रेफरल लिंक से स्वयं के लिए विज्ञापन पैकेज खरीदना सख्त मना है। सिस्टम द्वारा ईमेल, फोन, आईपी एड्रेस या डिवाइस ट्रैक होने पर कमीशन तुरंत निरस्त (Reverse) कर दिया जाएगा।
+                </div>
+              </div>
+            </div>
+
+            {/* FAQs Accordion */}
+            <div style={{
+              background: 'rgba(15, 23, 42, 0.4)',
+              border: '1px solid rgba(255, 255, 255, 0.05)',
+              borderRadius: '24px',
+              padding: '36px',
+              maxWidth: '900px',
+              margin: '0 auto',
+              backdropFilter: 'blur(20px)',
+              textAlign: 'left'
+            }}>
+              <h3 style={{ fontSize: '20px', fontWeight: 800, marginBottom: '24px', textAlign: 'center' }}>❓ Frequently Asked Questions (अक्सर पूछे जाने वाले प्रश्न)</h3>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                {[
+                  { q: 'क्या इस प्रोग्राम में शामिल होने के लिए कोई फीस है?', a: 'नहीं, द देसी अंदाज का पार्टनर प्रोग्राम पूरी तरह से मुफ्त है। कोई भी व्यक्ति रजिस्टर करके रेफरल कमाना शुरू कर सकता है।' },
+                  { q: 'क्या मैं अपने ग्राहकों के लिए कस्टम लिंक बना सकता हूँ?', a: 'हाँ, डैशबोर्ड के अंदर "Custom Page Link Generator" टूल मौजूद है, जहाँ आप वेबसाइट की किसी भी विज्ञापन सेवा का लिंक डालकर उसे रेफरल लिंक में बदल सकते हैं।' },
+                  { q: 'अगर ग्राहक विज्ञापन रद्द या रिफंड करता है तो क्या होगा?', a: 'यदि ग्राहक द्वारा खरीदे गए विज्ञापन पैकेज को कैंसिल या रिफंड किया जाता है, तो उस ट्रांजेक्शन पर दिया गया कमीशन निरस्त (Reversed) कर दिया जाएगा और वॉलेट बैलेंस समायोजित किया जाएगा।' },
+                  { q: 'खाता सक्रिय (Activate) होने में कितना समय लगता है?', a: 'केवाईसी और बैंक विवरण सबमिट करने के बाद, एडमिन द्वारा 24 से 48 घंटे के भीतर आपके प्रलेखों का सत्यापन कर खाता सक्रिय कर दिया जाता है।' }
+                ].map((faq, idx) => (
+                  <details key={idx} style={{
+                    background: 'rgba(255, 255, 255, 0.02)',
+                    border: '1px solid rgba(255, 255, 255, 0.04)',
+                    borderRadius: '12px',
+                    padding: '16px',
+                    cursor: 'pointer'
+                  }}
+                  className="faq-details"
+                  >
+                    <summary style={{ fontSize: '14.5px', fontWeight: 700, color: '#fff', outline: 'none' }}>
+                      {faq.q}
+                    </summary>
+                    <p style={{ fontSize: '13px', color: '#94a3b8', margin: '10px 0 0 0', lineHeight: 1.5, cursor: 'default' }}>
+                      {faq.a}
+                    </p>
+                  </details>
+                ))}
+              </div>
+            </div>
+
           </div>
         )}
 
@@ -866,6 +1002,38 @@ export default function AffiliatePage() {
         )}
 
       </main>
+
+      {/* Footer */}
+      <footer style={{
+        background: 'rgba(9, 13, 22, 0.95)',
+        borderTop: '1px solid rgba(255, 255, 255, 0.06)',
+        padding: '40px 24px 20px',
+        position: 'relative',
+        zIndex: 2,
+        marginTop: '60px'
+      }}>
+        <div style={{ maxWidth: '1200px', margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '30px', marginBottom: '30px' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', textAlign: 'left' }}>
+            <span style={{ fontSize: '16px', fontWeight: 900, color: '#fff' }}>THE DESI ANDAZ <span style={{ color: '#ef4444' }}>AFFILIATES</span></span>
+            <p style={{ fontSize: '12.5px', color: '#64748b', lineHeight: 1.6, margin: 0 }}>भारत का सबसे तेज़ी से उभरता हुआ स्वतंत्र मीडिया नेटवर्क। हमारे साथ पार्टनर बनकर अपने नेटवर्क को मुद्रीकृत करें।</p>
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', textAlign: 'left' }}>
+            <span style={{ fontSize: '13px', fontWeight: 700, color: '#fff', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Quick Links</span>
+            <Link href="/" style={{ fontSize: '13px', color: '#94a3b8', textDecoration: 'none', transition: 'color 0.2s' }}>Home</Link>
+            <Link href="/advertise" style={{ fontSize: '13px', color: '#94a3b8', textDecoration: 'none', transition: 'color 0.2s' }}>Advertise with Us</Link>
+            <Link href="/contact" style={{ fontSize: '13px', color: '#94a3b8', textDecoration: 'none', transition: 'color 0.2s' }}>Contact Support</Link>
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', textAlign: 'left' }}>
+            <span style={{ fontSize: '13px', fontWeight: 700, color: '#fff', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Important Rules</span>
+            <span style={{ fontSize: '12.5px', color: '#64748b' }}>• Minimum Payout: ₹500</span>
+            <span style={{ fontSize: '12.5px', color: '#64748b' }}>• Calculations: Base Value Only</span>
+            <span style={{ fontSize: '12.5px', color: '#64748b' }}>• Tracking: 90-Day Cookie Validity</span>
+          </div>
+        </div>
+        <div style={{ maxWidth: '1200px', margin: '0 auto', borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: '20px', textAlign: 'center', fontSize: '12.5px', color: '#64748b' }}>
+          © {new Date().getFullYear()} The Desi Andaz Media Network. All rights reserved. Registered RNI Number: JHBIL/26/A3245
+        </div>
+      </footer>
     </div>
   );
 }
