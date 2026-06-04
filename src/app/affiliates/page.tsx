@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { registerAffiliatePartner, loginAffiliatePartner } from '@/actions/affiliate';
 import Footer from '@/components/Footer';
+import styles from './affiliates.module.css';
 
 type ViewMode = 'landing' | 'login' | 'register';
 
@@ -148,60 +149,25 @@ export default function AffiliatePage() {
   };
 
   return (
-    <div style={{ background: '#090d16', color: '#f1f5f9', minHeight: '100vh', fontFamily: "'Poppins', sans-serif", overflowX: 'hidden' }}>
+    <div className={styles.pageWrapper}>
       
-      {/* Background Glow */}
-      <div style={{
-        position: 'fixed',
-        width: '50vw',
-        height: '50vw',
-        background: 'radial-gradient(circle, rgba(79, 70, 229, 0.08) 0%, transparent 70%)',
-        top: '-10%',
-        left: '-10%',
-        zIndex: 0,
-        pointerEvents: 'none'
-      }} />
-      <div style={{
-        position: 'fixed',
-        width: '50vw',
-        height: '50vw',
-        background: 'radial-gradient(circle, rgba(239, 68, 68, 0.05) 0%, transparent 70%)',
-        bottom: '-10%',
-        right: '-10%',
-        zIndex: 0,
-        pointerEvents: 'none'
-      }} />
+      {/* Background Aurora Glows */}
+      <div className={`${styles.glowOrb} ${styles.orbPurple}`} />
+      <div className={`${styles.glowOrb} ${styles.orbRed}`} />
+      <div className={`${styles.glowOrb} ${styles.orbCyan}`} />
 
       {/* Header */}
-      <header style={{
-        background: 'rgba(9, 13, 22, 0.8)',
-        backdropFilter: 'blur(12px)',
-        borderBottom: '1px solid rgba(255, 255, 255, 0.06)',
-        padding: '16px 24px',
-        position: 'sticky',
-        top: 0,
-        zIndex: 10
-      }}>
-        <div style={{ maxWidth: '1200px', margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <Link href="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <span style={{ fontSize: '20px', fontWeight: 900, color: '#fff', letterSpacing: '-0.5px' }}>
-              THE DESI ANDAZ <span style={{ color: '#ef4444' }}>AFFILIATES</span>
+      <header className={styles.header}>
+        <div className={styles.headerInner}>
+          <Link href="/" className={styles.logoLink}>
+            <span className={styles.logoText}>
+              THE DESI ANDAZ <span className={styles.logoHighlight}>AFFILIATES</span>
             </span>
           </Link>
-          <div style={{ display: 'flex', gap: '12px' }}>
+          <div className={styles.navActionGroup}>
             <button
               onClick={() => setViewMode('login')}
-              style={{
-                background: viewMode === 'login' ? 'linear-gradient(135deg, #4f46e5 0%, #4338ca 100%)' : 'rgba(255, 255, 255, 0.05)',
-                color: '#fff',
-                border: 'none',
-                padding: '8px 18px',
-                borderRadius: '8px',
-                fontWeight: 600,
-                fontSize: '13px',
-                cursor: 'pointer',
-                transition: 'all 0.2s'
-              }}
+              className={`${styles.navBtn} ${viewMode === 'login' ? styles.navBtnActive : ''}`}
             >
               Sign In
             </button>
@@ -210,17 +176,7 @@ export default function AffiliatePage() {
                 setViewMode('register');
                 setStep(1);
               }}
-              style={{
-                background: viewMode === 'register' ? 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)' : 'rgba(255, 255, 255, 0.05)',
-                color: '#fff',
-                border: 'none',
-                padding: '8px 18px',
-                borderRadius: '8px',
-                fontWeight: 600,
-                fontSize: '13px',
-                cursor: 'pointer',
-                transition: 'all 0.2s'
-              }}
+              className={`${styles.navBtn} ${viewMode === 'register' ? styles.navBtnPrimary : ''}`}
             >
               Register
             </button>
@@ -229,63 +185,34 @@ export default function AffiliatePage() {
       </header>
 
       {/* Main Content */}
-      <main style={{ maxWidth: '1200px', margin: '0 auto', padding: '60px 24px', position: 'relative', zIndex: 1 }}>
+      <main className={styles.mainContent}>
         
         {/* LANDING MODE */}
         {viewMode === 'landing' && (
-          <div style={{ textAlign: 'center', display: 'flex', flexDirection: 'column', gap: '50px' }}>
-            <div style={{ maxWidth: '800px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '20px' }}>
-              <span style={{
-                background: 'rgba(79, 70, 229, 0.1)',
-                color: '#818cf8',
-                padding: '6px 16px',
-                borderRadius: '20px',
-                fontSize: '12px',
-                fontWeight: 700,
-                alignSelf: 'center',
-                textTransform: 'uppercase',
-                letterSpacing: '1px'
-              }}>
+          <div className={styles.flexWrapper}>
+            <div className={styles.heroBlock}>
+              <span className={styles.badge}>
                 📢 Partnership Opportunity
               </span>
-              <h1 style={{ fontSize: '48px', fontWeight: 900, lineHeight: 1.15, letterSpacing: '-1px' }}>
+              <h1 className={styles.heroTitle}>
                 Become an Affiliate Partner & Earn <br />
-                <span style={{ background: 'linear-gradient(135deg, #ef4444 0%, #f59e0b 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', fontWeight: 950 }}>
+                <span className={styles.titleGradient}>
                   High Monthly Commissions
                 </span>
               </h1>
-              <p style={{ fontSize: '16.5px', color: '#94a3b8', lineHeight: '1.6' }}>
+              <p className={styles.heroSubtitle}>
                 Promote our premium localized B2B marketing & advertising services. Help local brands grow and secure a massive monthly income with dynamic performance slab calculations.
               </p>
-              <div style={{ display: 'flex', gap: '16px', justifyContent: 'center', marginTop: '12px' }}>
+              <div className={styles.heroCtaGroup}>
                 <button
                   onClick={() => { setViewMode('register'); setStep(1); }}
-                  style={{
-                    background: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
-                    color: '#fff',
-                    border: 'none',
-                    padding: '14px 32px',
-                    borderRadius: '30px',
-                    fontSize: '15px',
-                    fontWeight: 700,
-                    cursor: 'pointer',
-                    boxShadow: '0 4px 15px rgba(239, 68, 68, 0.3)'
-                  }}
+                  className={`${styles.ctaBtn} ${styles.ctaPrimary}`}
                 >
                   🚀 Become a Partner Now
                 </button>
                 <button
                   onClick={() => setViewMode('login')}
-                  style={{
-                    background: 'rgba(255, 255, 255, 0.03)',
-                    color: '#fff',
-                    border: '1px solid rgba(255, 255, 255, 0.08)',
-                    padding: '14px 32px',
-                    borderRadius: '30px',
-                    fontSize: '15px',
-                    fontWeight: 700,
-                    cursor: 'pointer'
-                  }}
+                  className={`${styles.ctaBtn} ${styles.ctaSecondary}`}
                 >
                   🔑 Partner Login
                 </button>
@@ -293,87 +220,53 @@ export default function AffiliatePage() {
             </div>
 
             {/* Commissions slabs description */}
-            <div style={{
-              background: 'rgba(15, 23, 42, 0.6)',
-              border: '1px solid rgba(255, 255, 255, 0.06)',
-              borderRadius: '24px',
-              padding: '36px',
-              maxWidth: '900px',
-              margin: '0 auto',
-              backdropFilter: 'blur(20px)'
-            }}>
-              <h3 style={{ fontSize: '20px', fontWeight: 800, marginBottom: '24px' }}>📈 Performance Commission Slabs (मासिक स्लैब दरें)</h3>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '20px' }}>
+            <div className={styles.glassCard}>
+              <h3 className={styles.cardTitle}>📈 Performance Commission Slabs (मासिक स्लैब दरें)</h3>
+              <div className={styles.slabsGrid}>
                 {[
                   { range: '₹0 – ₹1,00,000', comm: '15% Commission', desc: 'Starting Slab' },
                   { range: '₹1,00,001 – ₹2,00,000', comm: '18% Commission', desc: 'Achiever Slab' },
                   { range: '₹2,00,001 – ₹5,00,000', comm: '20% Commission', desc: 'Leader Slab' },
                   { range: 'Above ₹5,00,000', comm: '25% Commission', desc: 'Elite / VIP Slab' }
                 ].map((s, idx) => (
-                  <div key={idx} style={{
-                    background: 'rgba(255, 255, 255, 0.02)',
-                    border: '1px solid rgba(255, 255, 255, 0.04)',
-                    padding: '24px',
-                    borderRadius: '16px',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: '8px'
-                  }}>
-                    <span style={{ fontSize: '12px', color: '#818cf8', fontWeight: 700 }}>{s.desc}</span>
-                    <span style={{ fontSize: '18px', fontWeight: 800 }}>{s.range}</span>
-                    <span style={{ fontSize: '15px', color: '#ef4444', fontWeight: 700 }}>{s.comm}</span>
+                  <div key={idx} className={styles.slabCard}>
+                    <span className={styles.slabDesc}>{s.desc}</span>
+                    <span className={styles.slabRange}>{s.range}</span>
+                    <span className={styles.slabComm}>{s.comm}</span>
                   </div>
                 ))}
               </div>
-              <p style={{ fontSize: '12.5px', color: '#64748b', marginTop: '20px', fontStyle: 'italic' }}>
-                *नोट:  कमीशन की गणना GST और करों को छोड़कर केवल शुद्ध बेस वैल्यू पर की जाती है।
+              <p className={styles.slabNote}>
+                *नोट: कमीशन की गणना GST और करों को छोड़कर केवल शुद्ध बेस वैल्यू पर की जाती है।
               </p>
             </div>
 
             {/* How It Works */}
-            <div style={{
-              background: 'rgba(15, 23, 42, 0.4)',
-              border: '1px solid rgba(255, 255, 255, 0.05)',
-              borderRadius: '24px',
-              padding: '36px',
-              maxWidth: '900px',
-              margin: '0 auto',
-              backdropFilter: 'blur(20px)',
-              textAlign: 'left'
-            }}>
-              <h3 style={{ fontSize: '20px', fontWeight: 800, marginBottom: '24px', textAlign: 'center' }}>🛠️ Join in 3 Simple Steps (पार्टनर बनने की प्रक्रिया)</h3>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '24px' }}>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                  <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: '#4f46e5', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold' }}>1</div>
-                  <h4 style={{ fontSize: '15px', fontWeight: 700, margin: '4px 0 0 0' }}>1. Register Account</h4>
-                  <p style={{ fontSize: '13px', color: '#94a3b8', margin: 0 }}>पार्टनर रजिस्ट्रेशन फॉर्म भरकर अपना खाता तुरंत बनाएं। बैंक, यूपीआई और केवाईसी विवरण दर्ज करें।</p>
+            <div className={styles.glassCard}>
+              <h3 className={styles.cardTitle}>🛠️ Join in 3 Simple Steps (पार्टनर बनने की प्रक्रिया)</h3>
+              <div className={styles.stepsGrid}>
+                <div className={styles.stepBlock}>
+                  <div className={`${styles.stepNum} ${styles.stepNum1}`}>1</div>
+                  <h4 className={styles.stepTitle}>1. Register Account</h4>
+                  <p className={styles.stepText}>पार्टनर रजिस्ट्रेशन फॉर्म भरकर अपना खाता तुरंत बनाएं। बैंक, यूपीआई और केवाईसी विवरण दर्ज करें।</p>
                 </div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                  <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: '#ef4444', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold' }}>2</div>
-                  <h4 style={{ fontSize: '15px', fontWeight: 700, margin: '4px 0 0 0' }}>2. Share Referral Links</h4>
-                  <p style={{ fontSize: '13px', color: '#94a3b8', margin: 0 }}>डैशबोर्ड से सामान्य या विशिष्ट सेवा का रेफरल लिंक कॉपी करें और अपने नेटवर्क/व्हाट्सएप ग्रुप्स में साझा करें।</p>
+                <div className={styles.stepBlock}>
+                  <div className={`${styles.stepNum} ${styles.stepNum2}`}>2</div>
+                  <h4 className={styles.stepTitle}>2. Share Referral Links</h4>
+                  <p className={styles.stepText}>डैशबोर्ड से सामान्य या विशिष्ट सेवा का रेफरल लिंक कॉपी करें और अपने नेटवर्क/व्हाट्सएप ग्रुप्स में साझा करें।</p>
                 </div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                  <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: '#10b981', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold' }}>3</div>
-                  <h4 style={{ fontSize: '15px', fontWeight: 700, margin: '4px 0 0 0' }}>3. Earn High Commissions</h4>
-                  <p style={{ fontSize: '13px', color: '#94a3b8', margin: 0 }}>आपके रेफरल से होने वाली प्रत्येक B2B विज्ञापन खरीद पर 15% से 25% तक का बेस कमीशन प्राप्त करें।</p>
+                <div className={styles.stepBlock}>
+                  <div className={`${styles.stepNum} ${styles.stepNum3}`}>3</div>
+                  <h4 className={styles.stepTitle}>3. Earn Commissions</h4>
+                  <p className={styles.stepText}>आपके रेफरल से होने वाली प्रत्येक B2B विज्ञापन खरीद पर 15% से 25% तक का बेस कमीशन प्राप्त करें।</p>
                 </div>
               </div>
             </div>
 
             {/* Why Join Us / Core Benefits */}
-            <div style={{
-              background: 'rgba(15, 23, 42, 0.4)',
-              border: '1px solid rgba(255, 255, 255, 0.05)',
-              borderRadius: '24px',
-              padding: '36px',
-              maxWidth: '900px',
-              margin: '0 auto',
-              backdropFilter: 'blur(20px)',
-              textAlign: 'left'
-            }}>
-              <h3 style={{ fontSize: '20px', fontWeight: 800, marginBottom: '24px', textAlign: 'center' }}>🌟 Platform Features & Benefits (मुख्य विशेषताएं)</h3>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '20px' }}>
+            <div className={styles.glassCard}>
+              <h3 className={styles.cardTitle}>🌟 Platform Features & Benefits (मुख्य विशेषताएं)</h3>
+              <div className={styles.benefitsGrid}>
                 {[
                   { title: '🍪 90-Day Cookies', desc: 'यदि कोई ग्राहक आपके लिंक पर क्लिक करके 90 दिनों के भीतर कभी भी विज्ञापन पैकेज खरीदता है, तो कमीशन आपका है।' },
                   { title: '📊 Live Dashboard Tracking', desc: 'क्लिक, लीड, सेल्स, कमीशन और पेंडिंग राशि को रियल-टाइम में सीधे अपने डैशबोर्ड से ट्रैक करें।' },
@@ -382,171 +275,106 @@ export default function AffiliatePage() {
                   { title: '📁 Marketing Materials', desc: 'प्रचार के लिए प्री-डिजाइन किए गए बैनर्स, पोस्टर्स, वीडियो और पीडीएफ गाइड बिल्कुल फ्री प्राप्त करें।' },
                   { title: '🔒 Bank / UPI Payouts', desc: 'अर्जित बैलेंस को महीने के अंत में संसाधित कर सीधे आपके बैंक खाते या UPI आईडी में सुरक्षित रूप से ट्रांसफर किया जाता है।' }
                 ].map((item, idx) => (
-                  <div key={idx} style={{
-                    background: 'rgba(255, 255, 255, 0.02)',
-                    border: '1px solid rgba(255, 255, 255, 0.04)',
-                    padding: '20px',
-                    borderRadius: '12px'
-                  }}>
-                    <h4 style={{ fontSize: '14.5px', fontWeight: 750, color: '#ef4444', margin: '0 0 6px 0' }}>{item.title}</h4>
-                    <p style={{ fontSize: '12.5px', color: '#94a3b8', margin: 0, lineHeight: 1.5 }}>{item.desc}</p>
+                  <div key={idx} className={styles.benefitCard}>
+                    <h4 className={styles.benefitTitle}>{item.title}</h4>
+                    <p className={styles.benefitText}>{item.desc}</p>
                   </div>
                 ))}
               </div>
             </div>
 
             {/* Clear Rules Explanation */}
-            <div style={{
-              background: 'rgba(15, 23, 42, 0.4)',
-              border: '1px solid rgba(255, 255, 255, 0.05)',
-              borderRadius: '24px',
-              padding: '36px',
-              maxWidth: '900px',
-              margin: '0 auto',
-              backdropFilter: 'blur(20px)',
-              textAlign: 'left'
-            }}>
-              <h3 style={{ fontSize: '20px', fontWeight: 800, marginBottom: '24px', textAlign: 'center' }}>📌 Essential Rules & Transparency (पारदर्शी नियम और नीतियां)</h3>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', fontSize: '13.5px', color: '#cbd5e1', lineHeight: '1.6' }}>
-                <div>
-                  <strong style={{ color: '#fff' }}>• Commission Base Calculation (कमीशन बेस वैल्यू):</strong> 
+            <div className={styles.glassCard}>
+              <h3 className={styles.cardTitle}>📌 Essential Rules & Transparency (पारदर्शी नियम और नीतियां)</h3>
+              <div className={styles.rulesList}>
+                <div className={styles.rulesItem}>
+                  <strong className={styles.rulesTitle}>• Commission Base Calculation (कमीशन बेस वैल्यू):</strong> 
                   कमीशन की गणना केवल शुद्ध बेस वैल्यू (विज्ञापन पैकेज मूल्य - 18% GST) पर की जाती है। 
-                  <div style={{ fontSize: '12px', color: '#64748b', marginTop: '4px', background: '#00000040', padding: '8px 12px', borderRadius: '6px' }}>
+                  <div className={styles.rulesExample}>
                     उदाहरण: यदि एक ग्राहक ₹11,800 (₹10,000 बेस + 18% GST) का पैकेज खरीदता है, तो कमीशन की गणना ₹10,000 की बेस वैल्यू पर की जाएगी। 15% दर पर आपका कमीशन ₹1,500 होगा।
                   </div>
                 </div>
-                <div>
-                  <strong style={{ color: '#fff' }}>• Payout Threshold & Process (भुगतान सीमा और चक्र):</strong> 
+                <div className={styles.rulesItem}>
+                  <strong className={styles.rulesTitle}>• Payout Threshold & Process (भुगतान सीमा और चक्र):</strong> 
                   न्यूनतम भुगतान राशि ₹1500 है। पेंडिंग या अप्रूव्ड राशि ₹1500 से कम होने पर वह अगले महीने में कैरी फॉरवर्ड हो जाएगी। भुगतान प्रति माह 1 से 7 तारीख के बीच आपके बैंक/UPI पर ट्रांसफर किया जाता है।
                 </div>
-                <div>
-                  <strong style={{ color: '#fff' }}>• Self-Purchasing Policy (स्व-खरीद निषेध):</strong> 
+                <div className={styles.rulesItem}>
+                  <strong className={styles.rulesTitle}>• Self-Purchasing Policy (स्व-खरीद निषेध):</strong> 
                   खुद के रेफरल लिंक से स्वयं के लिए विज्ञापन पैकेज खरीदना सख्त मना है। सिस्टम द्वारा ईमेल, फोन, आईपी एड्रेस या डिवाइस ट्रैक होने पर कमीशन तुरंत निरस्त (Reverse) कर दिया जाएगा।
                 </div>
               </div>
             </div>
 
             {/* FAQs Accordion */}
-            <div style={{
-              background: 'rgba(15, 23, 42, 0.4)',
-              border: '1px solid rgba(255, 255, 255, 0.05)',
-              borderRadius: '24px',
-              padding: '36px',
-              maxWidth: '900px',
-              margin: '0 auto',
-              backdropFilter: 'blur(20px)',
-              textAlign: 'left'
-            }}>
-              <h3 style={{ fontSize: '20px', fontWeight: 800, marginBottom: '24px', textAlign: 'center' }}>❓ Frequently Asked Questions (अक्सर पूछे जाने वाले प्रश्न)</h3>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            <div className={styles.glassCard}>
+              <h3 className={styles.cardTitle}>❓ Frequently Asked Questions (अक्सर पूछे जाने वाले प्रश्न)</h3>
+              <div className={styles.faqContainer}>
                 {[
                   { q: 'क्या इस प्रोग्राम में शामिल होने के लिए कोई फीस है?', a: 'नहीं, द देसी अंदाज का पार्टनर प्रोग्राम पूरी तरह से मुफ्त है। कोई भी व्यक्ति रजिस्टर करके रेफरल कमाना शुरू कर सकता है।' },
                   { q: 'क्या मैं अपने ग्राहकों के लिए कस्टम लिंक बना सकता हूँ?', a: 'हाँ, डैशबोर्ड के अंदर "Custom Page Link Generator" टूल मौजूद है, जहाँ आप वेबसाइट की किसी भी विज्ञापन सेवा का लिंक डालकर उसे रेफरल लिंक में बदल सकते हैं।' },
                   { q: 'अगर ग्राहक विज्ञापन रद्द या रिफंड करता है तो क्या होगा?', a: 'यदि ग्राहक द्वारा खरीदे गए विज्ञापन पैकेज को कैंसिल या रिफंड किया जाता है, तो उस ट्रांजेक्शन पर दिया गया कमीशन निरस्त (Reversed) कर दिया जाएगा और वॉलेट बैलेंस समायोजित किया जाएगा।' },
                   { q: 'खाता सक्रिय (Activate) होने में कितना समय लगता है?', a: 'केवाईसी और बैंक विवरण सबमिट करने के बाद, एडमिन द्वारा 24 से 48 घंटे के भीतर आपके प्रलेखों का सत्यापन कर खाता सक्रिय कर दिया जाता है।' }
                 ].map((faq, idx) => (
-                  <details key={idx} style={{
-                    background: 'rgba(255, 255, 255, 0.02)',
-                    border: '1px solid rgba(255, 255, 255, 0.04)',
-                    borderRadius: '12px',
-                    padding: '16px',
-                    cursor: 'pointer'
-                  }}
-                  className="faq-details"
-                  >
-                    <summary style={{ fontSize: '14.5px', fontWeight: 700, color: '#fff', outline: 'none' }}>
+                  <details key={idx} className={styles.faqDetails}>
+                    <summary className={styles.faqSummary}>
                       {faq.q}
                     </summary>
-                    <p style={{ fontSize: '13px', color: '#94a3b8', margin: '10px 0 0 0', lineHeight: 1.5, cursor: 'default' }}>
+                    <p className={styles.faqText}>
                       {faq.a}
                     </p>
                   </details>
                 ))}
               </div>
             </div>
-
           </div>
         )}
 
         {/* LOGIN MODE */}
         {viewMode === 'login' && (
-          <div style={{ maxWidth: '420px', margin: '0 auto' }}>
-            <div style={{
-              background: 'rgba(15, 23, 42, 0.65)',
-              border: '1px solid rgba(255, 255, 255, 0.08)',
-              borderRadius: '24px',
-              padding: '36px',
-              backdropFilter: 'blur(20px)',
-              boxShadow: '0 20px 45px rgba(0, 0, 0, 0.35)'
-            }}>
-              <h2 style={{ fontSize: '24px', fontWeight: 800, marginBottom: '8px', textAlign: 'center' }}>पार्टनर लॉगिन</h2>
-              <p style={{ fontSize: '13px', color: '#94a3b8', marginBottom: '28px', textAlign: 'center' }}>अपनी लॉगिन जानकारी दर्ज करें</p>
+          <div className={styles.authContainer}>
+            <div className={styles.formCard}>
+              <h2 className={styles.formTitle}>पार्टनर लॉगिन</h2>
+              <p className={styles.formSubtitle}>अपनी लॉगिन जानकारी दर्ज करें</p>
               
-              <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                  <label style={{ fontSize: '11px', fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase' }}>Email (ईमेल)</label>
+              <form onSubmit={handleLogin} className={styles.form}>
+                <div className={styles.formField}>
+                  <label className={styles.fieldLabel}>Email (ईमेल)</label>
                   <input
                     type="email"
                     value={loginForm.email}
                     onChange={e => setLoginForm({ ...loginForm, email: e.target.value })}
                     placeholder="name@email.com"
                     required
-                    style={{
-                      background: 'rgba(8, 12, 26, 0.85)',
-                      border: '1px solid rgba(255, 255, 255, 0.08)',
-                      borderRadius: '10px',
-                      color: '#fff',
-                      padding: '12px',
-                      fontSize: '14px',
-                      outline: 'none'
-                    }}
+                    className={styles.input}
                   />
                 </div>
 
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                  <label style={{ fontSize: '11px', fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase' }}>Password (पासवर्ड)</label>
+                <div className={styles.formField}>
+                  <label className={styles.fieldLabel}>Password (पासवर्ड)</label>
                   <input
                     type="password"
                     value={loginForm.password}
                     onChange={e => setLoginForm({ ...loginForm, password: e.target.value })}
                     placeholder="••••••••"
                     required
-                    style={{
-                      background: 'rgba(8, 12, 26, 0.85)',
-                      border: '1px solid rgba(255, 255, 255, 0.08)',
-                      borderRadius: '10px',
-                      color: '#fff',
-                      padding: '12px',
-                      fontSize: '14px',
-                      outline: 'none'
-                    }}
+                    className={styles.input}
                   />
                 </div>
 
                 <button
                   type="submit"
                   disabled={loading}
-                  style={{
-                    background: 'linear-gradient(135deg, #4f46e5 0%, #4338ca 100%)',
-                    color: '#fff',
-                    border: 'none',
-                    padding: '14px',
-                    borderRadius: '10px',
-                    fontSize: '14px',
-                    fontWeight: 700,
-                    cursor: 'pointer',
-                    marginTop: '8px'
-                  }}
+                  className={styles.submitBtn}
                 >
                   {loading ? 'प्रमाणीकरण हो रहा है...' : 'सुरक्षित लॉगिन'}
                 </button>
               </form>
 
-              <div style={{ textAlign: 'center', marginTop: '24px', fontSize: '13px' }}>
+              <div className={styles.formToggleText}>
                 <span>नया पार्टनर खाता चाहिए? </span>
                 <button
                   onClick={() => { setViewMode('register'); setStep(1); }}
-                  style={{ background: 'none', border: 'none', color: '#818cf8', fontWeight: 700, cursor: 'pointer', padding: 0 }}
+                  className={styles.formToggleBtn}
                 >
                   यहाँ रजिस्टर करें
                 </button>
@@ -557,188 +385,161 @@ export default function AffiliatePage() {
 
         {/* REGISTER MODE */}
         {viewMode === 'register' && (
-          <div style={{ maxWidth: '640px', margin: '0 auto' }}>
-            <div style={{
-              background: 'rgba(15, 23, 42, 0.65)',
-              border: '1px solid rgba(255, 255, 255, 0.08)',
-              borderRadius: '24px',
-              padding: '36px',
-              backdropFilter: 'blur(20px)',
-              boxShadow: '0 20px 45px rgba(0, 0, 0, 0.35)'
-            }}>
+          <div className={styles.wizardContainer}>
+            <div className={styles.formCard}>
               {/* Stepper Header */}
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '32px', position: 'relative' }}>
-                <div style={{
-                  position: 'absolute',
-                  top: '18px',
-                  left: '10%',
-                  right: '10%',
-                  height: '2px',
-                  background: 'rgba(255,255,255,0.06)',
-                  zIndex: 0
-                }} />
-                <div style={{
-                  position: 'absolute',
-                  top: '18px',
-                  left: '10%',
-                  width: step === 1 ? '0%' : step === 2 ? '40%' : '80%',
-                  height: '2px',
-                  background: '#ef4444',
-                  zIndex: 0,
-                  transition: 'all 0.3s'
-                }} />
+              <div className={styles.stepper}>
+                <div className={styles.stepperLine} />
+                <div 
+                  className={styles.stepperProgress} 
+                  style={{ width: step === 1 ? '0%' : step === 2 ? '50%' : '100%' }}
+                />
 
                 {[
                   { num: 1, label: 'व्यक्तिगत जानकारी' },
                   { num: 2, label: 'बैंक व सत्यापन' },
                   { num: 3, label: 'नियम व स्वीकार्यता' }
                 ].map((s) => (
-                  <div key={s.num} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', zIndex: 1, cursor: 'pointer' }} onClick={() => step > s.num && setStep(s.num)}>
-                    <div style={{
-                      width: '36px',
-                      height: '36px',
-                      borderRadius: '50%',
-                      background: step >= s.num ? 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)' : '#1e293b',
-                      color: '#fff',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      fontSize: '14px',
-                      fontWeight: 800,
-                      boxShadow: step >= s.num ? '0 0 10px rgba(239, 68, 68, 0.25)' : 'none'
-                    }}>
+                  <div 
+                    key={s.num} 
+                    className={styles.stepNode}
+                    onClick={() => step > s.num && setStep(s.num)}
+                  >
+                    <div className={`${styles.stepCircle} ${step >= s.num ? styles.stepCircleActive : ''}`}>
                       {s.num}
                     </div>
-                    <span style={{ fontSize: '11px', color: step >= s.num ? '#f1f5f9' : '#64748b', fontWeight: 600 }}>{s.label}</span>
+                    <span className={`${styles.stepLabel} ${step >= s.num ? styles.stepLabelActive : ''}`}>
+                      {s.label}
+                    </span>
                   </div>
                 ))}
               </div>
 
-              <form onSubmit={step === 3 ? handleRegister : (e) => { e.preventDefault(); setStep(prev => prev + 1); }} style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+              <form onSubmit={step === 3 ? handleRegister : (e) => { e.preventDefault(); setStep(prev => prev + 1); }} className={styles.form}>
                 
                 {/* STEP 1: PERSONAL DETAILS */}
                 {step === 1 && (
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                    <h3 style={{ fontSize: '18px', fontWeight: 800, marginBottom: '12px', color: '#ef4444' }}>व्यक्तिगत विवरण (Personal Info)</h3>
+                    <h3 className={styles.sectionHeader}>व्यक्तिगत विवरण (Personal Info)</h3>
                     
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                        <label style={{ fontSize: '11px', fontWeight: 700, color: '#94a3b8' }}>पूरा नाम (Full Name) *</label>
+                    <div className={styles.grid2Col}>
+                      <div className={styles.formField}>
+                        <label className={styles.fieldLabel}>पूरा नाम (Full Name) *</label>
                         <input
                           type="text"
                           required
                           value={registerForm.fullName}
                           onChange={e => setRegisterForm({ ...registerForm, fullName: e.target.value })}
                           placeholder="राम कुमार"
-                          style={{ background: 'rgba(8, 12, 26, 0.85)', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '8px', color: '#fff', padding: '10px', fontSize: '13.5px' }}
+                          className={styles.input}
                         />
                       </div>
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                        <label style={{ fontSize: '11px', fontWeight: 700, color: '#94a3b8' }}>जन्म तिथि (DOB) *</label>
+                      <div className={styles.formField}>
+                        <label className={styles.fieldLabel}>जन्म तिथि (DOB) *</label>
                         <input
                           type="date"
                           required
                           value={registerForm.dob}
                           onChange={e => setRegisterForm({ ...registerForm, dob: e.target.value })}
-                          style={{ background: 'rgba(8, 12, 26, 0.85)', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '8px', color: '#fff', padding: '10px', fontSize: '13.5px' }}
+                          className={styles.input}
                         />
                       </div>
                     </div>
 
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                        <label style={{ fontSize: '11px', fontWeight: 700, color: '#94a3b8' }}>मोबाइल नंबर (Mobile) *</label>
+                    <div className={styles.grid2Col}>
+                      <div className={styles.formField}>
+                        <label className={styles.fieldLabel}>मोबाइल नंबर (Mobile) *</label>
                         <input
                           type="tel"
                           required
                           value={registerForm.mobile}
                           onChange={e => setRegisterForm({ ...registerForm, mobile: e.target.value })}
                           placeholder="+91-XXXXXXXXXX"
-                          style={{ background: 'rgba(8, 12, 26, 0.85)', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '8px', color: '#fff', padding: '10px', fontSize: '13.5px' }}
+                          className={styles.input}
                         />
                       </div>
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                        <label style={{ fontSize: '11px', fontWeight: 700, color: '#94a3b8' }}>ईमेल (Email) *</label>
+                      <div className={styles.formField}>
+                        <label className={styles.fieldLabel}>ईमेल (Email) *</label>
                         <input
                           type="email"
                           required
                           value={registerForm.email}
                           onChange={e => setRegisterForm({ ...registerForm, email: e.target.value })}
                           placeholder="name@email.com"
-                          style={{ background: 'rgba(8, 12, 26, 0.85)', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '8px', color: '#fff', padding: '10px', fontSize: '13.5px' }}
+                          className={styles.input}
                         />
                       </div>
                     </div>
 
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                      <label style={{ fontSize: '11px', fontWeight: 700, color: '#94a3b8' }}>पता (Full Address) *</label>
+                    <div className={styles.formField}>
+                      <label className={styles.fieldLabel}>पता (Full Address) *</label>
                       <input
                         type="text"
                         required
                         value={registerForm.address}
                         onChange={e => setRegisterForm({ ...registerForm, address: e.target.value })}
                         placeholder="गली/मोहल्ला, मकान नंबर"
-                        style={{ background: 'rgba(8, 12, 26, 0.85)', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '8px', color: '#fff', padding: '10px', fontSize: '13.5px' }}
+                        className={styles.input}
                       />
                     </div>
 
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '16px' }}>
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                        <label style={{ fontSize: '11px', fontWeight: 700, color: '#94a3b8' }}>City (शहर) *</label>
+                    <div className={styles.grid3Col}>
+                      <div className={styles.formField}>
+                        <label className={styles.fieldLabel}>City (शहर) *</label>
                         <input
                           type="text"
                           required
                           value={registerForm.city}
                           onChange={e => setRegisterForm({ ...registerForm, city: e.target.value })}
                           placeholder="Pakur"
-                          style={{ background: 'rgba(8, 12, 26, 0.85)', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '8px', color: '#fff', padding: '10px', fontSize: '13.5px' }}
+                          className={styles.input}
                         />
                       </div>
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                        <label style={{ fontSize: '11px', fontWeight: 700, color: '#94a3b8' }}>State (राज्य) *</label>
+                      <div className={styles.formField}>
+                        <label className={styles.fieldLabel}>State (राज्य) *</label>
                         <input
                           type="text"
                           required
                           value={registerForm.state}
                           onChange={e => setRegisterForm({ ...registerForm, state: e.target.value })}
                           placeholder="Jharkhand"
-                          style={{ background: 'rgba(8, 12, 26, 0.85)', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '8px', color: '#fff', padding: '10px', fontSize: '13.5px' }}
+                          className={styles.input}
                         />
                       </div>
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                        <label style={{ fontSize: '11px', fontWeight: 700, color: '#94a3b8' }}>PIN Code *</label>
+                      <div className={styles.formField}>
+                        <label className={styles.fieldLabel}>PIN Code *</label>
                         <input
                           type="text"
                           required
                           value={registerForm.pinCode}
                           onChange={e => setRegisterForm({ ...registerForm, pinCode: e.target.value })}
                           placeholder="816107"
-                          style={{ background: 'rgba(8, 12, 26, 0.85)', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '8px', color: '#fff', padding: '10px', fontSize: '13.5px' }}
+                          className={styles.input}
                         />
                       </div>
                     </div>
 
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                        <label style={{ fontSize: '11px', fontWeight: 700, color: '#94a3b8' }}>पासवर्ड (Password) *</label>
+                    <div className={styles.grid2Col}>
+                      <div className={styles.formField}>
+                        <label className={styles.fieldLabel}>पासवर्ड (Password) *</label>
                         <input
                           type="password"
                           required
                           value={registerForm.password}
                           onChange={e => setRegisterForm({ ...registerForm, password: e.target.value })}
                           placeholder="••••••••"
-                          style={{ background: 'rgba(8, 12, 26, 0.85)', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '8px', color: '#fff', padding: '10px', fontSize: '13.5px' }}
+                          className={styles.input}
                         />
                       </div>
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                        <label style={{ fontSize: '11px', fontWeight: 700, color: '#94a3b8' }}>पासवर्ड कन्फर्म करें *</label>
+                      <div className={styles.formField}>
+                        <label className={styles.fieldLabel}>पासवर्ड कन्फर्म करें *</label>
                         <input
                           type="password"
                           required
                           value={registerForm.confirmPassword}
                           onChange={e => setRegisterForm({ ...registerForm, confirmPassword: e.target.value })}
                           placeholder="••••••••"
-                          style={{ background: 'rgba(8, 12, 26, 0.85)', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '8px', color: '#fff', padding: '10px', fontSize: '13.5px' }}
+                          className={styles.input}
                         />
                       </div>
                     </div>
@@ -748,112 +549,102 @@ export default function AffiliatePage() {
                 {/* STEP 2: BANK AND KYC DETAILS */}
                 {step === 2 && (
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                    <h3 style={{ fontSize: '18px', fontWeight: 800, marginBottom: '12px', color: '#ef4444' }}>बैंक, यूपीआई व सत्यापन (Payment & KYC Details)</h3>
+                    <h3 className={styles.sectionHeader}>बैंक, यूपीआई व सत्यापन (Payment & KYC Details)</h3>
                     
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                        <label style={{ fontSize: '11px', fontWeight: 700, color: '#94a3b8' }}>आधार नंबर (Aadhaar Number) *</label>
+                    <div className={styles.grid2Col}>
+                      <div className={styles.formField}>
+                        <label className={styles.fieldLabel}>आधार नंबर (Aadhaar Number) *</label>
                         <input
                           type="text"
                           required
                           value={registerForm.aadhaarNumber}
                           onChange={e => setRegisterForm({ ...registerForm, aadhaarNumber: e.target.value })}
                           placeholder="XXXX XXXX XXXX"
-                          style={{ background: 'rgba(8, 12, 26, 0.85)', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '8px', color: '#fff', padding: '10px', fontSize: '13.5px' }}
+                          className={styles.input}
                         />
                       </div>
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                        <label style={{ fontSize: '11px', fontWeight: 700, color: '#94a3b8' }}>पैन नंबर (PAN Number) *</label>
+                      <div className={styles.formField}>
+                        <label className={styles.fieldLabel}>पैन नंबर (PAN Number) *</label>
                         <input
                           type="text"
                           required
                           value={registerForm.panNumber}
                           onChange={e => setRegisterForm({ ...registerForm, panNumber: e.target.value })}
                           placeholder="ABCDE1234F"
-                          style={{ background: 'rgba(8, 12, 26, 0.85)', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '8px', color: '#fff', padding: '10px', fontSize: '13.5px' }}
+                          className={styles.input}
                         />
                       </div>
                     </div>
 
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                        <label style={{ fontSize: '11px', fontWeight: 700, color: '#94a3b8' }}>Bank Account Holder Name *</label>
+                    <div className={styles.grid2Col}>
+                      <div className={styles.formField}>
+                        <label className={styles.fieldLabel}>Bank Account Holder Name *</label>
                         <input
                           type="text"
                           required
                           value={registerForm.bankHolderName}
                           onChange={e => setRegisterForm({ ...registerForm, bankHolderName: e.target.value })}
                           placeholder="Account Holder Name"
-                          style={{ background: 'rgba(8, 12, 26, 0.85)', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '8px', color: '#fff', padding: '10px', fontSize: '13.5px' }}
+                          className={styles.input}
                         />
                       </div>
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                        <label style={{ fontSize: '11px', fontWeight: 700, color: '#94a3b8' }}>Account Number *</label>
+                      <div className={styles.formField}>
+                        <label className={styles.fieldLabel}>Account Number *</label>
                         <input
                           type="text"
                           required
                           value={registerForm.bankAccountNumber}
                           onChange={e => setRegisterForm({ ...registerForm, bankAccountNumber: e.target.value })}
                           placeholder="Bank Account Number"
-                          style={{ background: 'rgba(8, 12, 26, 0.85)', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '8px', color: '#fff', padding: '10px', fontSize: '13.5px' }}
+                          className={styles.input}
                         />
                       </div>
                     </div>
 
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                        <label style={{ fontSize: '11px', fontWeight: 700, color: '#94a3b8' }}>IFSC Code *</label>
+                    <div className={styles.grid2Col}>
+                      <div className={styles.formField}>
+                        <label className={styles.fieldLabel}>IFSC Code *</label>
                         <input
                           type="text"
                           required
                           value={registerForm.ifscCode}
                           onChange={e => setRegisterForm({ ...registerForm, ifscCode: e.target.value })}
                           placeholder="SBIN0001234"
-                          style={{ background: 'rgba(8, 12, 26, 0.85)', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '8px', color: '#fff', padding: '10px', fontSize: '13.5px' }}
+                          className={styles.input}
                         />
                       </div>
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                        <label style={{ fontSize: '11px', fontWeight: 700, color: '#94a3b8' }}>UPI ID (वैकल्पिक)</label>
+                      <div className={styles.formField}>
+                        <label className={styles.fieldLabel}>UPI ID (वैकल्पिक)</label>
                         <input
                           type="text"
                           value={registerForm.upiId}
                           onChange={e => setRegisterForm({ ...registerForm, upiId: e.target.value })}
                           placeholder="ram@ybl"
-                          style={{ background: 'rgba(8, 12, 26, 0.85)', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '8px', color: '#fff', padding: '10px', fontSize: '13.5px' }}
+                          className={styles.input}
                         />
                       </div>
                     </div>
 
-                    {/* Profile Photo simulation */}
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                      <label style={{ fontSize: '11px', fontWeight: 700, color: '#94a3b8' }}>प्रोफाइल फोटो URL</label>
+                    <div className={styles.formField}>
+                      <label className={styles.fieldLabel}>प्रोफाइल फोटो URL</label>
                       <input
                         type="text"
                         value={registerForm.photoUrl}
                         onChange={e => setRegisterForm({ ...registerForm, photoUrl: e.target.value })}
                         placeholder="https://images.com/my-profile.jpg"
-                        style={{ background: 'rgba(8, 12, 26, 0.85)', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '8px', color: '#fff', padding: '10px', fontSize: '13.5px' }}
+                        className={styles.input}
                       />
                     </div>
 
                     {/* Verification Area */}
-                    <div style={{
-                      background: 'rgba(255,255,255,0.02)',
-                      border: '1px solid rgba(255,255,255,0.05)',
-                      padding: '20px',
-                      borderRadius: '12px',
-                      display: 'flex',
-                      flexDirection: 'column',
-                      gap: '16px',
-                      marginTop: '8px'
-                    }}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <span style={{ fontSize: '13.5px', fontWeight: 700 }}>मोबाइल व ईमेल सत्यापन</span>
+                    <div className={styles.verificationBox}>
+                      <div className={styles.verificationRow}>
+                        <span className={styles.verificationTitle}>मोबाइल व ईमेल सत्यापन</span>
                         {!otpSent && (
                           <button
                             type="button"
                             onClick={handleSendOtps}
-                            style={{ background: '#4f46e5', color: '#fff', border: 'none', padding: '6px 14px', borderRadius: '6px', fontSize: '12px', fontWeight: 700, cursor: 'pointer' }}
+                            className={styles.verifyBtn}
                           >
                             सत्यापन कोड भेजें
                           </button>
@@ -862,57 +653,41 @@ export default function AffiliatePage() {
 
                       {otpSent && (
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                          <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+                          <div className={styles.otpRow}>
                             <input
                               type="text"
                               value={mobileOtp}
                               onChange={e => setMobileOtp(e.target.value)}
                               placeholder="Mobile OTP (123456)"
                               disabled={isMobileVerified}
-                              style={{ background: 'rgba(8, 12, 26, 0.85)', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '6px', color: '#fff', padding: '8px 12px', fontSize: '13px', flex: 1 }}
+                              className={styles.input}
+                              style={{ flex: 1 }}
                             />
                             <button
                               type="button"
                               onClick={handleVerifyMobile}
                               disabled={isMobileVerified}
-                              style={{
-                                background: isMobileVerified ? '#10b981' : '#4f46e5',
-                                color: '#fff',
-                                border: 'none',
-                                padding: '8px 14px',
-                                borderRadius: '6px',
-                                fontSize: '12px',
-                                fontWeight: 700,
-                                cursor: 'pointer'
-                              }}
+                              className={`${styles.verifyBtn} ${isMobileVerified ? styles.verifyBtnSuccess : ''}`}
                             >
                               {isMobileVerified ? 'Verified ✓' : 'Verify'}
                             </button>
                           </div>
 
-                          <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+                          <div className={styles.otpRow}>
                             <input
                               type="text"
                               value={emailOtp}
                               onChange={e => setEmailOtp(e.target.value)}
                               placeholder="Email OTP (123456)"
                               disabled={isEmailVerified}
-                              style={{ background: 'rgba(8, 12, 26, 0.85)', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '6px', color: '#fff', padding: '8px 12px', fontSize: '13px', flex: 1 }}
+                              className={styles.input}
+                              style={{ flex: 1 }}
                             />
                             <button
                               type="button"
                               onClick={handleVerifyEmail}
                               disabled={isEmailVerified}
-                              style={{
-                                background: isEmailVerified ? '#10b981' : '#4f46e5',
-                                color: '#fff',
-                                border: 'none',
-                                padding: '8px 14px',
-                                borderRadius: '6px',
-                                fontSize: '12px',
-                                fontWeight: 700,
-                                cursor: 'pointer'
-                              }}
+                              className={`${styles.verifyBtn} ${isEmailVerified ? styles.verifyBtnSuccess : ''}`}
                             >
                               {isEmailVerified ? 'Verified ✓' : 'Verify'}
                             </button>
@@ -926,33 +701,22 @@ export default function AffiliatePage() {
                 {/* STEP 3: AGREEMENT AND FINAL SUBMISSION */}
                 {step === 3 && (
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                    <h3 style={{ fontSize: '18px', fontWeight: 800, marginBottom: '12px', color: '#ef4444' }}>अंतिम घोषणा एवं शर्तें (Affiliate Agreement)</h3>
+                    <h3 className={styles.sectionHeader}>अंतिम घोषणा एवं शर्तें (Affiliate Agreement)</h3>
                     
-                    <div style={{
-                      background: 'rgba(8, 12, 26, 0.85)',
-                      border: '1px solid rgba(255,255,255,0.06)',
-                      padding: '20px',
-                      borderRadius: '12px',
-                      fontSize: '12.5px',
-                      lineHeight: '1.6',
-                      maxHeight: '260px',
-                      overflowY: 'auto',
-                      color: '#94a3b8',
-                      textAlign: 'justify'
-                    }}>
-                      <h4 style={{ color: '#fff', fontWeight: 700, marginBottom: '8px' }}>THE DESI ANDAZ AFFILIATE PARTNER AGREEMENT</h4>
+                    <div className={styles.agreementText}>
+                      <h4 className={styles.agreementHeader}>THE DESI ANDAZ AFFILIATE PARTNER AGREEMENT</h4>
                       <p style={{ marginBottom: '8px' }}><strong>1. Commission Policy (कमीशन नियम):</strong> कमीशन की गणना केवल ग्राहक द्वारा भुगतान की गई राशि में से 18% GST काटने के बाद बचे बेस सर्विस वैल्यू (Base Service value) पर की जाएगी। गेटवे शुल्क या अतिरिक्त सरकारी करों पर कोई कमीशन देय नहीं होगा।</p>
                       <p style={{ marginBottom: '8px' }}><strong>2. Refund Policy (रिफंड नियम):</strong> यदि ग्राहक द्वारा खरीदे गए विज्ञापन पैकेज को निरस्त कर दिया जाता है या रिफंड किया जाता है, तो उस सेल पर अर्जित कमीशन तुरंत काट लिया जाएगा और वॉलेट बैलेंस समायोजित किया जाएगा।</p>
                       <p style={{ marginBottom: '8px' }}><strong>3. Payout Schedule (भुगतान चक्र):</strong> संचित भुगतान महीने के अंत में संसाधित किए जाएंगे और अगले महीने की 1 से 7 तारीख के बीच bank हस्तांतरण या यूपीआई के माध्यम से जारी किए जाएंगे। न्यूनतम भुगतान सीमा ₹1500 है। यदि अर्जित कमीशन ₹1500 से कम है, तो उसे अगले माह के लिए कैरी फॉरवर्ड कर दिया जाएगा।</p>
-                      <p style={{ marginBottom: '8px' }}><strong>4. Anti-Fraud Policy (धोखाधड़ी निषेध):</strong> अपने स्वयं के पार्टनर लिंक का उपयोग करके खरीदारी करना (Self-purchases) सख्त वर्जित है। डुप्लिकेट संपर्क विवरण, एक ही आईपी/डिवाइस के माध्यम से किए गए संदिग्ध भुगतानों को सिस्टम द्वारा स्वचालित रूप से फ्लैग किया जाएगा और एडमिन द्वारा खाते को बिना किसी पूर्व सूचना के निलंबित किया जा सकता है।</p>
+                      <p style={{ marginBottom: '8px' }}><strong>4. Anti-Fraud Policy (धोखाधड़ी निषेध):</strong> अपने स्वयं के पार्टनर लिंक का उपयोग करके खरीदारी करना (Self-purchases) सख्त वर्जित है।  संदिग्ध भुगतानों को सिस्टम द्वारा स्वचालित रूप से फ्लैग किया जाएगा और एडमिन द्वारा खाते को बिना किसी पूर्व सूचना के निलंबित किया जा सकता है।</p>
                     </div>
 
-                    <label style={{ display: 'flex', gap: '10px', alignItems: 'center', fontSize: '13px', cursor: 'pointer', marginTop: '10px' }}>
+                    <label className={styles.checkboxLabel}>
                       <input
                         type="checkbox"
                         checked={registerForm.agreementAccepted}
                         onChange={e => setRegisterForm({ ...registerForm, agreementAccepted: e.target.checked })}
-                        style={{ width: '18px', height: '18px', cursor: 'pointer' }}
+                        className={styles.checkbox}
                       />
                       <span>मैं घोषणा करता हूँ कि मैंने सभी नियमों, कमीशन पॉलिसियों और रिफंड शर्तों को ध्यानपूर्वक पढ़ लिया है और मैं इनसे पूरी तरह सहमत हूँ। *</span>
                     </label>
@@ -960,21 +724,12 @@ export default function AffiliatePage() {
                 )}
 
                 {/* Stepper Actions */}
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '16px', borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: '20px' }}>
+                <div className={styles.wizardActions}>
                   {step > 1 ? (
                     <button
                       type="button"
                       onClick={() => setStep(prev => prev - 1)}
-                      style={{
-                        background: 'rgba(255, 255, 255, 0.05)',
-                        color: '#fff',
-                        border: '1px solid rgba(255,255,255,0.1)',
-                        padding: '10px 24px',
-                        borderRadius: '8px',
-                        fontSize: '13.5px',
-                        fontWeight: 600,
-                        cursor: 'pointer'
-                      }}
+                      className={styles.wizardBackBtn}
                     >
                       पीछे जाएं
                     </button>
@@ -983,16 +738,7 @@ export default function AffiliatePage() {
                   <button
                     type="submit"
                     disabled={loading}
-                    style={{
-                      background: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
-                      color: '#fff',
-                      border: 'none',
-                      padding: '10px 28px',
-                      borderRadius: '8px',
-                      fontSize: '13.5px',
-                      fontWeight: 700,
-                      cursor: 'pointer'
-                    }}
+                    className={styles.wizardNextBtn}
                   >
                     {loading ? 'संसाधित हो रहा है...' : step === 3 ? 'रजिस्टर करें' : 'आगे बढ़ें'}
                   </button>
