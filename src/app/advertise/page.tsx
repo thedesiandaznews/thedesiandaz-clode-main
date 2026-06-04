@@ -227,6 +227,8 @@ export default function AdvertisePage() {
         '6month': 'https://rzp.io/rzp/SVWX8m6R',
         '12month': ''
       },
+      color: '#FF6B00',
+      glow: 'rgba(255, 107, 0, 0.15)'
     }
   ];
 
@@ -838,6 +840,21 @@ export default function AdvertisePage() {
                         </span>
                         <h4 style={{ fontSize: '19px', fontWeight: 900, color: '#fff', marginTop: '16px', marginBottom: '8px' }}>{pkg.name}</h4>
                         <p style={{ fontSize: '12.5px', color: '#94a3b8', margin: 0, lineHeight: '1.45' }}>{pkg.description}</p>
+                        
+                        {/* List of deliverables */}
+                        <div style={{ marginTop: '20px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                          <span style={{ fontSize: '10.5px', color: pkg.color, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.6px', display: 'block' }}>
+                            🎁 Included Deliverables:
+                          </span>
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                            {pkg.deliverables.map((del: string, idx: number) => (
+                              <div key={idx} style={{ display: 'flex', gap: '8px', alignItems: 'flex-start', fontSize: '11.5px', color: '#cbd5e1' }}>
+                                <span style={{ color: pkg.color, fontWeight: 'bold' }}>✓</span>
+                                <span style={{ lineHeight: '1.3', textAlign: 'left' }}>{del}</span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
                       </div>
                       <div style={{ marginTop: '24px', borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: '16px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
                         <div>
