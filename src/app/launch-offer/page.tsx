@@ -102,8 +102,8 @@ export default function LaunchOfferPage() {
   }, [formData.businessName, formData.targetCity]);
 
   const handleSelectPackage = (pkg: typeof LAUNCH_PACKAGES[0]) => {
-    setSelectedPkg(pkg);
-    setCheckoutStep('customize');
+    const refParam = referralCode ? `&ref=${referralCode}` : '';
+    window.location.href = `/advertise?pkg=${pkg.id}${refParam}`;
   };
 
   const handleFormChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {

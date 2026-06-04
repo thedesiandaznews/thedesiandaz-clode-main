@@ -227,10 +227,31 @@ export default function AdvertisePage() {
         '6month': 'https://rzp.io/rzp/SVWX8m6R',
         '12month': ''
       },
-      color: '#FF6B00',
-      glow: 'rgba(255, 107, 0, 0.15)'
     }
   ];
+
+  // Pre-select package and referral configs if passed via query parameters (e.g. from launch-offer page redirect)
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      const pkgId = params.get('pkg') || params.get('package');
+      if (pkgId) {
+        const found = packages.find(p => p.id === pkgId);
+        if (found) {
+          setSelectedPackage(found);
+          const activeDur = Object.keys(found.pricing).find(k => (found.pricing as any)[k].base > 0) || '2month';
+          setSelectedDuration(activeDur as any);
+          setAuthMode('signup');
+          setCurrentStep('account');
+        }
+      }
+      
+      const ref = params.get('ref');
+      if (ref) {
+        document.cookie = `tda_ref=${ref}; path=/; max-age=${30 * 24 * 60 * 60};`;
+      }
+    }
+  }, []);
 
   const slides = [
     {
