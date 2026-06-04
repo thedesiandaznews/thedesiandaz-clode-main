@@ -981,10 +981,40 @@ export default function AdvertiserDashboard() {
                     📅 {selectedClient.startDate} <span style={{ color: '#cbd5e1' }}>→</span> {selectedClient.endDate}
                   </strong>
                 </div>
-                <div style={{ gridColumn: 'span 2' }}>
+                 <div style={{ gridColumn: 'span 2' }}>
                   <div style={{ color: '#94a3b8', fontSize: '10px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '6px' }}>PLAN EXPIRATION STATUS</div>
                   {getPlanExpiryBadge(selectedClient.endDate, selectedClient.campaignStatus)}
                 </div>
+
+                {((selectedClient as any).logoAsset || (selectedClient as any).bannerAsset) && (
+                  <div style={{ gridColumn: 'span 2', borderTop: '1px solid #f1f5f9', paddingTop: '16px', marginTop: '8px' }}>
+                    <div style={{ color: '#ef4444', fontSize: '11px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.6px', marginBottom: '12px' }}>
+                      🖼️ Uploaded Brand Assets:
+                    </div>
+                    <div style={{ display: 'flex', gap: '20px', flexWrap: 'wrap' }}>
+                      {(selectedClient as any).logoAsset && (
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                          <span style={{ fontSize: '10.5px', color: '#64748b', fontWeight: 600 }}>Official Logo:</span>
+                          <img 
+                            src={(selectedClient as any).logoAsset} 
+                            alt="Logo" 
+                            style={{ height: '70px', borderRadius: '8px', border: '1px solid #cbd5e1', background: '#000', objectFit: 'contain', padding: '4px' }} 
+                          />
+                        </div>
+                      )}
+                      {(selectedClient as any).bannerAsset && (
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                          <span style={{ fontSize: '10.5px', color: '#64748b', fontWeight: 600 }}>Ad Graphic Creative:</span>
+                          <img 
+                            src={(selectedClient as any).bannerAsset} 
+                            alt="Ad Creative" 
+                            style={{ height: '70px', borderRadius: '8px', border: '1px solid #cbd5e1', objectFit: 'contain' }} 
+                          />
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
               </div>
 
               {/* Action Buttons */}

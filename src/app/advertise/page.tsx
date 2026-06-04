@@ -19,6 +19,81 @@ export default function AdvertisePage() {
   const [showLiveIframe, setShowLiveIframe] = useState(false);
   const [simulatedCard, setSimulatedCard] = useState({ number: '4532 •••• •••• 8824', name: 'Sonu Kumar Saha', expiry: '12/28', cvv: '•••' });
 
+  // Onboarding Workspace Assets State
+  const [uploadedLogo, setUploadedLogo] = useState<string | null>(null);
+  const [uploadedBanner, setUploadedBanner] = useState<string | null>(null);
+  const [tickerReviewText, setTickerReviewText] = useState('');
+  const [bannerReviewText, setBannerReviewText] = useState('');
+  const [latestClientId, setLatestClientId] = useState('');
+
+  // Handle Logo Upload base64 reader
+  const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      const base64 = reader.result as string;
+      setUploadedLogo(base64);
+      updateClientAsset('logoAsset', base64);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  // Handle Banner Upload base64 reader
+  const handleBannerUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      const base64 = reader.result as string;
+      setUploadedBanner(base64);
+      updateClientAsset('bannerAsset', base64);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  // Sync back to localStorage client details dynamically
+  const updateClientAsset = (key: string, value: string) => {
+    try {
+      const saved = localStorage.getItem('tda_advertiser_clients');
+      if (saved) {
+        const list = JSON.parse(saved);
+        if (list.length > 0) {
+          const lastIdx = list.length - 1;
+          list[lastIdx] = {
+            ...list[lastIdx],
+            [key]: value
+          };
+          localStorage.setItem('tda_advertiser_clients', JSON.stringify(list));
+        }
+      }
+    } catch (e) {
+      console.error('Failed to sync client asset', e);
+    }
+  };
+
+  // Load latest settings on success dashboard initialization
+  useEffect(() => {
+    if (currentStep === 'success') {
+      const saved = localStorage.getItem('tda_advertiser_clients');
+      if (saved) {
+        try {
+          const list = JSON.parse(saved);
+          const currentClient = list[list.length - 1];
+          if (currentClient) {
+            setUploadedLogo(currentClient.logoAsset || null);
+            setUploadedBanner(currentClient.bannerAsset || null);
+            setTickerReviewText(currentClient.tickerText || '');
+            setBannerReviewText(currentClient.bannerText || '');
+            setLatestClientId(currentClient.id || '');
+          }
+        } catch (e) {
+          console.error(e);
+        }
+      }
+    }
+  }, [currentStep]);
+
   // Handle Account Signup
   const handleAccountSignup = (e: React.FormEvent) => {
     e.preventDefault();
@@ -115,6 +190,7 @@ export default function AdvertisePage() {
 
       clientsList.push(newClient);
       localStorage.setItem('tda_advertiser_clients', JSON.stringify(clientsList));
+      setLatestClientId(newClientId);
     } catch (err) {
       console.error('Failed to save B2B client details to database', err);
     }
@@ -1763,60 +1839,186 @@ export default function AdvertisePage() {
         )}
 
         {/* ==================== STEP 7: ONBOARDING SUCCESS DASHBOARD ==================== */}
-        {currentStep === 'success' && (
+        {currentStep === 'success' && selectedPackage && (
           <div className="glass-card" style={{ 
             border: '2.5px solid #10b981',
-            padding: '60px 40px',
-            textAlign: 'center',
+            padding: '48px 36px',
             boxShadow: '0 20px 50px rgba(16,185,129,0.12)',
-            maxWidth: '800px',
+            maxWidth: '1000px',
             margin: '0 auto'
           }}>
-            <div style={{ width: '68px', height: '68px', background: 'rgba(16, 185, 129, 0.15)', color: '#10b981', borderRadius: '50%', display: 'flex', justifySelf: 'center', alignItems: 'center', justifyContent: 'center', fontSize: '34px', margin: '0 auto 24px auto' }}>✓</div>
-            
-            <h2 style={{ fontSize: '34px', fontWeight: 900, color: '#fff', marginBottom: '12px', letterSpacing: '-0.5px' }}>
-              Your Campaign is Booked!
-            </h2>
-            <p style={{ fontSize: '16px', color: '#10b981', fontWeight: 800, marginBottom: '40px' }}>
-              Santhal Pargana\'s First Media Network stands ready to launch your brand.
-            </p>
-
-            <div style={{ 
-              background: 'rgba(8, 12, 26, 0.45)', 
-              border: '1px solid rgba(255, 255, 255, 0.04)', 
-              borderRadius: '20px', 
-              padding: '28px', 
-              textAlign: 'left',
-              marginBottom: '40px',
-              display: 'grid',
-              gridTemplateColumns: '1.1fr 0.9fr',
-              gap: '30px'
-            }}>
-              <div>
-                <h5 style={{ color: '#ef4444', fontWeight: 800, fontSize: '13.5px', marginBottom: '14px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                  Next Onboarding Steps:
-                </h5>
-                <ol style={{ margin: 0, paddingLeft: '16px', fontSize: '13px', color: '#cbd5e1', display: 'flex', flexDirection: 'column', gap: '10px', lineHeight: '1.45' }}>
-                  <li>Our Campaign Manager will message you on WhatsApp (<b>{accountForm.phone}</b>) within 15 minutes.</li>
-                  <li>Provide your logo assets, tagline text, or raw banners directly over WhatsApp.</li>
-                  <li>Our studio designs the L-shape overlays and tickers.</li>
-                  <li>We send mockups for your approval, then go live!</li>
-                </ol>
-              </div>
-
-              <div>
-                <h5 style={{ color: '#f59e0b', fontWeight: 800, fontSize: '13.5px', marginBottom: '14px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                  Campaign Meta Profile:
-                </h5>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '13px', color: '#cbd5e1' }}>
-                  <div><b>Partner Brand:</b> <span style={{ color: '#fff', fontWeight: 700 }}>{detailsForm.businessName}</span></div>
-                  <div><b>Geotargeting Area:</b> <span style={{ color: '#10b981', fontWeight: 700 }}>{detailsForm.targetCity} (Dynamic Filter)</span></div>
-                  <div><b>Campaign Manager:</b> <span style={{ color: '#fff', fontWeight: 700 }}>Sonu Kumar Saha</span></div>
-                  <div><b>Receipt Hash:</b> <span style={{ color: '#fff', fontFamily: 'monospace' }}>TDA_PAY_B2B_SUCCESS_88924</span></div>
-                </div>
-              </div>
+            {/* Automatic Dynamic Thank You Message Banner */}
+            <div style={{ textAlign: 'center', marginBottom: '32px' }}>
+              <div style={{ width: '64px', height: '64px', background: 'rgba(16, 185, 129, 0.15)', color: '#10b981', borderRadius: '50%', display: 'flex', justifySelf: 'center', alignItems: 'center', justifyContent: 'center', fontSize: '32px', margin: '0 auto 20px auto' }}>✓</div>
+              <h2 style={{ fontSize: '30px', fontWeight: 900, color: '#fff', marginBottom: '8px', letterSpacing: '-0.5px' }}>
+                🎉 Thank You! Payment Verified Successfully
+              </h2>
+              <p style={{ fontSize: '14.5px', color: '#cbd5e1', maxWidth: '650px', margin: '0 auto', lineHeight: '1.5' }}>
+                Hello <b>{accountForm.name || 'Advertiser Partner'}</b>, your transaction for <b>{selectedPackage.name}</b> is confirmed. Below is your campaign dashboard. Please upload your raw marketing assets to go live!
+              </p>
             </div>
 
+            {/* Main Workspace Layout: Onboarding tracker on left, Asset uploaders on right */}
+            <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 0.8fr', gap: '32px', textAlign: 'left', marginBottom: '36px' }}>
+              
+              {/* Left Column: Brand Assets Upload Terminal */}
+              <div className="glass-card" style={{ padding: '24px', border: '1px solid rgba(255, 255, 255, 0.06)', background: 'rgba(5, 7, 14, 0.45)' }}>
+                <h4 style={{ color: '#fff', fontSize: '15px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.6px', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <span>🖼️ Advertiser Brand Assets Manager</span>
+                  <span style={{ fontSize: '11px', background: 'rgba(239, 68, 68, 0.15)', color: '#ef4444', padding: '2px 8px', borderRadius: '12px' }}>Workspace ID: {latestClientId}</span>
+                </h4>
+
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                  {/* Logo Image Uploader */}
+                  <div style={{ border: '1px solid rgba(255,255,255,0.06)', padding: '16px', borderRadius: '12px', background: 'rgba(0,0,0,0.2)' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
+                      <label style={{ fontSize: '12.5px', fontWeight: 800, color: '#fff' }}>Official Company Logo (PNG/JPEG)</label>
+                      {uploadedLogo ? (
+                        <span style={{ fontSize: '11px', color: '#10b981', fontWeight: 'bold' }}>✓ Uploaded</span>
+                      ) : (
+                        <span style={{ fontSize: '11px', color: '#f59e0b', fontWeight: 'bold' }}>⚠️ Required</span>
+                      )}
+                    </div>
+                    <input 
+                      type="file" 
+                      accept="image/*" 
+                      onChange={handleLogoUpload} 
+                      style={{ fontSize: '12px', color: '#94a3b8', width: '100%', cursor: 'pointer' }}
+                    />
+                    {uploadedLogo && (
+                      <div style={{ marginTop: '12px', display: 'flex', alignItems: 'center', gap: '12px' }}>
+                        <img 
+                          src={uploadedLogo} 
+                          alt="Logo Preview" 
+                          style={{ height: '56px', borderRadius: '8px', border: '1.5px solid #10b981', background: '#000' }} 
+                        />
+                        <span style={{ fontSize: '11.5px', color: '#94a3b8' }}>Preview rendering live. Stored securely.</span>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Banner Creative Graphic Uploader */}
+                  <div style={{ border: '1px solid rgba(255,255,255,0.06)', padding: '16px', borderRadius: '12px', background: 'rgba(0,0,0,0.2)' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
+                      <label style={{ fontSize: '12.5px', fontWeight: 800, color: '#fff' }}>Campaign Ad Banner Graphic</label>
+                      {uploadedBanner ? (
+                        <span style={{ fontSize: '11px', color: '#10b981', fontWeight: 'bold' }}>✓ Uploaded</span>
+                      ) : (
+                        <span style={{ fontSize: '11px', color: '#f59e0b', fontWeight: 'bold' }}>⚠️ Required</span>
+                      )}
+                    </div>
+                    <input 
+                      type="file" 
+                      accept="image/*" 
+                      onChange={handleBannerUpload} 
+                      style={{ fontSize: '12px', color: '#94a3b8', width: '100%', cursor: 'pointer' }}
+                    />
+                    {uploadedBanner && (
+                      <div style={{ marginTop: '12px', display: 'flex', alignItems: 'center', gap: '12px' }}>
+                        <img 
+                          src={uploadedBanner} 
+                          alt="Banner Preview" 
+                          style={{ maxHeight: '80px', maxWidth: '100%', borderRadius: '8px', border: '1.5px solid #10b981' }} 
+                        />
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Dynamic Ad Ticker Text Previewer */}
+                  <div style={{ border: '1px solid rgba(255,255,255,0.06)', padding: '16px', borderRadius: '12px', background: 'rgba(0,0,0,0.2)' }}>
+                    <div style={{ fontSize: '12.5px', fontWeight: 800, color: '#fff', marginBottom: '6px' }}>Verify Campaign Taglines</div>
+                    <div style={{ fontSize: '11.5px', color: '#94a3b8', background: 'rgba(255,255,255,0.02)', padding: '10px 14px', borderRadius: '6px', borderLeft: '3px solid #ef4444', lineHeight: '1.45', marginBottom: '8px' }}>
+                      <b>Broadcast Ticker:</b> {tickerReviewText || 'No Ticker Configured'}
+                    </div>
+                    <div style={{ fontSize: '11.5px', color: '#94a3b8', background: 'rgba(255,255,255,0.02)', padding: '10px 14px', borderRadius: '6px', borderLeft: '3px solid #f59e0b', lineHeight: '1.45' }}>
+                      <b>Display Banner:</b> {bannerReviewText || 'No Banner Tagline Configured'}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Right Column: Onboarding tracker and Client meta */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+                {/* Onboarding Timeline Checklist */}
+                <div className="glass-card" style={{ padding: '24px', border: '1px solid rgba(255, 255, 255, 0.06)', background: 'rgba(5, 7, 14, 0.45)' }}>
+                  <h4 style={{ color: '#ef4444', fontSize: '13.5px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.6px', marginBottom: '16px' }}>
+                    📈 Onboarding Checklist status
+                  </h4>
+                  
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+                    <div style={{ display: 'flex', gap: '10px', alignItems: 'center', fontSize: '12.5px' }}>
+                      <span style={{ color: '#10b981', fontWeight: 900, background: 'rgba(16,185,129,0.12)', padding: '2px 8px', borderRadius: '20px' }}>✓</span>
+                      <span style={{ color: '#fff' }}>Secure Payment Confirmed</span>
+                    </div>
+
+                    <div style={{ display: 'flex', gap: '10px', alignItems: 'center', fontSize: '12.5px' }}>
+                      {uploadedLogo && uploadedBanner ? (
+                        <>
+                          <span style={{ color: '#10b981', fontWeight: 900, background: 'rgba(16,185,129,0.12)', padding: '2px 8px', borderRadius: '20px' }}>✓</span>
+                          <span style={{ color: '#fff' }}>Brand Assets Uploaded</span>
+                        </>
+                      ) : (
+                        <>
+                          <span style={{ color: '#f59e0b', fontWeight: 900, background: 'rgba(245,158,11,0.12)', padding: '2px 8px', borderRadius: '20px' }}>⚠️</span>
+                          <span style={{ color: '#cbd5e1' }}>Asset Upload Pending</span>
+                        </>
+                      )}
+                    </div>
+
+                    <div style={{ display: 'flex', gap: '10px', alignItems: 'center', fontSize: '12.5px' }}>
+                      {uploadedLogo && uploadedBanner ? (
+                        <>
+                          <span style={{ color: '#f59e0b', fontWeight: 900, background: 'rgba(245,158,11,0.12)', padding: '2px 8px', borderRadius: '20px' }}>⏳</span>
+                          <span style={{ color: '#fff' }}>Graphic Studio Designing overlays</span>
+                        </>
+                      ) : (
+                        <>
+                          <span style={{ color: '#64748b', fontWeight: 900, background: 'rgba(255,255,255,0.05)', padding: '2px 8px', borderRadius: '20px' }}>•</span>
+                          <span style={{ color: '#64748b' }}>Design Verification Pending</span>
+                        </>
+                      )}
+                    </div>
+
+                    <div style={{ display: 'flex', gap: '10px', alignItems: 'center', fontSize: '12.5px' }}>
+                      <span style={{ color: '#64748b', fontWeight: 900, background: 'rgba(255,255,255,0.05)', padding: '2px 8px', borderRadius: '20px' }}>•</span>
+                      <span style={{ color: '#64748b' }}>Campaign Live on Broadcast Network</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Meta details Summary */}
+                <div className="glass-card" style={{ padding: '24px', border: '1px solid rgba(255, 255, 255, 0.06)', background: 'rgba(5, 7, 14, 0.45)' }}>
+                  <h4 style={{ color: '#f59e0b', fontSize: '13.5px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.6px', marginBottom: '16px' }}>
+                    📋 Campaign Details Summary
+                  </h4>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '12.5px', color: '#cbd5e1' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                      <span>Partner Brand:</span>
+                      <strong style={{ color: '#fff' }}>{detailsForm.businessName}</strong>
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                      <span>Duration Period:</span>
+                      <strong style={{ color: '#fff' }}>{selectedDuration.toUpperCase()} Plan</strong>
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                      <span>Target City:</span>
+                      <strong style={{ color: '#10b981' }}>{detailsForm.targetCity} Only</strong>
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                      <span>Amount Paid:</span>
+                      <strong style={{ color: '#f59e0b', fontFamily: 'monospace' }}>₹{selectedPackage.activePlan.total.toLocaleString('en-IN')}</strong>
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                      <span>Razorpay RP ID:</span>
+                      <span style={{ fontFamily: 'monospace', fontSize: '11px', color: '#94a3b8' }}>{simulatedCard.number ? 'pay_RPY_LIVE_' + latestClientId : 'Pending'}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+            {/* Bottom Actions Row */}
             <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: '28px', display: 'flex', justifyContent: 'center', gap: '20px', flexWrap: 'wrap' }}>
               <Link 
                 href="/"
@@ -1836,7 +2038,7 @@ export default function AdvertisePage() {
               </Link>
               
               <a 
-                href="https://wa.me/918409659560" 
+                href={`https://wa.me/918409659560?text=Hello%20Sonu%20Kumar%20Saha,%20I%20have%20successfully%20uploaded%20the%20ad%20campaign%20assets%20for%20${encodeURIComponent(detailsForm.businessName)}%20(Client%20ID:%20${latestClientId})!%20Please%20verify%20my%20onboarding%20status.`}
                 target="_blank" 
                 rel="noopener noreferrer"
                 style={{ 
@@ -1850,10 +2052,11 @@ export default function AdvertisePage() {
                   display: 'inline-flex',
                   alignItems: 'center',
                   gap: '10px',
-                  animation: 'activePulse 3s infinite'
+                  animation: 'activePulse 3s infinite',
+                  boxShadow: '0 4px 15px rgba(37, 211, 102, 0.3)'
                 }}
               >
-                <i className="fab fa-whatsapp" style={{ fontSize: '18px' }} /> Message Sonu on WhatsApp
+                <i className="fab fa-whatsapp" style={{ fontSize: '18px' }} /> Confirm Assets over WhatsApp
               </a>
             </div>
 
