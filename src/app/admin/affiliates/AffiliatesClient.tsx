@@ -428,16 +428,16 @@ export default function AffiliatesClient({ initialList }: { initialList: any[] }
                       setPayoutForm({ ...payoutForm, amount: selectedAffiliate.walletBalance });
                       setShowPayoutModal(true);
                     }}
-                    disabled={selectedAffiliate.walletBalance < 500}
+                    disabled={selectedAffiliate.walletBalance < 1500}
                     style={{
-                      background: selectedAffiliate.walletBalance >= 500 ? '#10b981' : '#cbd5e1',
+                      background: selectedAffiliate.walletBalance >= 1500 ? '#10b981' : '#cbd5e1',
                       color: '#fff',
                       border: 'none',
                       padding: '8px 12px',
                       borderRadius: '6px',
                       fontSize: '12px',
                       fontWeight: 700,
-                      cursor: selectedAffiliate.walletBalance >= 500 ? 'pointer' : 'not-allowed',
+                      cursor: selectedAffiliate.walletBalance >= 1500 ? 'pointer' : 'not-allowed',
                       flex: 1
                     }}
                   >

@@ -630,11 +630,11 @@ export default function AffiliateDashboard() {
                       ₹{data.walletBalance.toLocaleString('en-IN')}
                     </p>
                     <span style={{ fontSize: '12px', color: '#94a3b8' }}>
-                      *न्यूनतम भुगतान सीमा (Minimum Payout Threshold): <strong>₹500</strong>
+                      *न्यूनतम भुगतान सीमा (Minimum Payout Threshold): <strong>₹1500</strong>
                     </span>
                   </div>
 
-                  {data.walletBalance < 500 && (
+                  {data.walletBalance < 1500 && (
                     <div style={{ background: '#f59e0b10', border: '1px solid #f59e0b30', padding: '10px 14px', borderRadius: '8px', fontSize: '12px', color: '#f59e0b' }}>
                       ℹ️ आपका वॉलेट बैलेंस भुगतान सीमा से कम है। राशि स्वतः अगले महीने में कैरी फॉरवर्ड हो जाएगी।
                     </div>

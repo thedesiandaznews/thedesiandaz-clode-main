@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { registerAffiliatePartner, loginAffiliatePartner } from '@/actions/affiliate';
+import Footer from '@/components/Footer';
 
 type ViewMode = 'landing' | 'login' | 'register';
 
@@ -416,7 +417,7 @@ export default function AffiliatePage() {
                 </div>
                 <div>
                   <strong style={{ color: '#fff' }}>• Payout Threshold & Process (भुगतान सीमा और चक्र):</strong> 
-                  न्यूनतम भुगतान राशि ₹500 है। पेंडिंग या अप्रूव्ड राशि ₹500 से कम होने पर वह अगले महीने में कैरी फॉरवर्ड हो जाएगी। भुगतान प्रति माह 1 से 7 तारीख के बीच आपके बैंक/UPI पर ट्रांसफर किया जाता है।
+                  न्यूनतम भुगतान राशि ₹1500 है। पेंडिंग या अप्रूव्ड राशि ₹1500 से कम होने पर वह अगले महीने में कैरी फॉरवर्ड हो जाएगी। भुगतान प्रति माह 1 से 7 तारीख के बीच आपके बैंक/UPI पर ट्रांसफर किया जाता है।
                 </div>
                 <div>
                   <strong style={{ color: '#fff' }}>• Self-Purchasing Policy (स्व-खरीद निषेध):</strong> 
@@ -942,7 +943,7 @@ export default function AffiliatePage() {
                       <h4 style={{ color: '#fff', fontWeight: 700, marginBottom: '8px' }}>THE DESI ANDAZ AFFILIATE PARTNER AGREEMENT</h4>
                       <p style={{ marginBottom: '8px' }}><strong>1. Commission Policy (कमीशन नियम):</strong> कमीशन की गणना केवल ग्राहक द्वारा भुगतान की गई राशि में से 18% GST काटने के बाद बचे बेस सर्विस वैल्यू (Base Service value) पर की जाएगी। गेटवे शुल्क या अतिरिक्त सरकारी करों पर कोई कमीशन देय नहीं होगा।</p>
                       <p style={{ marginBottom: '8px' }}><strong>2. Refund Policy (रिफंड नियम):</strong> यदि ग्राहक द्वारा खरीदे गए विज्ञापन पैकेज को निरस्त कर दिया जाता है या रिफंड किया जाता है, तो उस सेल पर अर्जित कमीशन तुरंत काट लिया जाएगा और वॉलेट बैलेंस समायोजित किया जाएगा।</p>
-                      <p style={{ marginBottom: '8px' }}><strong>3. Payout Schedule (भुगतान चक्र):</strong> संचित भुगतान महीने के अंत में संसाधित किए जाएंगे और अगले महीने की 1 से 7 तारीख के बीच बैंक हस्तांतरण या यूपीआई के माध्यम से जारी किए जाएंगे। न्यूनतम भुगतान सीमा ₹500 है। यदि अर्जित कमीशन ₹500 से कम है, तो उसे अगले माह के लिए कैरी फॉरवर्ड कर दिया जाएगा।</p>
+                      <p style={{ marginBottom: '8px' }}><strong>3. Payout Schedule (भुगतान चक्र):</strong> संचित भुगतान महीने के अंत में संसाधित किए जाएंगे और अगले महीने की 1 से 7 तारीख के बीच bank हस्तांतरण या यूपीआई के माध्यम से जारी किए जाएंगे। न्यूनतम भुगतान सीमा ₹1500 है। यदि अर्जित कमीशन ₹1500 से कम है, तो उसे अगले माह के लिए कैरी फॉरवर्ड कर दिया जाएगा।</p>
                       <p style={{ marginBottom: '8px' }}><strong>4. Anti-Fraud Policy (धोखाधड़ी निषेध):</strong> अपने स्वयं के पार्टनर लिंक का उपयोग करके खरीदारी करना (Self-purchases) सख्त वर्जित है। डुप्लिकेट संपर्क विवरण, एक ही आईपी/डिवाइस के माध्यम से किए गए संदिग्ध भुगतानों को सिस्टम द्वारा स्वचालित रूप से फ्लैग किया जाएगा और एडमिन द्वारा खाते को बिना किसी पूर्व सूचना के निलंबित किया जा सकता है।</p>
                     </div>
 
@@ -1003,37 +1004,7 @@ export default function AffiliatePage() {
 
       </main>
 
-      {/* Footer */}
-      <footer style={{
-        background: 'rgba(9, 13, 22, 0.95)',
-        borderTop: '1px solid rgba(255, 255, 255, 0.06)',
-        padding: '40px 24px 20px',
-        position: 'relative',
-        zIndex: 2,
-        marginTop: '60px'
-      }}>
-        <div style={{ maxWidth: '1200px', margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '30px', marginBottom: '30px' }}>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', textAlign: 'left' }}>
-            <span style={{ fontSize: '16px', fontWeight: 900, color: '#fff' }}>THE DESI ANDAZ <span style={{ color: '#ef4444' }}>AFFILIATES</span></span>
-            <p style={{ fontSize: '12.5px', color: '#64748b', lineHeight: 1.6, margin: 0 }}>भारत का सबसे तेज़ी से उभरता हुआ स्वतंत्र मीडिया नेटवर्क। हमारे साथ पार्टनर बनकर अपने नेटवर्क को मुद्रीकृत करें।</p>
-          </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', textAlign: 'left' }}>
-            <span style={{ fontSize: '13px', fontWeight: 700, color: '#fff', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Quick Links</span>
-            <Link href="/" style={{ fontSize: '13px', color: '#94a3b8', textDecoration: 'none', transition: 'color 0.2s' }}>Home</Link>
-            <Link href="/advertise" style={{ fontSize: '13px', color: '#94a3b8', textDecoration: 'none', transition: 'color 0.2s' }}>Advertise with Us</Link>
-            <Link href="/contact" style={{ fontSize: '13px', color: '#94a3b8', textDecoration: 'none', transition: 'color 0.2s' }}>Contact Support</Link>
-          </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', textAlign: 'left' }}>
-            <span style={{ fontSize: '13px', fontWeight: 700, color: '#fff', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Important Rules</span>
-            <span style={{ fontSize: '12.5px', color: '#64748b' }}>• Minimum Payout: ₹500</span>
-            <span style={{ fontSize: '12.5px', color: '#64748b' }}>• Calculations: Base Value Only</span>
-            <span style={{ fontSize: '12.5px', color: '#64748b' }}>• Tracking: 90-Day Cookie Validity</span>
-          </div>
-        </div>
-        <div style={{ maxWidth: '1200px', margin: '0 auto', borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: '20px', textAlign: 'center', fontSize: '12.5px', color: '#64748b' }}>
-          © {new Date().getFullYear()} The Desi Andaz Media Network. All rights reserved. Registered RNI Number: JHBIL/26/A3245
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }
