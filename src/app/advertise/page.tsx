@@ -543,20 +543,10 @@ export default function AdvertisePage() {
         }
         .packages-responsive-grid {
           display: grid;
-          grid-template-columns: repeat(5, 1fr);
-          gap: 20px;
+          grid-template-columns: repeat(2, 1fr);
+          gap: 28px;
         }
-        @media (max-width: 1200px) {
-          .packages-responsive-grid {
-            grid-template-columns: repeat(3, 1fr);
-          }
-        }
-        @media (max-width: 800px) {
-          .packages-responsive-grid {
-            grid-template-columns: repeat(2, 1fr);
-          }
-        }
-        @media (max-width: 580px) {
+        @media (max-width: 768px) {
           .packages-responsive-grid {
             grid-template-columns: 1fr;
           }

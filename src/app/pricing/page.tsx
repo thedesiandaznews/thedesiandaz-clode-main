@@ -117,15 +117,10 @@ export default function PricingPage() {
         }
         .pricing-grid {
           display: grid;
-          grid-template-columns: repeat(3, 1fr);
+          grid-template-columns: repeat(2, 1fr);
           gap: 24px;
         }
-        @media (max-width: 1100px) {
-          .pricing-grid {
-            grid-template-columns: repeat(2, 1fr);
-          }
-        }
-        @media (max-width: 760px) {
+        @media (max-width: 768px) {
           .pricing-grid {
             grid-template-columns: 1fr;
           }
