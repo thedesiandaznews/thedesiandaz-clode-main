@@ -135,6 +135,20 @@ export default function AffiliateDashboard() {
     window.open(`https://api.whatsapp.com/send?text=${text}`, '_blank');
   };
 
+  const shareAdvertiseOnWhatsApp = () => {
+    if (!data) return;
+    const link = `https://thedesiandaz.com/advertise?ref=${data.affiliateCode}`;
+    const text = encodeURIComponent(`नमस्ते, अपने लोकल बिज़नेस की बिक्री बढ़ाने के लिए The Desi Andaz मीडिया नेटवर्क पर विज्ञापन बुक करें:\n\n👉 ${link}`);
+    window.open(`https://api.whatsapp.com/send?text=${text}`, '_blank');
+  };
+
+  const shareLaunchOfferOnWhatsApp = () => {
+    if (!data) return;
+    const link = `https://thedesiandaz.com/launch-offer?ref=${data.affiliateCode}`;
+    const text = encodeURIComponent(`💥 धमाका ऑफर! सिर्फ ₹10,000 + GST में 2 महीने तक प्रिंट + वेबसाइट + यूट्यूब पर पूरी विजिबिलिटी पाएं। सीमित स्लॉट उपलब्ध हैं, आज ही बुक करें:\n\n👉 ${link}`);
+    window.open(`https://api.whatsapp.com/send?text=${text}`, '_blank');
+  };
+
   // Generate downloadable PDF statement
   const generatePDFStatement = () => {
     const printContent = `
@@ -199,6 +213,8 @@ export default function AffiliateDashboard() {
   };
 
   const referralLink = `https://thedesiandaz.com/?ref=${data.affiliateCode}`;
+  const advertiseReferralLink = `https://thedesiandaz.com/advertise?ref=${data.affiliateCode}`;
+  const launchOfferReferralLink = `https://thedesiandaz.com/launch-offer?ref=${data.affiliateCode}`;
   
   // Progress Bar percentage calculate
   const targetPercent = Math.min(100, Math.floor((data.currentMonthBaseValue / (data.remainingTarget + data.currentMonthBaseValue)) * 100));
@@ -374,6 +390,65 @@ export default function AffiliateDashboard() {
                     >
                       <i className="fab fa-whatsapp" style={{ fontSize: '16px' }} />
                       <span>Share on WhatsApp</span>
+                    </button>
+                  </div>
+                </div>
+
+                {/* B2B Packages Specific Referral Links */}
+                <div className={styles.dbLinkCard}>
+                  <h3 className={styles.dbLinkTitle}>📣 B2B Visibility Packages (विज्ञापन पैकेज रेफरल)</h3>
+                  
+                  {/* Option 1: Main packages */}
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', borderBottom: '1px solid #f1f5f9', paddingBottom: '16px' }}>
+                    <span style={{ fontSize: '12.5px', fontWeight: 700, color: '#475569' }}>1. Main Advertising Page (मुख्य विज्ञापन पैकेज)</span>
+                    <div className={styles.dbInputRow}>
+                      <input
+                        type="text"
+                        readOnly
+                        value={advertiseReferralLink}
+                        className={styles.dbLinkInput}
+                      />
+                      <button
+                        onClick={() => copyToClipboard(advertiseReferralLink)}
+                        className={styles.dbActionBtn}
+                      >
+                        Copy
+                      </button>
+                    </div>
+                    <button
+                      onClick={shareAdvertiseOnWhatsApp}
+                      className={styles.dbWhatsappBtn}
+                      style={{ alignSelf: 'flex-start', padding: '6px 12px', fontSize: '12px', display: 'inline-flex', gap: '6px', alignItems: 'center' }}
+                    >
+                      <i className="fab fa-whatsapp" />
+                      <span>WhatsApp Share</span>
+                    </button>
+                  </div>
+
+                  {/* Option 2: Special launch offer */}
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                    <span style={{ fontSize: '12.5px', fontWeight: 700, color: '#475569' }}>2. Launch Visibility Offers (स्पेशल लॉन्च ऑफर)</span>
+                    <div className={styles.dbInputRow}>
+                      <input
+                        type="text"
+                        readOnly
+                        value={launchOfferReferralLink}
+                        className={styles.dbLinkInput}
+                      />
+                      <button
+                        onClick={() => copyToClipboard(launchOfferReferralLink)}
+                        className={styles.dbActionBtn}
+                      >
+                        Copy
+                      </button>
+                    </div>
+                    <button
+                      onClick={shareLaunchOfferOnWhatsApp}
+                      className={styles.dbWhatsappBtn}
+                      style={{ alignSelf: 'flex-start', padding: '6px 12px', fontSize: '12px', display: 'inline-flex', gap: '6px', alignItems: 'center' }}
+                    >
+                      <i className="fab fa-whatsapp" />
+                      <span>WhatsApp Share</span>
                     </button>
                   </div>
                 </div>
