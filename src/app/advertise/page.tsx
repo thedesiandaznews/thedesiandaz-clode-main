@@ -796,71 +796,82 @@ export default function AdvertisePage() {
                 Select Dynamic Combos & Packages
               </h3>
               <div className="packages-responsive-grid">
-                {packages.map(pkg => (
-                  <div 
-                    key={pkg.id} 
-                    className="glass-card"
-                    style={{ 
-                      padding: '28px',
-                      display: 'flex',
-                      flexDirection: 'column',
-                      justifyContent: 'space-between',
-                      border: `1px solid ${pkg.color}35`,
-                      boxShadow: `0 8px 30px ${pkg.glow}`,
-                      transition: 'transform 0.3s ease'
-                    }}
-                    onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-4px)'}
-                    onMouseLeave={(e) => e.currentTarget.style.transform = 'none'}
-                  >
-                    <div>
-                      <span style={{ background: `${pkg.color}15`, color: pkg.color, border: `1px solid ${pkg.color}35`, padding: '4px 12px', borderRadius: '20px', fontSize: '9.5px', fontWeight: 800, textTransform: 'uppercase' }}>
-                        {pkg.badge}
-                      </span>
-                      <h4 style={{ fontSize: '19px', fontWeight: 900, color: '#fff', marginTop: '16px', marginBottom: '8px' }}>{pkg.name}</h4>
-                      <p style={{ fontSize: '12.5px', color: '#94a3b8', margin: 0, lineHeight: '1.45' }}>{pkg.description}</p>
-                    </div>
-                    <div style={{ marginTop: '24px', borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: '16px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                {packages.map(pkg => {
+                  const activeDur = Object.keys(pkg.pricing).find(k => (pkg.pricing as any)[k].base > 0) || '2month';
+                  const plan = (pkg.pricing as any)[activeDur];
+                  const durationLabel = activeDur === 'week' ? 'Weekly' :
+                                        activeDur === 'month' ? 'Monthly' :
+                                        activeDur === '2month' ? '2 Months' :
+                                        activeDur === '3month' ? '3 Months' :
+                                        activeDur === '6month' ? '6 Months' :
+                                        activeDur === '12month' ? '12 Months' : activeDur;
+                  return (
+                    <div 
+                      key={pkg.id} 
+                      className="glass-card"
+                      style={{ 
+                        padding: '28px',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        justifyContent: 'space-between',
+                        border: `1px solid ${pkg.color}35`,
+                        boxShadow: `0 8px 30px ${pkg.glow}`,
+                        transition: 'transform 0.3s ease'
+                      }}
+                      onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-4px)'}
+                      onMouseLeave={(e) => e.currentTarget.style.transform = 'none'}
+                    >
                       <div>
-                        <div style={{ fontSize: '11px', color: '#94a3b8' }}>Starting Monthly Plan:</div>
-                        <div style={{ fontSize: '22px', fontWeight: 900, color: '#fff', fontFamily: 'monospace', margin: '4px 0' }}>
-                          ₹{pkg.pricing.month.total.toLocaleString('en-IN')}
-                        </div>
-                        <div style={{ fontSize: '10.5px', color: '#64748b' }}>Includes Base + 18% GST</div>
+                        <span style={{ background: `${pkg.color}15`, color: pkg.color, border: `1px solid ${pkg.color}35`, padding: '4px 12px', borderRadius: '20px', fontSize: '9.5px', fontWeight: 800, textTransform: 'uppercase' }}>
+                          {pkg.badge}
+                        </span>
+                        <h4 style={{ fontSize: '19px', fontWeight: 900, color: '#fff', marginTop: '16px', marginBottom: '8px' }}>{pkg.name}</h4>
+                        <p style={{ fontSize: '12.5px', color: '#94a3b8', margin: 0, lineHeight: '1.45' }}>{pkg.description}</p>
                       </div>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setSelectedPackage(pkg);
-                          setAuthMode('signup');
-                          setCurrentStep('account');
-                        }}
-                        style={{
-                          width: '100%',
-                          background: pkg.color,
-                          color: '#fff',
-                          border: 'none',
-                          padding: '12px',
-                          borderRadius: '12px',
-                          fontSize: '13px',
-                          fontWeight: 800,
-                          cursor: 'pointer',
-                          transition: 'all 0.2s ease',
-                          boxShadow: `0 4px 12px ${pkg.glow}`,
-                        }}
-                        onMouseEnter={(e) => {
-                          e.currentTarget.style.transform = 'translateY(-2px)';
-                          e.currentTarget.style.boxShadow = `0 6px 20px ${pkg.color}60`;
-                        }}
-                        onMouseLeave={(e) => {
-                          e.currentTarget.style.transform = 'none';
-                          e.currentTarget.style.boxShadow = `0 4px 12px ${pkg.glow}`;
-                        }}
-                      >
-                        Choose Plan
-                      </button>
+                      <div style={{ marginTop: '24px', borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: '16px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                        <div>
+                          <div style={{ fontSize: '11px', color: '#94a3b8' }}>Starting Plan ({durationLabel}):</div>
+                          <div style={{ fontSize: '22px', fontWeight: 900, color: '#fff', fontFamily: 'monospace', margin: '4px 0' }}>
+                            ₹{plan.total.toLocaleString('en-IN')}
+                          </div>
+                          <div style={{ fontSize: '10.5px', color: '#64748b' }}>Includes Base + 18% GST</div>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setSelectedPackage(pkg);
+                            setSelectedDuration(activeDur as any);
+                            setAuthMode('signup');
+                            setCurrentStep('account');
+                          }}
+                          style={{
+                            width: '100%',
+                            background: pkg.color,
+                            color: '#fff',
+                            border: 'none',
+                            padding: '12px',
+                            borderRadius: '12px',
+                            fontSize: '13px',
+                            fontWeight: 800,
+                            cursor: 'pointer',
+                            transition: 'all 0.2s ease',
+                            boxShadow: `0 4px 12px ${pkg.glow}`,
+                          }}
+                          onMouseEnter={(e) => {
+                            e.currentTarget.style.transform = 'translateY(-2px)';
+                            e.currentTarget.style.boxShadow = `0 6px 20px ${pkg.color}60`;
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.transform = 'none';
+                            e.currentTarget.style.boxShadow = `0 4px 12px ${pkg.glow}`;
+                          }}
+                        >
+                          Choose Plan
+                        </button>
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
 
