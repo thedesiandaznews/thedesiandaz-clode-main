@@ -12,6 +12,26 @@ export default function ReportersClient({ initialList }: { initialList: any[] })
   const [activeTab, setActiveTab] = useState<'Pending' | 'Approved' | 'Rejected' | 'Suspended' | 'Chat'>('Pending');
   const [selectedReporter, setSelectedReporter] = useState<any | null>(null);
 
+  // State & District Filters
+  const [selectedState, setSelectedState] = useState<string>('');
+  const [selectedDistrict, setSelectedDistrict] = useState<string>('');
+
+  // Dynamically extract unique states and districts from the loaded reporters list
+  const availableStates = Array.from(
+    new Set(reporters.map(r => r.state?.trim()).filter(Boolean))
+  ).sort() as string[];
+
+  const availableDistricts = selectedState
+    ? (Array.from(
+        new Set(
+          reporters
+            .filter(r => r.state?.trim().toLowerCase() === selectedState.trim().toLowerCase())
+            .map(r => r.district?.trim())
+            .filter(Boolean)
+        )
+      ).sort() as string[])
+    : [];
+
   // Rejection Dialogue States
   const [showRejectForm, setShowRejectForm] = useState(false);
   const [rejectReason, setRejectReason] = useState('');
@@ -56,7 +76,7 @@ export default function ReportersClient({ initialList }: { initialList: any[] })
     }
   }, []);
 
-  const filteredList = activeTab === 'Chat'
+  const tabFilteredList = activeTab === 'Chat'
     ? [...reporters].sort((a, b) => {
         if ((a.unreadCount || 0) !== (b.unreadCount || 0)) {
           return (b.unreadCount || 0) - (a.unreadCount || 0);
@@ -69,6 +89,33 @@ export default function ReportersClient({ initialList }: { initialList: any[] })
         return a.fullName.localeCompare(b.fullName);
       })
     : reporters.filter(r => r.status === activeTab);
+
+  const filteredList = tabFilteredList.filter(r => {
+    if (selectedState && r.state?.trim().toLowerCase() !== selectedState.trim().toLowerCase()) {
+      return false;
+    }
+    if (selectedDistrict && r.district?.trim().toLowerCase() !== selectedDistrict.trim().toLowerCase()) {
+      return false;
+    }
+    return true;
+  });
+
+  const getFilteredReportersCount = (status: string) => {
+    return reporters.filter(r => {
+      if (r.status !== status) return false;
+      if (selectedState && r.state?.trim().toLowerCase() !== selectedState.trim().toLowerCase()) return false;
+      if (selectedDistrict && r.district?.trim().toLowerCase() !== selectedDistrict.trim().toLowerCase()) return false;
+      return true;
+    }).length;
+  };
+
+  const getFilteredUnreadChatCount = () => {
+    return reporters.filter(r => {
+      if (selectedState && r.state?.trim().toLowerCase() !== selectedState.trim().toLowerCase()) return false;
+      if (selectedDistrict && r.district?.trim().toLowerCase() !== selectedDistrict.trim().toLowerCase()) return false;
+      return true;
+    }).reduce((acc, r) => acc + (r.unreadCount || 0), 0);
+  };
 
   const handleOpenReview = (rep: any) => {
     setSelectedReporter(rep);
@@ -995,7 +1042,7 @@ export default function ReportersClient({ initialList }: { initialList: any[] })
             fontWeight: 800,
             marginLeft: '4px'
           }}>
-            {reporters.filter(r => r.status === 'Pending').length}
+            {getFilteredReportersCount('Pending')}
           </span>
         </button>
 
@@ -1029,7 +1076,7 @@ export default function ReportersClient({ initialList }: { initialList: any[] })
             fontWeight: 800,
             marginLeft: '4px'
           }}>
-            {reporters.filter(r => r.status === 'Approved').length}
+            {getFilteredReportersCount('Approved')}
           </span>
         </button>
 
@@ -1063,7 +1110,7 @@ export default function ReportersClient({ initialList }: { initialList: any[] })
             fontWeight: 800,
             marginLeft: '4px'
           }}>
-            {reporters.filter(r => r.status === 'Rejected').length}
+            {getFilteredReportersCount('Rejected')}
           </span>
         </button>
 
@@ -1097,7 +1144,7 @@ export default function ReportersClient({ initialList }: { initialList: any[] })
             fontWeight: 800,
             marginLeft: '4px'
           }}>
-            {reporters.filter(r => r.status === 'Suspended').length}
+            {getFilteredReportersCount('Suspended')}
           </span>
         </button>
 
@@ -1123,7 +1170,7 @@ export default function ReportersClient({ initialList }: { initialList: any[] })
           <i className="fas fa-comments" style={{ color: activeTab === 'Chat' ? '#fff' : '#6366f1' }}></i>
           <span>Direct Chat with Reporter</span>
           
-          {reporters.reduce((acc, r) => acc + (r.unreadCount || 0), 0) > 0 && (
+          {getFilteredUnreadChatCount() > 0 && (
             <span style={{
               fontSize: '11px',
               background: activeTab === 'Chat' ? '#ffffff' : '#ef4444',
@@ -1136,10 +1183,129 @@ export default function ReportersClient({ initialList }: { initialList: any[] })
               display: 'inline-flex',
               alignItems: 'center',
             }}>
-              {reporters.reduce((acc, r) => acc + (r.unreadCount || 0), 0)} New
+              {getFilteredUnreadChatCount()} New
             </span>
           )}
         </button>
+      </div>
+
+      {/* Premium Filter Section */}
+      <div style={{
+        display: 'flex',
+        flexWrap: 'wrap',
+        alignItems: 'center',
+        gap: '16px',
+        padding: '16px 20px',
+        background: '#ffffff',
+        borderRadius: '16px',
+        border: '1px solid #cbd5e1',
+        marginBottom: '32px',
+        boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03)'
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#1e293b' }}>
+          <i className="fas fa-filter" style={{ color: '#4f46e5', fontSize: '15px' }}></i>
+          <span style={{ fontWeight: 700, fontSize: '14px', color: '#334155' }}>Filter Reporters:</span>
+        </div>
+
+        {/* State Selector */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', minWidth: '200px' }}>
+          <span style={{ fontSize: '11px', fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.5px' }}>State (राज्य)</span>
+          <div style={{ position: 'relative' }}>
+            <select
+              value={selectedState}
+              onChange={(e) => {
+                setSelectedState(e.target.value);
+                setSelectedDistrict('');
+              }}
+              style={{
+                width: '100%',
+                padding: '8px 32px 8px 12px',
+                borderRadius: '8px',
+                border: '1px solid #cbd5e1',
+                background: '#f8fafc',
+                fontSize: '13px',
+                fontWeight: 600,
+                color: '#334155',
+                outline: 'none',
+                cursor: 'pointer',
+                appearance: 'none',
+                transition: 'all 0.2s',
+              }}
+            >
+              <option value="">All States (सभी राज्य)</option>
+              {availableStates.map(state => (
+                <option key={state} value={state}>{state}</option>
+              ))}
+            </select>
+            <div style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none', color: '#64748b' }}>
+              <i className="fas fa-chevron-down" style={{ fontSize: '11px' }}></i>
+            </div>
+          </div>
+        </div>
+
+        {/* District Selector */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', minWidth: '200px' }}>
+          <span style={{ fontSize: '11px', fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.5px' }}>District (जिला)</span>
+          <div style={{ position: 'relative' }}>
+            <select
+              value={selectedDistrict}
+              onChange={(e) => setSelectedDistrict(e.target.value)}
+              disabled={!selectedState}
+              style={{
+                width: '100%',
+                padding: '8px 32px 8px 12px',
+                borderRadius: '8px',
+                border: '1px solid #cbd5e1',
+                background: selectedState ? '#f8fafc' : '#f1f5f9',
+                fontSize: '13px',
+                fontWeight: 600,
+                color: selectedState ? '#334155' : '#94a3b8',
+                outline: 'none',
+                cursor: selectedState ? 'pointer' : 'not-allowed',
+                appearance: 'none',
+                transition: 'all 0.2s',
+              }}
+            >
+              <option value="">All Districts (सभी जिले)</option>
+              {availableDistricts.map(district => (
+                <option key={district} value={district}>{district}</option>
+              ))}
+            </select>
+            <div style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none', color: '#64748b' }}>
+              <i className="fas fa-chevron-down" style={{ fontSize: '11px' }}></i>
+            </div>
+          </div>
+        </div>
+
+        {/* Clear Filters Button */}
+        {(selectedState || selectedDistrict) && (
+          <button
+            onClick={() => {
+              setSelectedState('');
+              setSelectedDistrict('');
+            }}
+            style={{
+              alignSelf: 'flex-end',
+              padding: '8px 16px',
+              borderRadius: '8px',
+              border: '1px solid #cbd5e1',
+              background: '#f1f5f9',
+              color: '#475569',
+              fontSize: '13px',
+              fontWeight: 700,
+              cursor: 'pointer',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '6px',
+              transition: 'all 0.2s',
+              height: '38px',
+              boxSizing: 'border-box'
+            }}
+          >
+            <i className="fas fa-undo" style={{ fontSize: '11px' }}></i>
+            <span>Clear</span>
+          </button>
+        )}
       </div>
 
       {/* Spacious Card-Separated Row spacing grid */}
