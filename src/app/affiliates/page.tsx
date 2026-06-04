@@ -236,13 +236,13 @@ export default function AffiliatePage() {
                       { range: 'Above ₹5,00,000', comm: '25% Commission', desc: 'Elite / VIP Slab', color: '#D4A017' }
                     ].map((s, idx) => (
                       <tr key={idx} style={{ borderLeft: `4px solid ${s.color}` }}>
-                        <td>
+                        <td data-label="Level (स्तर)">
                           <span className={styles.slabLevelBadge} style={{ background: `${s.color}12`, color: s.color }}>
                             {s.desc}
                           </span>
                         </td>
-                        <td className={styles.slabRangeText}>{s.range}</td>
-                        <td className={styles.slabCommText} style={{ color: s.color }}>{s.comm}</td>
+                        <td className={styles.slabRangeText} data-label="Sales Target Range (शुद्ध सेल सीमा)">{s.range}</td>
+                        <td className={styles.slabCommText} style={{ color: s.color }} data-label="Commission (आपका कमीशन)">{s.comm}</td>
                       </tr>
                     ))}
                   </tbody>
