@@ -220,8 +220,8 @@ function compressImage(file: File, maxWidth = 1000, maxHeight = 1000, quality = 
     }
 
     // Ensure all critical docs uploaded
-    if (!aadhaarUrl || !aadhaarBackUrl || !panUrl || !voterIdUrl || !photoUrl || !educationUrl || !videoUrl) {
-      setError('Please upload all documents (Aadhaar Card Front, Aadhaar Card Back, PAN Card, Voter ID, Passport Photo, Education Certs, and Introduction Video).');
+    if (!aadhaarUrl || !aadhaarBackUrl || !panUrl || !voterIdUrl || !photoUrl || !educationUrl) {
+      setError('Please upload all documents (Aadhaar Card Front, Aadhaar Card Back, PAN Card, Voter ID, Passport Photo, and Education Certs).');
       return;
     }
 
@@ -546,7 +546,7 @@ function compressImage(file: File, maxWidth = 1000, maxHeight = 1000, quality = 
                   onClick={() => document.getElementById('videoUpload')?.click()}
                 >
                   <i className={`fas ${uploadStatus.video === 'success' ? 'fa-check-circle' : uploadStatus.video === 'uploading' ? 'fa-spinner fa-spin' : 'fa-video'} ${styles.uploadIcon}`}></i>
-                  <span className={styles.uploadTitle}>Introduction Video <span style={{ color: 'red' }}>*</span></span>
+                  <span className={styles.uploadTitle}>Introduction Video <span style={{ fontSize: '12px', opacity: 0.7, fontWeight: 'normal' }}>(Optional)</span></span>
                   <span className={styles.uploadSubtitle}>Short clip (MP4, max 50MB)</span>
                   <input type="file" id="videoUpload" style={{ display: 'none' }} accept="video/*" onChange={(e) => handleFileUpload(e, 'video')} />
                 </div>
