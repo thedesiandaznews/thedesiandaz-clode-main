@@ -469,18 +469,18 @@ export default function AffiliateDashboard() {
                     <tbody>
                       {filteredSales.map((s: any) => (
                         <tr key={s.id}>
-                          <td style={{ color: '#64748b' }}>{new Date(s.createdAt).toLocaleDateString('en-IN')}</td>
-                          <td style={{ fontWeight: 700, color: '#0f172a' }}>{s.customerName}</td>
-                          <td>
+                          <td data-label="Purchase Date" style={{ color: '#64748b' }}>{new Date(s.createdAt).toLocaleDateString('en-IN')}</td>
+                          <td data-label="Customer" style={{ fontWeight: 700, color: '#0f172a' }}>{s.customerName}</td>
+                          <td data-label="Package Specs">
                             <span style={{ background: '#f1f5f9', border: '1px solid #e2e8f0', padding: '3px 8px', borderRadius: '4px', fontSize: '12px', color: '#334155', fontWeight: 600 }}>
                               {s.packageName}
                             </span>
                           </td>
-                          <td>₹{s.baseValue.toLocaleString('en-IN')}</td>
-                          <td style={{ color: '#64748b' }}>₹{s.gstAmount.toLocaleString('en-IN')}</td>
-                          <td style={{ fontWeight: 700 }}>₹{s.totalPaid.toLocaleString('en-IN')}</td>
-                          <td style={{ color: '#16a34a', fontWeight: 800 }}>₹{s.commissionEarned.toLocaleString('en-IN')}</td>
-                          <td style={{ textAlign: 'center' }}>
+                          <td data-label="Base Value">₹{s.baseValue.toLocaleString('en-IN')}</td>
+                          <td data-label="GST (18%)" style={{ color: '#64748b' }}>₹{s.gstAmount.toLocaleString('en-IN')}</td>
+                          <td data-label="Total Paid" style={{ fontWeight: 700 }}>₹{s.totalPaid.toLocaleString('en-IN')}</td>
+                          <td data-label="Commission" style={{ color: '#16a34a', fontWeight: 800 }}>₹{s.commissionEarned.toLocaleString('en-IN')}</td>
+                          <td data-label="Status" style={{ textAlign: 'center' }}>
                             <span className={`${styles.dbStatusBadge} ${s.commissionStatus === 'Paid' ? styles.dbStatusPaid : s.commissionStatus === 'Approved' ? styles.dbStatusApproved : s.commissionStatus === 'Reversed' ? styles.dbStatusReversed : styles.dbStatusPending}`}>
                               {s.commissionStatus}
                             </span>
@@ -554,17 +554,17 @@ export default function AffiliateDashboard() {
                       <tbody>
                         {data.transactions.map((t: any) => (
                           <tr key={t.id}>
-                            <td style={{ color: '#64748b' }}>{new Date(t.createdAt).toLocaleDateString('en-IN')}</td>
-                            <td>
+                            <td data-label="Date" style={{ color: '#64748b' }}>{new Date(t.createdAt).toLocaleDateString('en-IN')}</td>
+                            <td data-label="Type">
                               <span className={`${styles.dbStatusBadge} ${t.type === 'Credit' ? styles.dbStatusPaid : styles.dbStatusReversed}`}>
                                 {t.type}
                               </span>
                             </td>
-                            <td style={{ color: '#2A343D' }}>{t.description}</td>
-                            <td style={{ fontWeight: 700, color: '#0f172a' }}>
+                            <td data-label="Description" style={{ color: '#2A343D' }}>{t.description}</td>
+                            <td data-label="Amount" style={{ fontWeight: 700, color: '#0f172a' }}>
                               {t.type === 'Credit' ? '+' : '-'}₹{t.amount.toLocaleString('en-IN')}
                             </td>
-                            <td>
+                            <td data-label="Status">
                               <span style={{ color: t.status === 'Paid' || t.status === 'Approved' ? '#1B8A3C' : '#D97706', fontWeight: 700 }}>
                                 {t.status}
                               </span>
