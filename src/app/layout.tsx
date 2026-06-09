@@ -5,6 +5,7 @@ import ThemeScript from '@/components/ThemeScript';
 import ResponsiveBanner from '@/components/ResponsiveBanner';
 import SiteMetadata from '@/components/SiteMetadata';
 import ReferralTracker from '@/components/ReferralTracker';
+import Script from 'next/script';
 
 export const metadata: Metadata = {
   title: 'The Desi Andaz - देसी नज़रिया, सच्ची खबर',
@@ -40,7 +41,20 @@ export default function RootLayout({
             {children}
           </ConditionalLayout>
         </div>
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-7CTKGE7ZXR"
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-7CTKGE7ZXR');
+          `}
+        </Script>
       </body>
     </html>
   );
 }
+

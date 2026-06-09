@@ -234,20 +234,20 @@ function compressImage(file: File, maxWidth = 1000, maxHeight = 1000, quality = 
         fullName,
         fatherHusbandName,
         mobile,
-        bloodGroup: bloodGroup || undefined,
+        bloodGroup: bloodGroup || '',
         state,
         district,
         poPs,
         block,
         fullAddress,
-        aadhaarNumber: aadhaarNumber || undefined,
+        aadhaarNumber: aadhaarNumber || '',
         aadhaarUrl,
         aadhaarBackUrl,
         panUrl,
-        voterIdUrl: voterIdUrl || undefined,
+        voterIdUrl: voterIdUrl || '',
         photoUrl,
         educationUrl,
-        videoUrl: videoUrl || undefined
+        videoUrl: videoUrl || ''
       });
 
       if (res.success) {
