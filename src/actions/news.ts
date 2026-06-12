@@ -34,6 +34,7 @@ export async function getNewsArticles(filters?: {
   state?: string;
   district?: string;
   q?: string;
+  limit?: number;
 }) {
   try {
     const whereClause: any = {};
@@ -48,7 +49,7 @@ export async function getNewsArticles(filters?: {
       ];
     }
 
-    const articles = await prisma.article.findMany({
+    const queryOptions: any = {
       where: whereClause,
       include: {
         category: true,
@@ -64,12 +65,23 @@ export async function getNewsArticles(filters?: {
         }
       },
       orderBy: { createdAt: 'desc' }
-    });
+    };
+
+    if (filters?.limit) {
+      queryOptions.take = filters.limit;
+    }
+
+    const articles = await prisma.article.findMany(queryOptions);
 
     // On-the-fly slug backfill — run SEQUENTIALLY to avoid unique-slug race conditions
+    // OPTIMIZATION: Push synchronously if the article already has a slug
     const withSlugs: any[] = [];
     for (const article of articles) {
-      withSlugs.push(await backfillSlug(article));
+      if (article.slug) {
+        withSlugs.push(article);
+      } else {
+        withSlugs.push(await backfillSlug(article));
+      }
     }
     return withSlugs;
   } catch (error) {

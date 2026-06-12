@@ -7,8 +7,7 @@ import DashboardClient from './DashboardClient'; // For client iteractivity like
 export default async function AdminDashboard() {
   const stats = await getDashboardStats();
   // Get 5 most recent
-  const recentNewsList = await getNewsArticles();
-  const recentNews = recentNewsList.slice(0, 5);
+  const recentNews = await getNewsArticles({ limit: 5 });
 
   return (
     <div>

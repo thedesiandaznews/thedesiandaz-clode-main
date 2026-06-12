@@ -45,7 +45,7 @@ export default async function NewsDetailPage({ params }: { params: Promise<{ id:
     notFound();
   }
 
-  const latestNews = await getNewsArticles({ status: 'Published' });
+  const latestNews = await getNewsArticles({ status: 'Published', limit: 20 });
   const relatedNews = latestNews
     .filter(n => n.id !== article.id && n.categoryId === article.categoryId)
     .slice(0, 6);

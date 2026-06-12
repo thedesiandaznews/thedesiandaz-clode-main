@@ -18,7 +18,7 @@ export default function Header() {
 
   useEffect(() => {
     // Load live news from DB for search and ticker
-    getNewsArticles({ status: 'Published' }).then(setLiveNews);
+    getNewsArticles({ status: 'Published', limit: 20 }).then(setLiveNews);
     getCategories().then(setCategories);
     
     // Fetch Global category banners to get mobile 320x50 banner

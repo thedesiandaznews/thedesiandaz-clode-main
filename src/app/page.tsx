@@ -38,7 +38,7 @@ export default async function Home() {
   }
 
   // Fetch live published news from Database
-  const publishedNews = (await getNewsArticles({ status: 'Published' })) || [];
+  const publishedNews = (await getNewsArticles({ status: 'Published', limit: 100 })) || [];
   
   // Sort by latest
   const latestNews = [...publishedNews].sort((a, b) => {
