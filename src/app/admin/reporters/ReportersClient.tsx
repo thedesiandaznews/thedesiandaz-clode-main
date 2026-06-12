@@ -4,12 +4,19 @@ import React, { useState, useEffect } from 'react';
 import styles from '../admin.module.css';
 import { updateReporterStatus, deleteReporter, approveReporterWithLetterAction, getReporterById } from '@/actions/reporter';
 import { getReporterMessages, sendReporterMessage, markReporterMessagesAsRead, getReportersListWithUnreadCounts } from '@/actions/chat';
+import {
+  verifySuperAdminCredentials,
+  getCorrespondentsPasswordsList,
+  logPasswordViewAction,
+  resetCorrespondentPasswordAction,
+  getAuditLogsAction
+} from '@/actions/reporter-passwords';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 
 export default function ReportersClient({ initialList }: { initialList: any[] }) {
   const [reporters, setReporters] = useState<any[]>(initialList);
-  const [activeTab, setActiveTab] = useState<'Pending' | 'Approved' | 'Rejected' | 'Suspended' | 'Chat'>('Pending');
+  const [activeTab, setActiveTab] = useState<'Pending' | 'Approved' | 'Rejected' | 'Suspended' | 'Chat' | 'Passwords'>('Pending');
   const [selectedReporter, setSelectedReporter] = useState<any | null>(null);
 
   // State & District Filters
@@ -55,6 +62,24 @@ export default function ReportersClient({ initialList }: { initialList: any[] })
   const [previewPdfUrl, setPreviewPdfUrl] = useState<string | null>(null);
   const [previewPdfBlob, setPreviewPdfBlob] = useState<Blob | null>(null);
   const [isPreviewLoading, setIsPreviewLoading] = useState(false);
+
+  // Password Management States
+  const [isPasswordsAuthorized, setIsPasswordsAuthorized] = useState(false);
+  const [adminUsernameInput, setAdminUsernameInput] = useState('');
+  const [adminPasswordInput, setAdminPasswordInput] = useState('');
+  const [isVerifyingAdmin, setIsVerifyingAdmin] = useState(false);
+  const [passwordsVerifyError, setPasswordsVerifyError] = useState('');
+  
+  const [passwordsList, setPasswordsList] = useState<any[]>([]);
+  const [isLoadingPasswords, setIsLoadingPasswords] = useState(false);
+  const [passwordsSearchQuery, setPasswordsSearchQuery] = useState('');
+  const [auditLogs, setAuditLogs] = useState<any[]>([]);
+  
+  // Per-user password states
+  const [showPasswordStates, setShowPasswordStates] = useState<Record<string, boolean>>({});
+  const [customPasswordResetInputs, setCustomPasswordResetInputs] = useState<Record<string, string>>({});
+  const [activeResetUserId, setActiveResetUserId] = useState<string | null>(null);
+  const [isResettingPassword, setIsResettingPassword] = useState(false);
 
   // Cleanup object URLs to prevent memory leaks
   useEffect(() => {
@@ -998,6 +1023,160 @@ export default function ReportersClient({ initialList }: { initialList: any[] })
     }
   };
 
+  // -- Password Management Handlers --
+
+  const handlePasswordsTabClick = async () => {
+    setActiveTab('Passwords');
+    if (isPasswordsAuthorized) {
+      await fetchPasswordsData();
+    }
+  };
+
+  const fetchPasswordsData = async () => {
+    setIsLoadingPasswords(true);
+    try {
+      const activeAdmin = adminUsernameInput || localStorage.getItem('adminUsername') || 'ThedesiandazNews';
+      const list = await getCorrespondentsPasswordsList(activeAdmin);
+      setPasswordsList(list);
+      
+      const logs = await getAuditLogsAction(activeAdmin);
+      setAuditLogs(logs);
+    } catch (err) {
+      console.error('Failed to load password manager data:', err);
+    } finally {
+      setIsLoadingPasswords(false);
+    }
+  };
+
+  const handleSuperAdminVerify = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!adminUsernameInput.trim() || !adminPasswordInput.trim()) {
+      setPasswordsVerifyError('कृपया आईडी और पासवर्ड दर्ज करें।');
+      return;
+    }
+
+    setIsVerifyingAdmin(true);
+    setPasswordsVerifyError('');
+
+    try {
+      const res = await verifySuperAdminCredentials(adminUsernameInput.trim(), adminPasswordInput.trim());
+      if (res.success) {
+        setIsPasswordsAuthorized(true);
+        localStorage.setItem('adminUsername', adminUsernameInput.trim());
+        localStorage.setItem('adminPasswordHash', adminPasswordInput.trim());
+        
+        await fetchPasswordsData();
+      } else {
+        setPasswordsVerifyError(res.message || 'अमान्य क्रेडेंशियल्स।');
+      }
+    } catch (err) {
+      setPasswordsVerifyError('सर्वर से संपर्क करने में असमर्थ।');
+    } finally {
+      setIsVerifyingAdmin(false);
+    }
+  };
+
+  const handleToggleShowPassword = async (reporter: any) => {
+    const reporterId = reporter.id;
+    const isShowing = showPasswordStates[reporterId];
+    
+    setShowPasswordStates(prev => ({ ...prev, [reporterId]: !isShowing }));
+
+    if (!isShowing) {
+      try {
+        const activeAdmin = adminUsernameInput || localStorage.getItem('adminUsername') || 'ThedesiandazNews';
+        await logPasswordViewAction(activeAdmin, reporter.fullName, 'Viewed plain-text password credentials');
+        
+        const logs = await getAuditLogsAction(activeAdmin);
+        setAuditLogs(logs);
+      } catch (err) {
+        console.error('Failed to log audit activity:', err);
+      }
+    }
+  };
+
+  const handleCopyPassword = async (reporter: any, passwordText: string) => {
+    try {
+      await navigator.clipboard.writeText(passwordText);
+      alert(`${reporter.fullName} का पासवर्ड कॉपी किया गया!`);
+      
+      const activeAdmin = adminUsernameInput || localStorage.getItem('adminUsername') || 'ThedesiandazNews';
+      await logPasswordViewAction(activeAdmin, reporter.fullName, 'Copied credentials to clipboard');
+      const logs = await getAuditLogsAction(activeAdmin);
+      setAuditLogs(logs);
+    } catch (err) {
+      alert('क्लिपबोर्ड पर कॉपी करने में असमर्थ।');
+    }
+  };
+
+  const handleGenerateRandomPassword = async (reporter: any) => {
+    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+    let randomPassword = 'TDA-';
+    for (let i = 0; i < 6; i++) {
+      randomPassword += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+
+    if (!confirm(`Generate and set random password "${randomPassword}" for ${reporter.fullName}?`)) {
+      return;
+    }
+
+    try {
+      const activeAdmin = adminUsernameInput || localStorage.getItem('adminUsername') || 'ThedesiandazNews';
+      const res = await resetCorrespondentPasswordAction(activeAdmin, reporter.id, randomPassword);
+      if (res.success) {
+        alert(`Password for ${reporter.fullName} reset to: ${randomPassword}\n(This has been copied to your clipboard)`);
+        await navigator.clipboard.writeText(randomPassword);
+        await fetchPasswordsData();
+      } else {
+        alert('Failed to reset: ' + res.message);
+      }
+    } catch (err) {
+      alert('Error resetting password.');
+    }
+  };
+
+  const handleCustomResetSubmit = async (reporter: any) => {
+    const newPass = customPasswordResetInputs[reporter.id]?.trim();
+    if (!newPass || newPass.length < 4) {
+      alert('Password must be at least 4 characters long.');
+      return;
+    }
+
+    setIsResettingPassword(true);
+    try {
+      const activeAdmin = adminUsernameInput || localStorage.getItem('adminUsername') || 'ThedesiandazNews';
+      const res = await resetCorrespondentPasswordAction(activeAdmin, reporter.id, newPass);
+      if (res.success) {
+        alert(`Password for ${reporter.fullName} successfully updated.`);
+        setCustomPasswordResetInputs(prev => ({ ...prev, [reporter.id]: '' }));
+        setActiveResetUserId(null);
+        await fetchPasswordsData();
+      } else {
+        alert('Failed to reset: ' + res.message);
+      }
+    } catch (err) {
+      alert('Error updating password.');
+    } finally {
+      setIsResettingPassword(false);
+    }
+  };
+
+  const handleMockSendCredentials = async (reporter: any, channel: 'WhatsApp' | 'SMS' | 'Email') => {
+    const activeAdmin = adminUsernameInput || localStorage.getItem('adminUsername') || 'ThedesiandazNews';
+    await logPasswordViewAction(activeAdmin, reporter.fullName, `Sent login credentials via ${channel}`);
+    const logs = await getAuditLogsAction(activeAdmin);
+    setAuditLogs(logs);
+    alert(`क्रेडेंशियल्स सफलतापूर्वक ${channel} द्वारा ${reporter.fullName} को भेज दिए गए हैं!`);
+  };
+
+  const handleLockPasswordsPanel = () => {
+    setIsPasswordsAuthorized(false);
+    setAdminPasswordInput('');
+    setPasswordsList([]);
+    setAuditLogs([]);
+    setActiveTab('Pending');
+  };
+
   return (
     <div>
       <div className={styles.pageHeader} style={{ marginBottom: '28px' }}>
@@ -1201,420 +1380,1054 @@ export default function ReportersClient({ initialList }: { initialList: any[] })
             </span>
           )}
         </button>
+
+        <button 
+          onClick={handlePasswordsTabClick} 
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            padding: '10px 20px',
+            borderRadius: '12px',
+            fontSize: '13px',
+            fontWeight: 700,
+            cursor: 'pointer',
+            transition: 'all 0.25s cubic-bezier(0.4, 0, 0.2, 1)',
+            border: 'none',
+            background: activeTab === 'Passwords' ? 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)' : 'transparent',
+            color: activeTab === 'Passwords' ? '#ffffff' : '#64748b',
+            boxShadow: activeTab === 'Passwords' ? '0 4px 12px rgba(245, 158, 11, 0.2)' : 'none',
+            whiteSpace: 'nowrap',
+          }}
+        >
+          <i className="fas fa-key" style={{ color: activeTab === 'Passwords' ? '#fff' : '#f59e0b' }}></i>
+          <span>पासवर्ड प्रबंधन</span>
+        </button>
       </div>
 
-      {/* Premium Filter Section */}
-      <div style={{
-        display: 'flex',
-        flexWrap: 'wrap',
-        alignItems: 'center',
-        gap: '16px',
-        padding: '16px 20px',
-        background: '#ffffff',
-        borderRadius: '16px',
-        border: '1px solid #cbd5e1',
-        marginBottom: '32px',
-        boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03)'
-      }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#1e293b' }}>
-          <i className="fas fa-filter" style={{ color: '#4f46e5', fontSize: '15px' }}></i>
-          <span style={{ fontWeight: 700, fontSize: '14px', color: '#334155' }}>संवाददाता फ़िल्टर:</span>
-        </div>
-
-        {/* State Selector */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', minWidth: '200px' }}>
-          <span style={{ fontSize: '11px', fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.5px' }}>State (राज्य)</span>
-          <div style={{ position: 'relative' }}>
-            <select
-              value={selectedState}
-              onChange={(e) => {
-                setSelectedState(e.target.value);
-                setSelectedDistrict('');
-              }}
-              style={{
-                width: '100%',
-                padding: '8px 32px 8px 12px',
-                borderRadius: '8px',
-                border: '1px solid #cbd5e1',
-                background: '#f8fafc',
-                fontSize: '13px',
-                fontWeight: 600,
-                color: '#334155',
-                outline: 'none',
-                cursor: 'pointer',
-                appearance: 'none',
-                transition: 'all 0.2s',
-              }}
-            >
-              <option value="">All States (सभी राज्य)</option>
-              {availableStates.map(state => (
-                <option key={state} value={state}>{state}</option>
-              ))}
-            </select>
-            <div style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none', color: '#64748b' }}>
-              <i className="fas fa-chevron-down" style={{ fontSize: '11px' }}></i>
+      {activeTab !== 'Passwords' ? (
+        <>
+          {/* Premium Filter Section */}
+          <div style={{
+            display: 'flex',
+            flexWrap: 'wrap',
+            alignItems: 'center',
+            gap: '16px',
+            padding: '16px 20px',
+            background: '#ffffff',
+            borderRadius: '16px',
+            border: '1px solid #cbd5e1',
+            marginBottom: '32px',
+            boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03)'
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#1e293b' }}>
+              <i className="fas fa-filter" style={{ color: '#4f46e5', fontSize: '15px' }}></i>
+              <span style={{ fontWeight: 700, fontSize: '14px', color: '#334155' }}>संवाददाता फ़िल्टर:</span>
             </div>
-          </div>
-        </div>
 
-        {/* District Selector */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', minWidth: '200px' }}>
-          <span style={{ fontSize: '11px', fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.5px' }}>District (जिला)</span>
-          <div style={{ position: 'relative' }}>
-            <select
-              value={selectedDistrict}
-              onChange={(e) => setSelectedDistrict(e.target.value)}
-              disabled={!selectedState}
-              style={{
-                width: '100%',
-                padding: '8px 32px 8px 12px',
-                borderRadius: '8px',
-                border: '1px solid #cbd5e1',
-                background: selectedState ? '#f8fafc' : '#f1f5f9',
-                fontSize: '13px',
-                fontWeight: 600,
-                color: selectedState ? '#334155' : '#94a3b8',
-                outline: 'none',
-                cursor: selectedState ? 'pointer' : 'not-allowed',
-                appearance: 'none',
-                transition: 'all 0.2s',
-              }}
-            >
-              <option value="">All Districts (सभी जिले)</option>
-              {availableDistricts.map(district => (
-                <option key={district} value={district}>{district}</option>
-              ))}
-            </select>
-            <div style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none', color: '#64748b' }}>
-              <i className="fas fa-chevron-down" style={{ fontSize: '11px' }}></i>
+            {/* State Selector */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', minWidth: '200px' }}>
+              <span style={{ fontSize: '11px', fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.5px' }}>State (राज्य)</span>
+              <div style={{ position: 'relative' }}>
+                <select
+                  value={selectedState}
+                  onChange={(e) => {
+                    setSelectedState(e.target.value);
+                    setSelectedDistrict('');
+                  }}
+                  style={{
+                    width: '100%',
+                    padding: '8px 32px 8px 12px',
+                    borderRadius: '8px',
+                    border: '1px solid #cbd5e1',
+                    background: '#f8fafc',
+                    fontSize: '13px',
+                    fontWeight: 600,
+                    color: '#334155',
+                    outline: 'none',
+                    cursor: 'pointer',
+                    appearance: 'none',
+                    transition: 'all 0.2s',
+                  }}
+                >
+                  <option value="">All States (सभी राज्य)</option>
+                  {availableStates.map(state => (
+                    <option key={state} value={state}>{state}</option>
+                  ))}
+                </select>
+                <div style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none', color: '#64748b' }}>
+                  <i className="fas fa-chevron-down" style={{ fontSize: '11px' }}></i>
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
 
-        {/* Clear Filters Button */}
-        {(selectedState || selectedDistrict) && (
-          <button
-            onClick={() => {
-              setSelectedState('');
-              setSelectedDistrict('');
-            }}
-            style={{
-              alignSelf: 'flex-end',
-              padding: '8px 16px',
-              borderRadius: '8px',
-              border: '1px solid #cbd5e1',
-              background: '#f1f5f9',
-              color: '#475569',
-              fontSize: '13px',
-              fontWeight: 700,
-              cursor: 'pointer',
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '6px',
-              transition: 'all 0.2s',
-              height: '38px',
-              boxSizing: 'border-box'
-            }}
-          >
-            <i className="fas fa-undo" style={{ fontSize: '11px' }}></i>
-            <span>Clear</span>
-          </button>
-        )}
-      </div>
+            {/* District Selector */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', minWidth: '200px' }}>
+              <span style={{ fontSize: '11px', fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.5px' }}>District (जिला)</span>
+              <div style={{ position: 'relative' }}>
+                <select
+                  value={selectedDistrict}
+                  onChange={(e) => setSelectedDistrict(e.target.value)}
+                  disabled={!selectedState}
+                  style={{
+                    width: '100%',
+                    padding: '8px 32px 8px 12px',
+                    borderRadius: '8px',
+                    border: '1px solid #cbd5e1',
+                    background: selectedState ? '#f8fafc' : '#f1f5f9',
+                    fontSize: '13px',
+                    fontWeight: 600,
+                    color: selectedState ? '#334155' : '#94a3b8',
+                    outline: 'none',
+                    cursor: selectedState ? 'pointer' : 'not-allowed',
+                    appearance: 'none',
+                    transition: 'all 0.2s',
+                  }}
+                >
+                  <option value="">All Districts (सभी जिले)</option>
+                  {availableDistricts.map(district => (
+                    <option key={district} value={district}>{district}</option>
+                  ))}
+                </select>
+                <div style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none', color: '#64748b' }}>
+                  <i className="fas fa-chevron-down" style={{ fontSize: '11px' }}></i>
+                </div>
+              </div>
+            </div>
 
-      {/* Spacious Card-Separated Row spacing grid */}
-      <div style={{ overflowX: 'auto' }}>
-        <table style={{ width: '100%', borderCollapse: 'separate', borderSpacing: '0 12px', fontSize: '13.5px', textAlign: 'left' }}>
-          <thead>
-            <tr style={{ color: '#64748b', fontSize: '12px', textTransform: 'uppercase', letterSpacing: '0.75px' }}>
-              <th style={{ padding: '12px 16px', fontWeight: 'bold' }}>संवाददाता विवरण</th>
-              <th style={{ padding: '12px 16px', fontWeight: 'bold' }}>Email Address</th>
-              <th style={{ padding: '12px 16px', fontWeight: 'bold' }}>Mobile Number</th>
-              <th style={{ padding: '12px 16px', fontWeight: 'bold' }}>Assigned Region</th>
-              <th style={{ padding: '12px 16px', fontWeight: 'bold' }}>Registration Date</th>
-              <th style={{ padding: '12px 16px', fontWeight: 'bold', textAlign: 'center' }}>Evaluation</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredList.length === 0 ? (
-              <tr>
-                <td colSpan={6} style={{ 
-                  textAlign: 'center', 
-                  padding: '60px 40px', 
-                  color: '#64748b',
-                  background: '#ffffff',
-                  border: '2px dashed #cbd5e1',
-                  borderRadius: '16px'
-                }}>
-                  <div style={{ fontSize: '32px', color: '#cbd5e1', marginBottom: '12px' }}>
-                    <i className="fas fa-users-slash"></i>
-                  </div>
-                  <span style={{ fontSize: '15px', fontWeight: 700, display: 'block', color: '#475569' }}>No profiles found</span>
-                  <span style={{ fontSize: '13px', color: '#94a3b8', marginTop: '4px', display: 'block' }}>There are currently no reporters under the active tab selection.</span>
-                </td>
-              </tr>
-            ) : (
-              filteredList.map((rep) => (
-                <tr key={rep.id} style={{
-                  background: '#ffffff',
-                  boxShadow: '0 1px 3px rgba(15, 23, 42, 0.03)',
-                  borderRadius: '12px',
+            {/* Clear Filters Button */}
+            {(selectedState || selectedDistrict) && (
+              <button
+                onClick={() => {
+                  setSelectedState('');
+                  setSelectedDistrict('');
+                }}
+                style={{
+                  alignSelf: 'flex-end',
+                  padding: '8px 16px',
+                  borderRadius: '8px',
+                  border: '1px solid #cbd5e1',
+                  background: '#f1f5f9',
+                  color: '#475569',
+                  fontSize: '13px',
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '6px',
                   transition: 'all 0.2s',
-                }}>
-                  <td style={{ 
-                    padding: '14px 16px', 
-                    borderTopLeftRadius: '12px', 
-                    borderBottomLeftRadius: '12px', 
-                    border: '1px solid #e2e8f0', 
-                    borderLeft: rep.status === 'Suspended' ? '4px solid #ef4444' : '1px solid #e2e8f0',
-                    borderRight: 'none',
-                    verticalAlign: 'middle'
-                  }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                      <div style={{ position: 'relative' }}>
-                        <img
-                          src={rep.photoUrl || `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23cbd5e1"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>`}
-                          alt={rep.fullName}
-                          style={{ 
-                            width: '42px', 
-                            height: '42px', 
-                            borderRadius: '50%', 
-                            objectFit: 'cover', 
-                            border: '2px solid #e2e8f0',
-                            boxShadow: '0 4px 6px -1px rgba(0,0,0,0.06)',
-                            background: '#f8fafc'
-                          }}
-                        />
-                        {/* Status notification dot */}
-                        <span style={{
-                          position: 'absolute',
-                          bottom: '0',
-                          right: '0',
-                          width: '12px',
-                          height: '12px',
-                          borderRadius: '50%',
-                          border: '2px solid #ffffff',
-                          background: rep.status === 'Approved' ? '#10b981' : rep.status === 'Pending' ? '#6366f1' : rep.status === 'Rejected' ? '#f59e0b' : '#ef4444',
-                          boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-                        }} />
+                  height: '38px',
+                  boxSizing: 'border-box'
+                }}
+              >
+                <i className="fas fa-undo" style={{ fontSize: '11px' }}></i>
+                <span>Clear</span>
+              </button>
+            )}
+          </div>
+
+          {/* Spacious Card-Separated Row spacing grid */}
+          <div style={{ overflowX: 'auto' }}>
+            <table style={{ width: '100%', borderCollapse: 'separate', borderSpacing: '0 12px', fontSize: '13.5px', textAlign: 'left' }}>
+              <thead>
+                <tr style={{ color: '#64748b', fontSize: '12px', textTransform: 'uppercase', letterSpacing: '0.75px' }}>
+                  <th style={{ padding: '12px 16px', fontWeight: 'bold' }}>संवाददाता विवरण</th>
+                  <th style={{ padding: '12px 16px', fontWeight: 'bold' }}>Email Address</th>
+                  <th style={{ padding: '12px 16px', fontWeight: 'bold' }}>Mobile Number</th>
+                  <th style={{ padding: '12px 16px', fontWeight: 'bold' }}>Assigned Region</th>
+                  <th style={{ padding: '12px 16px', fontWeight: 'bold' }}>Registration Date</th>
+                  <th style={{ padding: '12px 16px', fontWeight: 'bold', textAlign: 'center' }}>Evaluation</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredList.length === 0 ? (
+                  <tr>
+                    <td colSpan={6} style={{ 
+                      textAlign: 'center', 
+                      padding: '60px 40px', 
+                      color: '#64748b',
+                      background: '#ffffff',
+                      border: '2px dashed #cbd5e1',
+                      borderRadius: '16px'
+                    }}>
+                      <div style={{ fontSize: '32px', color: '#cbd5e1', marginBottom: '12px' }}>
+                        <i className="fas fa-users-slash"></i>
                       </div>
-                      <div>
-                        <span style={{ fontWeight: 750, color: '#1e293b', fontSize: '14.5px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                          <span>{rep.fullName}</span>
-                          {rep.status === 'Suspended' ? (
+                      <span style={{ fontSize: '15px', fontWeight: 700, display: 'block', color: '#475569' }}>No profiles found</span>
+                      <span style={{ fontSize: '13px', color: '#94a3b8', marginTop: '4px', display: 'block' }}>There are currently no reporters under the active tab selection.</span>
+                    </td>
+                  </tr>
+                ) : (
+                  filteredList.map((rep) => (
+                    <tr key={rep.id} style={{
+                      background: '#ffffff',
+                      boxShadow: '0 1px 3px rgba(15, 23, 42, 0.03)',
+                      borderRadius: '12px',
+                      transition: 'all 0.2s',
+                    }}>
+                      <td style={{ 
+                        padding: '14px 16px', 
+                        borderTopLeftRadius: '12px', 
+                        borderBottomLeftRadius: '12px', 
+                        border: '1px solid #e2e8f0', 
+                        borderLeft: rep.status === 'Suspended' ? '4px solid #ef4444' : '1px solid #e2e8f0',
+                        borderRight: 'none',
+                        verticalAlign: 'middle'
+                      }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                          <div style={{ position: 'relative' }}>
+                            <img
+                              src={rep.photoUrl || `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23cbd5e1"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>`}
+                              alt={rep.fullName}
+                              style={{ 
+                                width: '42px', 
+                                height: '42px', 
+                                borderRadius: '50%', 
+                                objectFit: 'cover', 
+                                border: '2px solid #e2e8f0',
+                                boxShadow: '0 4px 6px -1px rgba(0,0,0,0.06)',
+                                background: '#f8fafc'
+                              }}
+                            />
+                            {/* Status notification dot */}
                             <span style={{
-                              background: '#fef2f2',
-                              color: '#dc2626',
-                              fontSize: '11px',
-                              fontWeight: 800,
-                              padding: '2px 8px',
-                              borderRadius: '6px',
-                              border: '1px solid #fca5a5',
-                              display: 'inline-flex',
-                              alignItems: 'center',
-                              gap: '4px',
-                              lineHeight: '1'
-                            }}>
-                              <i className="fas fa-ban" style={{ fontSize: '9px' }}></i>
-                              <span>Blocked</span>
+                              position: 'absolute',
+                              bottom: '0',
+                              right: '0',
+                              width: '12px',
+                              height: '12px',
+                              borderRadius: '50%',
+                              border: '2px solid #ffffff',
+                              background: rep.status === 'Approved' ? '#10b981' : rep.status === 'Pending' ? '#6366f1' : rep.status === 'Rejected' ? '#f59e0b' : '#ef4444',
+                              boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+                            }} />
+                          </div>
+                          <div>
+                            <span style={{ fontWeight: 750, color: '#1e293b', fontSize: '14.5px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                              <span>{rep.fullName}</span>
+                              {rep.status === 'Suspended' ? (
+                                <span style={{
+                                  background: '#fef2f2',
+                                  color: '#dc2626',
+                                  fontSize: '11px',
+                                  fontWeight: 800,
+                                  padding: '2px 8px',
+                                  borderRadius: '6px',
+                                  border: '1px solid #fca5a5',
+                                  display: 'inline-flex',
+                                  alignItems: 'center',
+                                  gap: '4px',
+                                  lineHeight: '1'
+                                }}>
+                                  <i className="fas fa-ban" style={{ fontSize: '9px' }}></i>
+                                  <span>Blocked</span>
+                                </span>
+                              ) : activeTab === 'Chat' ? (
+                                <span style={{
+                                  background: rep.status === 'Approved' ? '#ecfdf5' : rep.status === 'Pending' ? '#eeebff' : '#fff9db',
+                                  color: rep.status === 'Approved' ? '#10b981' : rep.status === 'Pending' ? '#4f46e5' : '#d97706',
+                                  fontSize: '11px',
+                                  fontWeight: 800,
+                                  padding: '2px 8px',
+                                  borderRadius: '6px',
+                                  border: `1px solid ${rep.status === 'Approved' ? '#a7f3d0' : rep.status === 'Pending' ? '#cbd5e1' : '#fde68a'}`,
+                                  display: 'inline-flex',
+                                  alignItems: 'center',
+                                  gap: '4px',
+                                  lineHeight: '1'
+                                }}>
+                                  <i className={`fas ${rep.status === 'Approved' ? 'fa-check-circle' : rep.status === 'Pending' ? 'fa-hourglass-half' : 'fa-times-circle'}`} style={{ fontSize: '9px' }}></i>
+                                  <span>{rep.status}</span>
+                                </span>
+                              ) : null}
+                              {(rep.unreadCount || 0) > 0 && (
+                                <span style={{
+                                  background: '#ef4444',
+                                  color: '#ffffff',
+                                  fontSize: '10px',
+                                  fontWeight: 800,
+                                  padding: '2px 8px',
+                                  borderRadius: '20px',
+                                  display: 'inline-flex',
+                                  alignItems: 'center',
+                                  gap: '3px',
+                                  boxShadow: '0 2px 8px rgba(239, 68, 68, 0.3)'
+                                }}>
+                                  <i className="fas fa-bell" style={{ fontSize: '8px' }}></i>
+                                  <span>{rep.unreadCount} New</span>
+                                </span>
+                              )}
                             </span>
-                          ) : activeTab === 'Chat' ? (
-                            <span style={{
-                              background: rep.status === 'Approved' ? '#ecfdf5' : rep.status === 'Pending' ? '#eeebff' : '#fff9db',
-                              color: rep.status === 'Approved' ? '#10b981' : rep.status === 'Pending' ? '#4f46e5' : '#d97706',
-                              fontSize: '11px',
-                              fontWeight: 800,
-                              padding: '2px 8px',
-                              borderRadius: '6px',
-                              border: `1px solid ${rep.status === 'Approved' ? '#a7f3d0' : rep.status === 'Pending' ? '#cbd5e1' : '#fde68a'}`,
-                              display: 'inline-flex',
-                              alignItems: 'center',
-                              gap: '4px',
-                              lineHeight: '1'
-                            }}>
-                              <i className={`fas ${rep.status === 'Approved' ? 'fa-check-circle' : rep.status === 'Pending' ? 'fa-hourglass-half' : 'fa-times-circle'}`} style={{ fontSize: '9px' }}></i>
-                              <span>{rep.status}</span>
-                            </span>
-                          ) : null}
-                          {(rep.unreadCount || 0) > 0 && (
-                            <span style={{
-                              background: '#ef4444',
-                              color: '#ffffff',
-                              fontSize: '10px',
-                              fontWeight: 800,
-                              padding: '2px 8px',
-                              borderRadius: '20px',
-                              display: 'inline-flex',
-                              alignItems: 'center',
-                              gap: '3px',
-                              boxShadow: '0 2px 8px rgba(239, 68, 68, 0.3)'
-                            }}>
-                              <i className="fas fa-bell" style={{ fontSize: '8px' }}></i>
-                              <span>{rep.unreadCount} New</span>
-                            </span>
-                          )}
-                        </span>
-                        
-                        {activeTab === 'Chat' ? (
-                          <div style={{ marginTop: '4px' }}>
-                            {rep.lastMessageText ? (
-                              <span style={{ 
-                                fontSize: '12px', 
-                                color: (rep.unreadCount || 0) > 0 ? '#4f46e5' : '#64748b', 
-                                fontWeight: (rep.unreadCount || 0) > 0 ? 700 : 500, 
-                                display: 'block',
-                                maxWidth: '280px',
-                                textOverflow: 'ellipsis',
-                                overflow: 'hidden',
-                                whiteSpace: 'nowrap'
-                              }}>
-                                {(rep.unreadCount || 0) > 0 ? '💬 ' : ''}{rep.lastMessageText}
-                              </span>
+                            
+                            {activeTab === 'Chat' ? (
+                              <div style={{ marginTop: '4px' }}>
+                                {rep.lastMessageText ? (
+                                  <span style={{ 
+                                    fontSize: '12px', 
+                                    color: (rep.unreadCount || 0) > 0 ? '#4f46e5' : '#64748b', 
+                                    fontWeight: (rep.unreadCount || 0) > 0 ? 700 : 500, 
+                                    display: 'block',
+                                    maxWidth: '280px',
+                                    textOverflow: 'ellipsis',
+                                    overflow: 'hidden',
+                                    whiteSpace: 'nowrap'
+                                  }}>
+                                    {(rep.unreadCount || 0) > 0 ? '💬 ' : ''}{rep.lastMessageText}
+                                  </span>
+                                ) : (
+                                  <span style={{ fontSize: '12px', color: '#94a3b8', fontStyle: 'italic', display: 'block' }}>
+                                    No message history
+                                  </span>
+                                )}
+                              </div>
                             ) : (
-                              <span style={{ fontSize: '12px', color: '#94a3b8', fontStyle: 'italic', display: 'block' }}>
-                                No message history
+                              <span style={{ 
+                                display: 'inline-flex', 
+                                alignItems: 'center', 
+                                gap: '4px',
+                                fontSize: '10.5px', 
+                                color: '#4f46e5', 
+                                fontWeight: 800, 
+                                fontFamily: 'monospace', 
+                                marginTop: '4px',
+                                background: '#eeebff',
+                                padding: '2px 8px',
+                                borderRadius: '6px',
+                              }}>
+                                <i className="fas fa-id-badge"></i> {rep.reporterCode || 'NO ID ASSIGNED'}
                               </span>
                             )}
                           </div>
-                        ) : (
-                          <span style={{ 
-                            display: 'inline-flex', 
-                            alignItems: 'center', 
-                            gap: '4px',
-                            fontSize: '10.5px', 
-                            color: '#4f46e5', 
-                            fontWeight: 800, 
-                            fontFamily: 'monospace', 
-                            marginTop: '4px',
-                            background: '#eeebff',
-                            padding: '2px 8px',
-                            borderRadius: '6px',
+                        </div>
+                      </td>
+                      <td style={{ 
+                        padding: '14px 16px', 
+                        border: '1px solid #e2e8f0', 
+                        borderLeft: 'none', 
+                        borderRight: 'none',
+                        verticalAlign: 'middle',
+                        color: '#475569',
+                        fontWeight: 600
+                      }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          <i className="far fa-envelope" style={{ color: '#94a3b8' }}></i>
+                          <span>{rep.email}</span>
+                        </div>
+                      </td>
+                      <td style={{ 
+                        padding: '14px 16px', 
+                        border: '1px solid #e2e8f0', 
+                        borderLeft: 'none', 
+                        borderRight: 'none',
+                        verticalAlign: 'middle',
+                        color: '#475569',
+                        fontWeight: 600
+                      }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          <i className="fas fa-phone-alt" style={{ color: '#94a3b8' }}></i>
+                          <span>{rep.mobile}</span>
+                        </div>
+                      </td>
+                      <td style={{ 
+                        padding: '14px 16px', 
+                        border: '1px solid #e2e8f0', 
+                        borderLeft: 'none', 
+                        borderRight: 'none',
+                        verticalAlign: 'middle',
+                        color: '#475569',
+                        fontWeight: 600
+                      }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          <i className="fas fa-map-marker-alt" style={{ color: '#f43f5e' }}></i>
+                          <span>{rep.block ? `${rep.block}, ` : ''}{rep.district}, {rep.state}</span>
+                        </div>
+                      </td>
+                      <td style={{ 
+                        padding: '14px 16px', 
+                        border: '1px solid #e2e8f0', 
+                        borderLeft: 'none', 
+                        borderRight: 'none',
+                        verticalAlign: 'middle',
+                        color: '#64748b',
+                        fontSize: '13px'
+                      }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                          <i className="far fa-calendar-alt" style={{ color: '#94a3b8' }}></i>
+                          <span>{new Date(rep.createdAt).toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
+                        </div>
+                      </td>
+                      <td style={{ 
+                        padding: '14px 16px', 
+                        borderTopRightRadius: '12px', 
+                        borderBottomRightRadius: '12px', 
+                        border: '1px solid #e2e8f0', 
+                        borderLeft: 'none',
+                        verticalAlign: 'middle',
+                        textAlign: 'center'
+                      }}>
+                        <button 
+                          onClick={() => handleOpenReview(rep)} 
+                          style={{
+                            background: activeTab === 'Chat' && (rep.unreadCount || 0) > 0
+                              ? 'linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)'
+                              : 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)',
+                            border: activeTab === 'Chat' && (rep.unreadCount || 0) > 0 ? 'none' : '1px solid #cbd5e1',
+                            color: activeTab === 'Chat' && (rep.unreadCount || 0) > 0 ? '#ffffff' : '#334155',
+                            padding: '8px 16px',
+                            fontSize: '12.5px',
+                            fontWeight: 700,
+                            borderRadius: '10px',
+                            cursor: 'pointer',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '6px',
+                            transition: 'all 0.2s',
+                            boxShadow: activeTab === 'Chat' && (rep.unreadCount || 0) > 0 ? '0 4px 12px rgba(79, 70, 229, 0.25)' : '0 2px 4px rgba(0,0,0,0.02)',
+                          }}
+                          onMouseEnter={(e) => {
+                            if (activeTab === 'Chat' && (rep.unreadCount || 0) > 0) {
+                              e.currentTarget.style.transform = 'translateY(-1px)';
+                              e.currentTarget.style.boxShadow = '0 6px 16px rgba(79, 70, 229, 0.35)';
+                            } else {
+                              e.currentTarget.style.background = 'linear-gradient(135deg, #334155 0%, #1e293b 100%)';
+                              e.currentTarget.style.color = '#ffffff';
+                              e.currentTarget.style.borderColor = '#1e293b';
+                              e.currentTarget.style.transform = 'translateY(-1px)';
+                              e.currentTarget.style.boxShadow = '0 4px 12px rgba(30, 41, 59, 0.15)';
+                            }
+                          }}
+                          onMouseLeave={(e) => {
+                            if (activeTab === 'Chat' && (rep.unreadCount || 0) > 0) {
+                              e.currentTarget.style.transform = 'translateY(0)';
+                              e.currentTarget.style.boxShadow = '0 4px 12px rgba(79, 70, 229, 0.25)';
+                            } else {
+                              e.currentTarget.style.background = 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)';
+                              e.currentTarget.style.color = '#334155';
+                              e.currentTarget.style.borderColor = '#cbd5e1';
+                              e.currentTarget.style.transform = 'translateY(0)';
+                              e.currentTarget.style.boxShadow = '0 2px 4px rgba(0,0,0,0.02)';
+                            }
+                          }}
+                        >
+                          <i className={`fas ${activeTab === 'Chat' ? 'fa-comments' : 'fa-clipboard-check'}`}></i>
+                          <span>{activeTab === 'Chat' ? 'Open Chat' : 'Review KYC'}</span>
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+        </>
+      ) : (
+        /* Password Management Dashboard Content */
+        !isPasswordsAuthorized ? (
+          /* Re-authentication Form card */
+          <div style={{
+            maxWidth: '500px',
+            margin: '40px auto',
+            padding: '32px',
+            background: '#ffffff',
+            borderRadius: '24px',
+            boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
+            border: '1px solid #cbd5e1',
+            textAlign: 'center'
+          }}>
+            <div style={{
+              width: '64px',
+              height: '64px',
+              borderRadius: '50%',
+              background: '#fff9db',
+              color: '#f59e0b',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              margin: '0 auto 20px auto',
+              fontSize: '24px'
+            }}>
+              <i className="fas fa-lock"></i>
+            </div>
+            <h2 style={{ fontSize: '20px', fontWeight: 800, color: '#1e293b', marginBottom: '8px' }}>
+              Super Admin Re-authentication Required
+            </h2>
+            <p style={{ fontSize: '14px', color: '#64748b', marginBottom: '24px' }}>
+              सुरक्षा कारणों से, संवाददाताओं के पासवर्ड देखने के लिए कृपया सुपर एडमिन क्रेडेंशियल्स सत्यापित करें।
+            </p>
+            <form onSubmit={handleSuperAdminVerify} style={{ display: 'flex', flexDirection: 'column', gap: '16px', textAlign: 'left' }}>
+              <div>
+                <label style={{ display: 'block', fontSize: '12.5px', fontWeight: 700, color: '#475569', marginBottom: '6px' }}>
+                  Admin ID / उपयोगकर्ता नाम
+                </label>
+                <input
+                  type="text"
+                  value={adminUsernameInput}
+                  onChange={(e) => setAdminUsernameInput(e.target.value)}
+                  placeholder="e.g. SuperAdmin"
+                  style={{
+                    width: '100%',
+                    padding: '10px 14px',
+                    borderRadius: '10px',
+                    border: '1px solid #cbd5e1',
+                    fontSize: '14px',
+                    outline: 'none',
+                    transition: 'border-color 0.2s',
+                    boxSizing: 'border-box'
+                  }}
+                  required
+                />
+              </div>
+              <div>
+                <label style={{ display: 'block', fontSize: '12.5px', fontWeight: 700, color: '#475569', marginBottom: '6px' }}>
+                  Password / पासवर्ड
+                </label>
+                <input
+                  type="password"
+                  value={adminPasswordInput}
+                  onChange={(e) => setAdminPasswordInput(e.target.value)}
+                  placeholder="••••••••"
+                  style={{
+                    width: '100%',
+                    padding: '10px 14px',
+                    borderRadius: '10px',
+                    border: '1px solid #cbd5e1',
+                    fontSize: '14px',
+                    outline: 'none',
+                    transition: 'border-color 0.2s',
+                    boxSizing: 'border-box'
+                  }}
+                  required
+                />
+              </div>
+              {passwordsVerifyError && (
+                <div style={{ color: '#ef4444', fontSize: '13px', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <i className="fas fa-exclamation-circle"></i>
+                  <span>{passwordsVerifyError}</span>
+                </div>
+              )}
+              <button
+                type="submit"
+                disabled={isVerifyingAdmin}
+                style={{
+                  width: '100%',
+                  padding: '12px',
+                  background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
+                  color: '#ffffff',
+                  border: 'none',
+                  borderRadius: '10px',
+                  fontWeight: 700,
+                  fontSize: '14px',
+                  cursor: isVerifyingAdmin ? 'not-allowed' : 'pointer',
+                  boxShadow: '0 4px 12px rgba(245, 158, 11, 0.2)',
+                  transition: 'all 0.2s'
+                }}
+              >
+                {isVerifyingAdmin ? 'सत्यापित किया जा रहा है...' : 'अनलॉक करें (Unlock)'}
+              </button>
+            </form>
+          </div>
+        ) : (
+          /* Authorized Dashboard Table & Controls */
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+            <div style={{
+              display: 'flex',
+              flexWrap: 'wrap',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              gap: '16px',
+              padding: '16px 20px',
+              background: '#ffffff',
+              borderRadius: '16px',
+              border: '1px solid #cbd5e1',
+              boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.05)'
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <div style={{
+                  width: '40px',
+                  height: '40px',
+                  borderRadius: '10px',
+                  background: '#fff9db',
+                  color: '#f59e0b',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: '18px'
+                }}>
+                  <i className="fas fa-shield-alt"></i>
+                </div>
+                <div>
+                  <h2 style={{ fontSize: '16px', fontWeight: 800, color: '#1e293b', margin: 0 }}>
+                    संवाददाता पासवर्ड प्रबंधन डैशबोर्ड
+                  </h2>
+                  <span style={{ fontSize: '12px', color: '#64748b', fontWeight: 500 }}>
+                    Secure Plain-text credentials log & verification center.
+                  </span>
+                </div>
+              </div>
+
+              {/* Search & Lock controls */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
+                <div style={{ position: 'relative', minWidth: '240px' }}>
+                  <input
+                    type="text"
+                    value={passwordsSearchQuery}
+                    onChange={(e) => setPasswordsSearchQuery(e.target.value)}
+                    placeholder="खोजें (नाम, ईमेल, मोबाइल...)"
+                    style={{
+                      width: '100%',
+                      padding: '8px 12px 8px 32px',
+                      borderRadius: '8px',
+                      border: '1px solid #cbd5e1',
+                      fontSize: '13px',
+                      outline: 'none',
+                      boxSizing: 'border-box'
+                    }}
+                  />
+                  <i className="fas fa-search" style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)', color: '#94a3b8', fontSize: '12px' }}></i>
+                </div>
+
+                <button
+                  onClick={handleLockPasswordsPanel}
+                  style={{
+                    padding: '8px 16px',
+                    background: '#ef4444',
+                    color: '#ffffff',
+                    border: 'none',
+                    borderRadius: '8px',
+                    fontWeight: 700,
+                    fontSize: '13px',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                    boxShadow: '0 2px 6px rgba(239, 68, 68, 0.2)'
+                  }}
+                >
+                  <i className="fas fa-lock"></i>
+                  <span>Lock Panel</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Passwords List Table */}
+            <div style={{ overflowX: 'auto' }}>
+              <table style={{ width: '100%', borderCollapse: 'separate', borderSpacing: '0 12px', fontSize: '13.5px', textAlign: 'left' }}>
+                <thead>
+                  <tr style={{ color: '#64748b', fontSize: '12px', textTransform: 'uppercase', letterSpacing: '0.75px' }}>
+                    <th style={{ padding: '12px 16px', fontWeight: 'bold' }}>संवाददाता</th>
+                    <th style={{ padding: '12px 16px', fontWeight: 'bold' }}>Username / Email</th>
+                    <th style={{ padding: '12px 16px', fontWeight: 'bold' }}>Mobile</th>
+                    <th style={{ padding: '12px 16px', fontWeight: 'bold' }}>Password Status & Plaintext</th>
+                    <th style={{ padding: '12px 16px', fontWeight: 'bold' }}>Last Login Info</th>
+                    <th style={{ padding: '12px 16px', fontWeight: 'bold', textAlign: 'center' }}>Actions / Reset Options</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {isLoadingPasswords ? (
+                    <tr>
+                      <td colSpan={6} style={{ textAlign: 'center', padding: '40px', background: '#ffffff', borderRadius: '12px', border: '1px solid #cbd5e1' }}>
+                        <i className="fas fa-spinner fa-spin" style={{ fontSize: '24px', color: '#d97706', marginBottom: '8px' }}></i>
+                        <div style={{ fontWeight: 600, color: '#64748b' }}>डेटा लोड किया जा रहा है...</div>
+                      </td>
+                    </tr>
+                  ) : (
+                    (() => {
+                      const filtered = passwordsList.filter(rep => {
+                        const query = passwordsSearchQuery.toLowerCase().trim();
+                        if (!query) return true;
+                        return (
+                          rep.fullName?.toLowerCase().includes(query) ||
+                          rep.email?.toLowerCase().includes(query) ||
+                          rep.mobile?.toLowerCase().includes(query) ||
+                          rep.reporterCode?.toLowerCase().includes(query)
+                        );
+                      });
+
+                      if (filtered.length === 0) {
+                        return (
+                          <tr>
+                            <td colSpan={6} style={{
+                              textAlign: 'center',
+                              padding: '40px',
+                              color: '#64748b',
+                              background: '#ffffff',
+                              border: '2px dashed #cbd5e1',
+                              borderRadius: '16px'
+                            }}>
+                              <i className="fas fa-users-slash" style={{ fontSize: '32px', color: '#cbd5e1', marginBottom: '12px' }}></i>
+                              <div style={{ fontSize: '15px', fontWeight: 700, color: '#475569' }}>कोई संवाददाता नहीं मिला</div>
+                            </td>
+                          </tr>
+                        );
+                      }
+
+                      return filtered.map((rep) => {
+                        const isReversible = rep.isReversible;
+                        const isShowing = showPasswordStates[rep.id] || false;
+                        const showResetForm = activeResetUserId === rep.id;
+
+                        return (
+                          <tr key={rep.id} style={{
+                            background: '#ffffff',
+                            boxShadow: '0 1px 3px rgba(15, 23, 42, 0.03)',
+                            borderRadius: '12px',
+                            transition: 'all 0.2s',
                           }}>
-                            <i className="fas fa-id-badge"></i> {rep.reporterCode || 'NO ID ASSIGNED'}
-                          </span>
-                        )}
+                            {/* Profile cell */}
+                            <td style={{
+                              padding: '14px 16px',
+                              borderTopLeftRadius: '12px',
+                              borderBottomLeftRadius: '12px',
+                              border: '1px solid #e2e8f0',
+                              borderRight: 'none',
+                              verticalAlign: 'middle'
+                            }}>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                                <div style={{
+                                  fontWeight: 750,
+                                  color: '#1e293b',
+                                  fontSize: '14.5px',
+                                  display: 'flex',
+                                  flexDirection: 'column'
+                                }}>
+                                  <span>{rep.fullName}</span>
+                                  <span style={{
+                                    fontSize: '11px',
+                                    color: rep.status === 'Approved' ? '#10b981' : rep.status === 'Pending' ? '#4f46e5' : rep.status === 'Rejected' ? '#f59e0b' : '#ef4444',
+                                    fontWeight: 800,
+                                    marginTop: '2px'
+                                  }}>
+                                    {rep.status}
+                                  </span>
+                                </div>
+                              </div>
+                            </td>
+
+                            {/* Username cell */}
+                            <td style={{
+                              padding: '14px 16px',
+                              border: '1px solid #e2e8f0',
+                              borderLeft: 'none',
+                              borderRight: 'none',
+                              verticalAlign: 'middle',
+                              color: '#475569',
+                              fontWeight: 600
+                            }}>
+                              <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                                <span style={{ fontFamily: 'monospace', fontSize: '12px', background: '#eeebff', color: '#4f46e5', padding: '2px 6px', borderRadius: '4px', alignSelf: 'flex-start' }}>
+                                  {rep.reporterCode}
+                                </span>
+                                <span style={{ fontSize: '12px', color: '#64748b' }}>{rep.email}</span>
+                              </div>
+                            </td>
+
+                            {/* Mobile cell */}
+                            <td style={{
+                              padding: '14px 16px',
+                              border: '1px solid #e2e8f0',
+                              borderLeft: 'none',
+                              borderRight: 'none',
+                              verticalAlign: 'middle',
+                              color: '#475569',
+                              fontWeight: 600
+                            }}>
+                              <span>{rep.mobile}</span>
+                            </td>
+
+                            {/* Password display cell */}
+                            <td style={{
+                              padding: '14px 16px',
+                              border: '1px solid #e2e8f0',
+                              borderLeft: 'none',
+                              borderRight: 'none',
+                              verticalAlign: 'middle',
+                              minWidth: '220px'
+                            }}>
+                              {!isReversible ? (
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                                  <span style={{
+                                    fontSize: '11px',
+                                    fontWeight: 800,
+                                    background: '#fee2e2',
+                                    color: '#ef4444',
+                                    padding: '2px 8px',
+                                    borderRadius: '6px',
+                                    border: '1px solid #fecaca',
+                                    alignSelf: 'flex-start'
+                                  }}>
+                                    ⚠️ SHA-256 Hashed
+                                  </span>
+                                  <span style={{ fontSize: '11.5px', color: '#64748b' }}>
+                                    रिसेट आवश्यक है (पासवर्ड अदृश्य है)
+                                  </span>
+                                </div>
+                              ) : (
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                  <span style={{
+                                    fontFamily: 'monospace',
+                                    fontSize: '14px',
+                                    fontWeight: 700,
+                                    background: '#f8fafc',
+                                    padding: '4px 8px',
+                                    borderRadius: '6px',
+                                    border: '1px solid #cbd5e1',
+                                    minWidth: '100px',
+                                    textAlign: 'center',
+                                    color: isShowing ? '#1e293b' : '#94a3b8'
+                                  }}>
+                                    {isShowing ? rep.passwordPreview : '••••••••'}
+                                  </span>
+
+                                  <button
+                                    onClick={() => handleToggleShowPassword(rep)}
+                                    title={isShowing ? 'पासवर्ड छुपाएं' : 'पासवर्ड दिखाएं'}
+                                    style={{
+                                      background: 'none',
+                                      border: 'none',
+                                      cursor: 'pointer',
+                                      color: '#64748b',
+                                      fontSize: '14px',
+                                      padding: '4px',
+                                    }}
+                                  >
+                                    <i className={isShowing ? 'fas fa-eye-slash' : 'fas fa-eye'}></i>
+                                  </button>
+
+                                  <button
+                                    onClick={() => handleCopyPassword(rep, rep.passwordPreview)}
+                                    title="पासवर्ड कॉपी करें"
+                                    style={{
+                                      background: 'none',
+                                      border: 'none',
+                                      cursor: 'pointer',
+                                      color: '#64748b',
+                                      fontSize: '14px',
+                                      padding: '4px',
+                                    }}
+                                  >
+                                    <i className="fas fa-copy"></i>
+                                  </button>
+                                </div>
+                              )}
+                            </td>
+
+                            {/* Last Login Info cell */}
+                            <td style={{
+                              padding: '14px 16px',
+                              border: '1px solid #e2e8f0',
+                              borderLeft: 'none',
+                              borderRight: 'none',
+                              verticalAlign: 'middle',
+                              color: '#475569',
+                              fontSize: '12.5px',
+                              fontWeight: 500
+                            }}>
+                              <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                                <span style={{ color: '#1e293b', fontWeight: 600 }}>{rep.lastLogin}</span>
+                              </div>
+                            </td>
+
+                            {/* Actions cell */}
+                            <td style={{
+                              padding: '14px 16px',
+                              borderTopRightRadius: '12px',
+                              borderBottomRightRadius: '12px',
+                              border: '1px solid #e2e8f0',
+                              borderLeft: 'none',
+                              verticalAlign: 'middle'
+                            }}>
+                              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                                <div style={{ display: 'flex', gap: '6px' }}>
+                                  <button
+                                    onClick={() => handleGenerateRandomPassword(rep)}
+                                    style={{
+                                      flex: 1,
+                                      padding: '6px 10px',
+                                      fontSize: '11px',
+                                      fontWeight: 700,
+                                      borderRadius: '6px',
+                                      border: '1px solid #d97706',
+                                      background: '#fffbeb',
+                                      color: '#d97706',
+                                      cursor: 'pointer',
+                                      transition: 'all 0.2s',
+                                    }}
+                                    onMouseEnter={(e) => {
+                                      e.currentTarget.style.background = '#d97706';
+                                      e.currentTarget.style.color = '#ffffff';
+                                    }}
+                                    onMouseLeave={(e) => {
+                                      e.currentTarget.style.background = '#fffbeb';
+                                      e.currentTarget.style.color = '#d97706';
+                                    }}
+                                  >
+                                    <i className="fas fa-random" style={{ marginRight: '4px' }}></i>
+                                    Auto Gen
+                                  </button>
+
+                                  <button
+                                    onClick={() => setActiveResetUserId(showResetForm ? null : rep.id)}
+                                    style={{
+                                      flex: 1,
+                                      padding: '6px 10px',
+                                      fontSize: '11px',
+                                      fontWeight: 700,
+                                      borderRadius: '6px',
+                                      border: '1px solid #4f46e5',
+                                      background: showResetForm ? '#4f46e5' : '#eeebff',
+                                      color: showResetForm ? '#ffffff' : '#4f46e5',
+                                      cursor: 'pointer',
+                                      transition: 'all 0.2s',
+                                    }}
+                                  >
+                                    <i className="fas fa-edit" style={{ marginRight: '4px' }}></i>
+                                    {showResetForm ? 'Cancel' : 'Reset'}
+                                  </button>
+                                </div>
+
+                                {/* Custom Password Input Form */}
+                                {showResetForm && (
+                                  <div style={{
+                                    display: 'flex',
+                                    gap: '6px',
+                                    padding: '8px',
+                                    background: '#f8fafc',
+                                    borderRadius: '8px',
+                                    border: '1px solid #cbd5e1'
+                                  }}>
+                                    <input
+                                      type="text"
+                                      placeholder="नया पासवर्ड"
+                                      value={customPasswordResetInputs[rep.id] || ''}
+                                      onChange={(e) => setCustomPasswordResetInputs(prev => ({ ...prev, [rep.id]: e.target.value }))}
+                                      style={{
+                                        flex: 1,
+                                        padding: '4px 8px',
+                                        fontSize: '12px',
+                                        border: '1px solid #cbd5e1',
+                                        borderRadius: '4px',
+                                        outline: 'none',
+                                      }}
+                                    />
+                                    <button
+                                      onClick={() => handleCustomResetSubmit(rep)}
+                                      disabled={isResettingPassword}
+                                      style={{
+                                        padding: '4px 8px',
+                                        fontSize: '11px',
+                                        fontWeight: 700,
+                                        borderRadius: '4px',
+                                        border: 'none',
+                                        background: '#10b981',
+                                        color: '#ffffff',
+                                        cursor: 'pointer'
+                                      }}
+                                    >
+                                      Save
+                                    </button>
+                                  </div>
+                                )}
+
+                                {/* Mock Send channels */}
+                                <div style={{
+                                  display: 'flex',
+                                  justifyContent: 'space-between',
+                                  alignItems: 'center',
+                                  background: '#f8fafc',
+                                  padding: '4px 8px',
+                                  borderRadius: '6px',
+                                  border: '1px dashed #cbd5e1',
+                                  fontSize: '11px'
+                                }}>
+                                  <span style={{ fontWeight: 600, color: '#64748b' }}>Mock Send:</span>
+                                  <div style={{ display: 'flex', gap: '6px' }}>
+                                    <button
+                                      onClick={() => handleMockSendCredentials(rep, 'WhatsApp')}
+                                      title="WhatsApp पर भेजें"
+                                      style={{ background: 'none', border: 'none', color: '#25D366', cursor: 'pointer', fontSize: '12px' }}
+                                    >
+                                      <i className="fab fa-whatsapp"></i>
+                                    </button>
+                                    <button
+                                      onClick={() => handleMockSendCredentials(rep, 'SMS')}
+                                      title="SMS द्वारा भेजें"
+                                      style={{ background: 'none', border: 'none', color: '#3b82f6', cursor: 'pointer', fontSize: '12px' }}
+                                    >
+                                      <i className="fas fa-sms"></i>
+                                    </button>
+                                    <button
+                                      onClick={() => handleMockSendCredentials(rep, 'Email')}
+                                      title="ईमेल द्वारा भेजें"
+                                      style={{ background: 'none', border: 'none', color: '#ea4335', cursor: 'pointer', fontSize: '12px' }}
+                                    >
+                                      <i className="far fa-envelope"></i>
+                                    </button>
+                                  </div>
+                                </div>
+                              </div>
+                            </td>
+                          </tr>
+                        );
+                      });
+                    })()
+                  )}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Audit Logs Section */}
+            <div style={{
+              background: '#ffffff',
+              borderRadius: '16px',
+              border: '1px solid #cbd5e1',
+              padding: '20px',
+              boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.05)'
+            }}>
+              <h3 style={{ fontSize: '15px', fontWeight: 800, color: '#1e293b', marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <i className="fas fa-history" style={{ color: '#d97706' }}></i>
+                <span>Password Audit Logs (सुरक्षा लॉग)</span>
+              </h3>
+              <div style={{
+                maxHeight: '200px',
+                overflowY: 'auto',
+                background: '#f8fafc',
+                borderRadius: '8px',
+                padding: '12px',
+                border: '1px solid #e2e8f0',
+                fontSize: '12px',
+                fontFamily: 'monospace'
+              }}>
+                {auditLogs.length === 0 ? (
+                  <div style={{ color: '#94a3b8', fontStyle: 'italic', textAlign: 'center', padding: '12px' }}>
+                    कोई हालिया गतिविधि नहीं।
+                  </div>
+                ) : (
+                  auditLogs.map((log, index) => (
+                    <div key={index} style={{
+                      padding: '8px 0',
+                      borderBottom: index < auditLogs.length - 1 ? '1px solid #e2e8f0' : 'none',
+                      color: '#475569',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: '2px'
+                    }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                        <span style={{ fontWeight: 700, color: '#1e293b' }}>
+                          [{new Date(log.timestamp).toLocaleString('hi-IN')}]
+                        </span>
+                        <span style={{ color: '#4f46e5', fontWeight: 700 }}>{log.adminName} (Super Admin)</span>
+                      </div>
+                      <div>
+                        Action on <span style={{ fontWeight: 700, color: '#0f172a' }}>{log.correspondentName}</span>: {log.action}
                       </div>
                     </div>
-                  </td>
-                  <td style={{ 
-                    padding: '14px 16px', 
-                    border: '1px solid #e2e8f0', 
-                    borderLeft: 'none', 
-                    borderRight: 'none',
-                    verticalAlign: 'middle',
-                    color: '#475569',
-                    fontWeight: 600
-                  }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <i className="far fa-envelope" style={{ color: '#94a3b8' }}></i>
-                      <span>{rep.email}</span>
-                    </div>
-                  </td>
-                  <td style={{ 
-                    padding: '14px 16px', 
-                    border: '1px solid #e2e8f0', 
-                    borderLeft: 'none', 
-                    borderRight: 'none',
-                    verticalAlign: 'middle',
-                    color: '#475569',
-                    fontWeight: 600
-                  }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <i className="fas fa-phone-alt" style={{ color: '#94a3b8' }}></i>
-                      <span>{rep.mobile}</span>
-                    </div>
-                  </td>
-                  <td style={{ 
-                    padding: '14px 16px', 
-                    border: '1px solid #e2e8f0', 
-                    borderLeft: 'none', 
-                    borderRight: 'none',
-                    verticalAlign: 'middle',
-                    color: '#475569',
-                    fontWeight: 600
-                  }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <i className="fas fa-map-marker-alt" style={{ color: '#f43f5e' }}></i>
-                      <span>{rep.block ? `${rep.block}, ` : ''}{rep.district}, {rep.state}</span>
-                    </div>
-                  </td>
-                  <td style={{ 
-                    padding: '14px 16px', 
-                    border: '1px solid #e2e8f0', 
-                    borderLeft: 'none', 
-                    borderRight: 'none',
-                    verticalAlign: 'middle',
-                    color: '#64748b',
-                    fontSize: '13px'
-                  }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                      <i className="far fa-calendar-alt" style={{ color: '#94a3b8' }}></i>
-                      <span>{new Date(rep.createdAt).toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
-                    </div>
-                  </td>
-                  <td style={{ 
-                    padding: '14px 16px', 
-                    borderTopRightRadius: '12px', 
-                    borderBottomRightRadius: '12px', 
-                    border: '1px solid #e2e8f0', 
-                    borderLeft: 'none',
-                    verticalAlign: 'middle',
-                    textAlign: 'center'
-                  }}>
-                    <button 
-                      onClick={() => handleOpenReview(rep)} 
-                      style={{
-                        background: activeTab === 'Chat' && (rep.unreadCount || 0) > 0
-                          ? 'linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)'
-                          : 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)',
-                        border: activeTab === 'Chat' && (rep.unreadCount || 0) > 0 ? 'none' : '1px solid #cbd5e1',
-                        color: activeTab === 'Chat' && (rep.unreadCount || 0) > 0 ? '#ffffff' : '#334155',
-                        padding: '8px 16px',
-                        fontSize: '12.5px',
-                        fontWeight: 700,
-                        borderRadius: '10px',
-                        cursor: 'pointer',
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        gap: '6px',
-                        transition: 'all 0.2s',
-                        boxShadow: activeTab === 'Chat' && (rep.unreadCount || 0) > 0 ? '0 4px 12px rgba(79, 70, 229, 0.25)' : '0 2px 4px rgba(0,0,0,0.02)',
-                      }}
-                      onMouseEnter={(e) => {
-                        if (activeTab === 'Chat' && (rep.unreadCount || 0) > 0) {
-                          e.currentTarget.style.transform = 'translateY(-1px)';
-                          e.currentTarget.style.boxShadow = '0 6px 16px rgba(79, 70, 229, 0.35)';
-                        } else {
-                          e.currentTarget.style.background = 'linear-gradient(135deg, #334155 0%, #1e293b 100%)';
-                          e.currentTarget.style.color = '#ffffff';
-                          e.currentTarget.style.borderColor = '#1e293b';
-                          e.currentTarget.style.transform = 'translateY(-1px)';
-                          e.currentTarget.style.boxShadow = '0 4px 12px rgba(30, 41, 59, 0.15)';
-                        }
-                      }}
-                      onMouseLeave={(e) => {
-                        if (activeTab === 'Chat' && (rep.unreadCount || 0) > 0) {
-                          e.currentTarget.style.transform = 'translateY(0)';
-                          e.currentTarget.style.boxShadow = '0 4px 12px rgba(79, 70, 229, 0.25)';
-                        } else {
-                          e.currentTarget.style.background = 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)';
-                          e.currentTarget.style.color = '#334155';
-                          e.currentTarget.style.borderColor = '#cbd5e1';
-                          e.currentTarget.style.transform = 'translateY(0)';
-                          e.currentTarget.style.boxShadow = '0 2px 4px rgba(0,0,0,0.02)';
-                        }
-                      }}
-                    >
-                      <i className={`fas ${activeTab === 'Chat' ? 'fa-comments' : 'fa-clipboard-check'}`}></i>
-                      <span>{activeTab === 'Chat' ? 'Open Chat' : 'Review KYC'}</span>
-                    </button>
-                  </td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
-      </div>
+                  ))
+                )}
+              </div>
+            </div>
+          </div>
+        )
+      )}
 
       {/* DETAIL MODAL INTERACTIVE PORTAL */}
       {selectedReporter && (

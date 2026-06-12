@@ -5,6 +5,9 @@ import prisma from '@/lib/db';
 import crypto from 'crypto';
 import { generateUniqueSlug } from '@/lib/slug';
 import { uploadFileAction } from './upload';
+import { encryptPassword, decryptPassword, hashPassword } from '@/lib/crypto';
+import { saveLastLogin } from './reporter-passwords';
+import { headers } from 'next/headers';
 
 // ─── Slug uniqueness checker for articles ────────────────────────────────────
 async function isArticleSlugTaken(slug: string, excludeId?: string): Promise<boolean> {
@@ -12,11 +15,6 @@ async function isArticleSlugTaken(slug: string, excludeId?: string): Promise<boo
   if (!found) return false;
   if (excludeId && found.id === excludeId) return false;
   return true;
-}
-
-// Helper to hash password
-function hashPassword(password: string): string {
-  return crypto.createHash('sha256').update(password).digest('hex');
 }
 
 export async function registerReporter(data: {
@@ -54,7 +52,7 @@ export async function registerReporter(data: {
       return { success: false, message: 'An account with this email already exists.' };
     }
 
-    const hashedPassword = hashPassword(data.password);
+    const encryptedPassword = encryptPassword(data.password);
 
     // Calculate next sequential reporterCode: TDA/yy/mm/xxxx
     const now = new Date();
@@ -83,7 +81,7 @@ export async function registerReporter(data: {
       data: {
         reporterCode,
         email: data.email.toLowerCase().trim(),
-        password: hashedPassword,
+        password: encryptedPassword,
         fullName: data.fullName.trim(),
         fatherHusbandName: data.fatherHusbandName?.trim() || null,
         mobile: data.mobile.trim(),
@@ -128,10 +126,37 @@ export async function loginReporter(email: string, password: string) {
       return { success: false, message: 'Invalid email or password.' };
     }
 
-    const hashedInput = hashPassword(password);
-    if (reporter.password !== hashedInput) {
+    let isCorrect = false;
+    if (reporter.password && reporter.password.includes(':')) {
+      try {
+        const decrypted = decryptPassword(reporter.password);
+        isCorrect = (decrypted === password);
+      } catch (e) {
+        isCorrect = false;
+      }
+    } else {
+      const hashedInput = hashPassword(password);
+      isCorrect = (reporter.password === hashedInput);
+    }
+
+    if (!isCorrect) {
       return { success: false, message: 'Invalid email or password.' };
     }
+
+    // Resolve client IP address dynamically
+    let ipAddress = '127.0.0.1';
+    try {
+      const clientHeaders = await headers();
+      ipAddress = clientHeaders.get('x-forwarded-for') || clientHeaders.get('x-real-ip') || '127.0.0.1';
+      if (ipAddress.includes(',')) {
+        ipAddress = ipAddress.split(',')[0].trim();
+      }
+    } catch (e) {
+      console.warn('Could not resolve client headers:', e);
+    }
+
+    // Save dynamic last login timestamp & IP
+    await saveLastLogin(reporter.id, ipAddress);
 
     // Dynamic on-the-fly backfill for older registered accounts
     if (!reporter.reporterCode) {
