@@ -4,16 +4,21 @@ import { prisma } from '@/lib/prisma';
 import { revalidatePath } from 'next/cache';
 
 export async function getPageContent(pageSlug: string) {
-  const page = await prisma.pageContent.findUnique({
-    where: { pageSlug }
-  });
-  
-  if (!page) return null;
-  
-  return {
-    ...page,
-    content: JSON.parse(page.content) // Parse JSON string back to object
-  };
+  try {
+    const page = await prisma.pageContent.findUnique({
+      where: { pageSlug }
+    });
+    
+    if (!page) return null;
+    
+    return {
+      ...page,
+      content: JSON.parse(page.content) // Parse JSON string back to object
+    };
+  } catch (error) {
+    console.error(`Error fetching page content for ${pageSlug}:`, error);
+    return null;
+  }
 }
 
 export async function updatePageContent(

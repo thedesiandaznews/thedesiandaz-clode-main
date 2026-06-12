@@ -11,6 +11,47 @@ interface ResponsiveBannerClientProps {
   fallbackMobileBanner: React.ReactNode;
 }
 
+let sharedGeoPromise: Promise<any> | null = null;
+
+const getSharedGeo = (): Promise<any> => {
+  if (typeof window === 'undefined') return Promise.resolve(null);
+  
+  const cached = sessionStorage.getItem('user_geo_cache');
+  if (cached) {
+    try {
+      return Promise.resolve(JSON.parse(cached));
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  if (sharedGeoPromise) {
+    return sharedGeoPromise;
+  }
+
+  sharedGeoPromise = fetch('https://ipapi.co/json/')
+    .then(async (res) => {
+      if (res.ok) {
+        const data = await res.json();
+        const geo = {
+          state: data.region || null,
+          district: data.city || null,
+          lat: data.latitude || null,
+          lng: data.longitude || null
+        };
+        sessionStorage.setItem('user_geo_cache', JSON.stringify(geo));
+        return geo;
+      }
+      return null;
+    })
+    .catch((err) => {
+      console.error("Silent geolocation lookup failed, falling back to all ads", err);
+      return null;
+    });
+
+  return sharedGeoPromise;
+};
+
 export default function ResponsiveBannerClient({
   categoryName,
   position,
@@ -23,35 +64,7 @@ export default function ResponsiveBannerClient({
   useEffect(() => {
     const fetchGeotargetedAd = async () => {
       try {
-        let geo = null;
-        const cached = sessionStorage.getItem('user_geo_cache');
-        
-        if (cached) {
-          try {
-            geo = JSON.parse(cached);
-          } catch (e) {
-            console.error(e);
-          }
-        }
-
-        // If no cached geo, fetch silently using high-performance IP geocoding API
-        if (!geo) {
-          try {
-            const res = await fetch('https://ipapi.co/json/');
-            if (res.ok) {
-              const data = await res.json();
-              geo = {
-                state: data.region || null,
-                district: data.city || null,
-                lat: data.latitude || null,
-                lng: data.longitude || null
-              };
-              sessionStorage.setItem('user_geo_cache', JSON.stringify(geo));
-            }
-          } catch (e) {
-            console.error("Silent geolocation lookup failed, falling back to all ads", e);
-          }
-        }
+        const geo = await getSharedGeo();
 
         // Build query string
         let url = `/api/ads/serve?category=${encodeURIComponent(categoryName)}&position=${position}`;
