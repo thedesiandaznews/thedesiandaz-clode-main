@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import styles from '../admin.module.css';
-import { updateReporterStatus, deleteReporter, approveReporterWithLetterAction } from '@/actions/reporter';
+import { updateReporterStatus, deleteReporter, approveReporterWithLetterAction, getReporterById } from '@/actions/reporter';
 import { getReporterMessages, sendReporterMessage, markReporterMessagesAsRead, getReportersListWithUnreadCounts } from '@/actions/chat';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
@@ -117,7 +117,7 @@ export default function ReportersClient({ initialList }: { initialList: any[] })
     }).reduce((acc, r) => acc + (r.unreadCount || 0), 0);
   };
 
-  const handleOpenReview = (rep: any) => {
+  const handleOpenReview = async (rep: any) => {
     setSelectedReporter(rep);
     setShowRejectForm(false);
     setShowApproveForm(false);
@@ -141,6 +141,19 @@ export default function ReportersClient({ initialList }: { initialList: any[] })
     setProbationStartDate(`${dd}-${mm}-${yyyy}`);
     if (activeTab === 'Chat') {
       setIsAdminChatOpen(true);
+    }
+
+    // Load full details asynchronously (Aadhaar, PAN, voter id, joining letter etc.)
+    try {
+      const fullReporter = await getReporterById(rep.id);
+      if (fullReporter) {
+        setSelectedReporter(fullReporter);
+        setFatherHusbandName(fullReporter.fatherHusbandName || '');
+        // Cache in local reporters list
+        setReporters(prev => prev.map(r => r.id === rep.id ? { ...r, ...fullReporter } : r));
+      }
+    } catch (err) {
+      console.error('Error fetching full reporter details:', err);
     }
   };
 
@@ -696,17 +709,17 @@ export default function ReportersClient({ initialList }: { initialList: any[] })
         });
         await Promise.all(imgPromises);
 
-        const canvas1 = await html2canvas(page1El, { scale: 1.5, useCORS: false, logging: false, imageTimeout: 3000 });
-        const imgData1 = canvas1.toDataURL('image/jpeg', 0.7);
+        const canvas1 = await html2canvas(page1El, { scale: 1.2, useCORS: false, logging: false, imageTimeout: 3000 });
+        const imgData1 = canvas1.toDataURL('image/jpeg', 0.6);
 
-        const canvas2 = await html2canvas(page2El, { scale: 1.5, useCORS: false, logging: false, imageTimeout: 3000 });
-        const imgData2 = canvas2.toDataURL('image/jpeg', 0.7);
+        const canvas2 = await html2canvas(page2El, { scale: 1.2, useCORS: false, logging: false, imageTimeout: 3000 });
+        const imgData2 = canvas2.toDataURL('image/jpeg', 0.6);
 
-        const canvas3 = await html2canvas(page3El, { scale: 1.5, useCORS: false, logging: false, imageTimeout: 3000 });
-        const imgData3 = canvas3.toDataURL('image/jpeg', 0.7);
+        const canvas3 = await html2canvas(page3El, { scale: 1.2, useCORS: false, logging: false, imageTimeout: 3000 });
+        const imgData3 = canvas3.toDataURL('image/jpeg', 0.6);
 
-        const canvas4 = await html2canvas(page4El, { scale: 1.5, useCORS: false, logging: false, imageTimeout: 3000 });
-        const imgData4 = canvas4.toDataURL('image/jpeg', 0.7);
+        const canvas4 = await html2canvas(page4El, { scale: 1.2, useCORS: false, logging: false, imageTimeout: 3000 });
+        const imgData4 = canvas4.toDataURL('image/jpeg', 0.6);
 
         const pdf = new jsPDF('p', 'mm', 'a4');
         const pdfWidth = pdf.internal.pageSize.getWidth();

@@ -229,6 +229,26 @@ export async function getReportersList(status?: string) {
 
     const reporters = await prisma.reporter.findMany({
       where: whereClause,
+      select: {
+        id: true,
+        reporterCode: true,
+        email: true,
+        fullName: true,
+        fatherHusbandName: true,
+        mobile: true,
+        bloodGroup: true,
+        state: true,
+        district: true,
+        poPs: true,
+        block: true,
+        fullAddress: true,
+        status: true,
+        rejectionReason: true,
+        createdAt: true,
+        updatedAt: true,
+        photoUrl: true,
+        aadhaarNumber: true
+      },
       orderBy: { createdAt: 'desc' }
     });
 
@@ -267,8 +287,8 @@ export async function getReportersList(status?: string) {
       }
     }
 
-    // Exclude passwords
-    return reporters.map(({ password, ...rest }) => rest);
+    // Exclude password (if returned, though select excludes it, keep map for safety/compatibility)
+    return reporters.map(({ ...rest }) => rest);
   } catch (error) {
     console.error('Error fetching reporters list:', error);
     return [];

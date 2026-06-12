@@ -94,6 +94,26 @@ export async function getUnreadMessageCount(reporterId: string, viewer: 'Admin' 
 export async function getReportersListWithUnreadCounts() {
   try {
     const reporters = await prisma.reporter.findMany({
+      select: {
+        id: true,
+        reporterCode: true,
+        email: true,
+        fullName: true,
+        fatherHusbandName: true,
+        mobile: true,
+        bloodGroup: true,
+        state: true,
+        district: true,
+        poPs: true,
+        block: true,
+        fullAddress: true,
+        status: true,
+        rejectionReason: true,
+        createdAt: true,
+        updatedAt: true,
+        photoUrl: true,
+        aadhaarNumber: true
+      },
       orderBy: { fullName: 'asc' }
     });
 
@@ -112,7 +132,7 @@ export async function getReportersListWithUnreadCounts() {
           orderBy: { createdAt: 'desc' }
         });
 
-        const { password, ...safeRep } = rep;
+        const safeRep = rep;
         return {
           ...safeRep,
           unreadCount,

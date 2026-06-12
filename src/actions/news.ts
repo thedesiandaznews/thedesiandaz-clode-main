@@ -50,7 +50,19 @@ export async function getNewsArticles(filters?: {
 
     const articles = await prisma.article.findMany({
       where: whereClause,
-      include: { category: true, reporterRel: true, additionalCategories: true },
+      include: {
+        category: true,
+        additionalCategories: true,
+        reporterRel: {
+          select: {
+            id: true,
+            reporterCode: true,
+            fullName: true,
+            photoUrl: true,
+            status: true
+          }
+        }
+      },
       orderBy: { createdAt: 'desc' }
     });
 
@@ -71,14 +83,38 @@ export async function getArticleById(identifier: string) {
     // 1️⃣ Try finding by slug first (SEO-friendly URL)
     let article = await prisma.article.findUnique({
       where: { slug: identifier },
-      include: { category: true, reporterRel: true, additionalCategories: true }
+      include: {
+        category: true,
+        additionalCategories: true,
+        reporterRel: {
+          select: {
+            id: true,
+            reporterCode: true,
+            fullName: true,
+            photoUrl: true,
+            status: true
+          }
+        }
+      }
     });
 
     // 2️⃣ Fallback: try the raw CUID id (backward compatibility)
     if (!article) {
       article = await prisma.article.findUnique({
         where: { id: identifier },
-        include: { category: true, reporterRel: true, additionalCategories: true }
+        include: {
+          category: true,
+          additionalCategories: true,
+          reporterRel: {
+            select: {
+              id: true,
+              reporterCode: true,
+              fullName: true,
+              photoUrl: true,
+              status: true
+            }
+          }
+        }
       });
     }
 
