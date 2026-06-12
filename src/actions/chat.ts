@@ -35,7 +35,9 @@ export async function sendReporterMessage(reporterId: string, sender: 'Admin' | 
     });
 
     revalidatePath('/admin/reporters');
+    revalidatePath('/admin/correspondents');
     revalidatePath('/reporter/dashboard');
+    revalidatePath('/correspondent/dashboard');
     return { success: true, message: newMessage };
   } catch (error: any) {
     console.error('Error sending reporter message:', error);
@@ -64,7 +66,9 @@ export async function markReporterMessagesAsRead(reporterId: string, viewer: 'Ad
     });
 
     revalidatePath('/admin/reporters');
+    revalidatePath('/admin/correspondents');
     revalidatePath('/reporter/dashboard');
+    revalidatePath('/correspondent/dashboard');
     return { success: true };
   } catch (error) {
     console.error('Error marking messages as read:', error);

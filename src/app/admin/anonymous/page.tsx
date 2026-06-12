@@ -110,7 +110,7 @@ export default function AdminContributorsPage() {
               <i className="fas fa-users-slash"></i>
             </div>
             <span style={{ fontSize: '15px', fontWeight: 700, display: 'block', color: '#475569' }}>No contributors found</span>
-            <span style={{ fontSize: '13px', color: '#94a3b8', marginTop: '4px', display: 'block' }}>There are currently no anonymous reporter accounts recorded in the system.</span>
+            <span style={{ fontSize: '13px', color: '#94a3b8', marginTop: '4px', display: 'block' }}>There are currently no anonymous correspondent accounts recorded in the system.</span>
           </div>
         ) : (
           <div style={{ overflowX: 'auto' }}>

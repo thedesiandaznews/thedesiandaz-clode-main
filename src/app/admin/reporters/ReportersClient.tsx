@@ -173,7 +173,7 @@ export default function ReportersClient({ initialList }: { initialList: any[] })
     try {
       const res = await updateReporterStatus(selectedReporter.id, 'Rejected', undefined, rejectReason.trim());
       if (res.success) {
-        alert('Reporter KYC marked as Rejected.');
+        alert('Correspondent KYC marked as Rejected.');
         
         // Update local list state
         setReporters(prev => prev.map(r => r.id === selectedReporter.id ? { ...r, status: 'Rejected', rejectionReason: rejectReason } : r));
@@ -439,7 +439,7 @@ export default function ReportersClient({ initialList }: { initialList: any[] })
             <tr>
                 <td class="label">श्री/श्रीमती:</td>
                 <td class="value">${reporter.fullName}</td>
-                <td class="label">Official ID:</td>
+                <td class="label">संवाददाता पहचान पत्र:</td>
                 <td class="value" style="color:#8B1428; font-weight:700;">${reporter.reporterCode || 'NO ID ASSIGNED'}</td>
             </tr>
             <tr>
@@ -461,13 +461,13 @@ export default function ReportersClient({ initialList }: { initialList: any[] })
         </table>
 
         <div class="section">
-            <div class="sec-title">विषय: The Desi Andaz Media Network में Official Reporter के पद पर नियुक्ति।</div>
+            <div class="sec-title">विषय: The Desi Andaz Media Network में संवाददाता (Official Correspondent) के पद पर नियुक्ति।</div>
         </div>
 
         <div class="section">
             <p class="body-text"><strong>महोदय/महोदया,</strong></p>
             <p class="body-text" style="margin-top:2mm;">
-                हमें यह बताते हुए प्रसन्नता हो रही है कि आपके द्वारा प्रस्तुत आवेदन, पहचान दस्तावेजों, शैक्षणिक प्रमाण-पत्रों एवं अन्य आवश्यक अभिलेखों के सत्यापन उपरांत आपको The Desi Andaz Media Network में <strong>Official Reporter</strong> के पद पर नियुक्त किया जाता है।
+                हमें यह बताते हुए प्रसन्नता हो रही है कि आपके द्वारा प्रस्तुत आवेदन, पहचान दस्तावेजों, शैक्षणिक प्रमाण-पत्रों एवं अन्य आवश्यक अभिलेखों के सत्यापन उपरांत आपको The Desi Andaz Media Network में <strong>संवाददाता (Official Correspondent)</strong> के पद पर नियुक्त किया जाता है।
             </p>
             <p class="body-text" style="margin-top:2mm;">
                 आपको <strong>${reporter.block}</strong> क्षेत्र के लिए संस्था के अधिकृत प्रतिनिधि एवं संवाददाता के रूप में नियुक्त किया जाता है। आप अपने क्षेत्र से समाचार संकलन, जनहित से जुड़े विषयों की रिपोर्टिंग, सामाजिक एवं प्रशासनिक गतिविधियों का कवरेज तथा स्थानीय समस्याओं एवं विकास कार्यों की जानकारी संगठन तक पहुँचाने का कार्य करेंगे।
@@ -522,7 +522,7 @@ export default function ReportersClient({ initialList }: { initialList: any[] })
         <div class="section">
             <div class="sec-title">नियम एवं शर्तें (Terms & Conditions)</div>
             <ol class="num-list">
-                <li>Reporter ID केवल आधिकारिक कार्य हेतु मान्य होगी।</li>
+                <li>संवाददाता पहचान पत्र (Correspondent ID) केवल आधिकारिक कार्य हेतु मान्य होगी।</li>
                 <li>संस्था के नाम, लोगो अथवा पहचान पत्र का दुरुपयोग पूर्णतः प्रतिबंधित रहेगा।</li>
                 <li>संस्था के नाम पर किसी भी प्रकार का आर्थिक लेन-देन बिना लिखित अनुमति के नहीं किया जाएगा।</li>
                 <li>फर्जी, भ्रामक अथवा अपुष्ट समाचार प्रकाशित या प्रसारित करना गंभीर अनुशासनहीनता माना जाएगा।</li>
@@ -530,7 +530,7 @@ export default function ReportersClient({ initialList }: { initialList: any[] })
                 <li>संस्था आवश्यकता अनुसार कार्यक्षेत्र अथवा दायित्वों में परिवर्तन करने का अधिकार सुरक्षित रखती है।</li>
                 <li>नियुक्ति पत्र का उपयोग केवल संस्था से संबंधित कार्यों के लिए ही किया जा सकता है, व्यक्तिगत लाभ हेतु नहीं।</li>
                 <li>संस्था की गोपनीय सूचनाओं, रणनीतियों एवं आंतरिक मामलों को किसी तीसरे पक्ष के साथ साझा करना वर्जित है।</li>
-                <li>रिपोर्टर को किसी भी राजनीतिक दल अथवा संगठन का प्रचार संस्था के नाम पर करने की अनुमति नहीं होगी।</li>
+                <li>संवाददाता को किसी भी राजनीतिक दल अथवा संगठन का प्रचार संस्था के नाम पर करने की अनुमति नहीं होगी।</li>
                 <li>संस्था द्वारा निर्धारित समय-सीमा के भीतर समाचार एवं रिपोर्ट प्रस्तुत करना अनिवार्य होगा।</li>
             </ol>
         </div>
@@ -577,7 +577,7 @@ export default function ReportersClient({ initialList }: { initialList: any[] })
         <div class="section">
             <div class="sec-title">सुविधाएँ एवं अधिकार (Facilities & Rights)</div>
             <ul class="bullet-list">
-                <li>संस्था द्वारा आधिकारिक Reporter ID Card प्रदान किया जाएगा जो आपकी पहचान एवं प्रमाणिकता का प्रतीक होगा।</li>
+                <li>संस्था द्वारा आधिकारिक संवाददाता परिचय पत्र (Correspondent Card) प्रदान किया जाएगा जो आपकी पहचान एवं प्रमाणिकता का प्रतीक होगा।</li>
                 <li>संस्था के डिजिटल प्लेटफॉर्म, वेबसाइट एवं सोशल मीडिया पेज पर आपकी प्रोफाइल प्रकाशित की जाएगी।</li>
                 <li>समय-समय पर संस्था द्वारा आयोजित प्रशिक्षण कार्यक्रमों एवं कार्यशालाओं में भाग लेने का अवसर दिया जाएगा।</li>
                 <li>क्षेत्रीय एवं राष्ट्रीय स्तर के पत्रकारिता कार्यक्रमों में संस्था के प्रतिनिधि के रूप में भाग लेने का अवसर प्राप्त होगा।</li>
@@ -666,7 +666,7 @@ export default function ReportersClient({ initialList }: { initialList: any[] })
                     <div class="af-line"></div>
                 </div>
                 <div class="acc-field">
-                    <div class="af-label">Official Reporter ID: ${reporter.reporterCode || 'PENDING'}</div>
+                    <div class="af-label">संवाददाता पहचान पत्र (Correspondent ID): ${reporter.reporterCode || 'PENDING'}</div>
                     <div class="af-line"></div>
                 </div>
                 <div class="acc-field">
@@ -825,7 +825,7 @@ export default function ReportersClient({ initialList }: { initialList: any[] })
       // Call single server action to upload and approve in one roundtrip
       const res = await approveReporterWithLetterAction(uploadFormData);
       if (res.success && res.url) {
-        alert('Reporter approved and Joining Letter published!');
+        alert('Correspondent approved and Joining Letter published!');
         
         // Update local list state
         setReporters(prev => prev.map(r => r.id === selectedReporter.id ? { ...r, status: 'Approved', joiningLetter: res.url } : r));
@@ -1003,7 +1003,7 @@ export default function ReportersClient({ initialList }: { initialList: any[] })
         <div>
           <h1 style={{ fontSize: '26px', fontWeight: 850, color: '#0f172a', margin: 0, letterSpacing: '-0.5px', display: 'flex', alignItems: 'center', gap: '10px' }}>
             <i className="fas fa-users-cog" style={{ color: '#ef4444' }}></i>
-            <span>Reporter KYC Management</span>
+            <span>संवाददाता KYC प्रबंधन</span>
           </h1>
           <p style={{ margin: '6px 0 0 0', fontSize: '13.5px', color: '#64748b', fontWeight: 500 }}>
             Audit verification dossier submissions, manage official contracts, and regulate active reporting authorizations.
@@ -1181,7 +1181,7 @@ export default function ReportersClient({ initialList }: { initialList: any[] })
           }}
         >
           <i className="fas fa-comments" style={{ color: activeTab === 'Chat' ? '#fff' : '#6366f1' }}></i>
-          <span>Direct Chat with Reporter</span>
+          <span>Direct Chat with Correspondent</span>
           
           {getFilteredUnreadChatCount() > 0 && (
             <span style={{
@@ -1217,7 +1217,7 @@ export default function ReportersClient({ initialList }: { initialList: any[] })
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#1e293b' }}>
           <i className="fas fa-filter" style={{ color: '#4f46e5', fontSize: '15px' }}></i>
-          <span style={{ fontWeight: 700, fontSize: '14px', color: '#334155' }}>Filter Reporters:</span>
+          <span style={{ fontWeight: 700, fontSize: '14px', color: '#334155' }}>संवाददाता फ़िल्टर:</span>
         </div>
 
         {/* State Selector */}
@@ -1326,7 +1326,7 @@ export default function ReportersClient({ initialList }: { initialList: any[] })
         <table style={{ width: '100%', borderCollapse: 'separate', borderSpacing: '0 12px', fontSize: '13.5px', textAlign: 'left' }}>
           <thead>
             <tr style={{ color: '#64748b', fontSize: '12px', textTransform: 'uppercase', letterSpacing: '0.75px' }}>
-              <th style={{ padding: '12px 16px', fontWeight: 'bold' }}>Reporter Dossier Details</th>
+              <th style={{ padding: '12px 16px', fontWeight: 'bold' }}>संवाददाता विवरण</th>
               <th style={{ padding: '12px 16px', fontWeight: 'bold' }}>Email Address</th>
               <th style={{ padding: '12px 16px', fontWeight: 'bold' }}>Mobile Number</th>
               <th style={{ padding: '12px 16px', fontWeight: 'bold' }}>Assigned Region</th>
@@ -1672,7 +1672,7 @@ export default function ReportersClient({ initialList }: { initialList: any[] })
                   }}
                 >
                   <i className="fas fa-comments"></i>
-                  <span>{isAdminChatOpen ? 'Close Chat Workspace' : 'Direct Chat with Reporter'}</span>
+                  <span>{isAdminChatOpen ? 'Close Chat Workspace' : 'Direct Chat with Correspondent'}</span>
                 </button>
 
                 <button 
@@ -1779,7 +1779,7 @@ export default function ReportersClient({ initialList }: { initialList: any[] })
                 
                 <div className={styles.dossierGrid} style={{ flex: 1, fontSize: '13.5px', rowGap: '16px', columnGap: '24px' }}>
                   <div>
-                    <span style={{ color: '#64748b', display: 'block', fontWeight: 600, fontSize: '11.5px', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '2px' }}>Reporter Full Name</span>
+                    <span style={{ color: '#64748b', display: 'block', fontWeight: 600, fontSize: '11.5px', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '2px' }}>संवाददाता का पूरा नाम</span>
                     <span style={{ fontWeight: 750, color: '#1e293b', fontSize: '15px' }}>{selectedReporter.fullName}</span>
                   </div>
                   <div>
@@ -1787,7 +1787,7 @@ export default function ReportersClient({ initialList }: { initialList: any[] })
                     <span style={{ fontWeight: 750, color: '#1e293b', fontSize: '15px' }}>{selectedReporter.fatherHusbandName || 'Not Provided'}</span>
                   </div>
                   <div>
-                    <span style={{ color: '#64748b', display: 'block', fontWeight: 600, fontSize: '11.5px', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '2px' }}>Official Reporter ID</span>
+                    <span style={{ color: '#64748b', display: 'block', fontWeight: 600, fontSize: '11.5px', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '2px' }}>संवाददाता पहचान पत्र (Correspondent ID)</span>
                     <span style={{ fontWeight: 750, color: '#4f46e5', fontFamily: 'monospace', fontSize: '14px' }}>{selectedReporter.reporterCode || 'No ID Assigned'}</span>
                   </div>
                   <div>
@@ -2244,7 +2244,7 @@ export default function ReportersClient({ initialList }: { initialList: any[] })
                     gap: '8px'
                   }}>
                     <i className="fas fa-video"></i>
-                    <span>Reporter Video Introduction</span>
+                    <span>संवाददाता वीडियो परिचय</span>
                   </h4>
                   <div style={{ 
                     maxWidth: '520px', 
@@ -2288,7 +2288,7 @@ export default function ReportersClient({ initialList }: { initialList: any[] })
                         <i className="fas fa-file-pdf"></i>
                       </div>
                       <div>
-                        <span style={{ fontSize: '15px', fontWeight: 800, color: '#065f46', display: 'block', marginBottom: '2px' }}>Verified & Active Reporter</span>
+                        <span style={{ fontSize: '15px', fontWeight: 800, color: '#065f46', display: 'block', marginBottom: '2px' }}>सत्यापित एवं सक्रिय संवाददाता</span>
                         <a 
                           href={selectedReporter.joiningLetter} 
                           target="_blank" 
@@ -2340,7 +2340,7 @@ export default function ReportersClient({ initialList }: { initialList: any[] })
                       disabled={isSuspending}
                     >
                       <i className="fas fa-ban"></i> 
-                      <span>{isSuspending ? 'Blocking Account...' : 'Block / Suspend Reporter Profile'}</span>
+                      <span>{isSuspending ? 'Blocking Account...' : 'Block / Suspend Correspondent Profile'}</span>
                     </button>
                   </div>
                 </div>
@@ -2410,7 +2410,7 @@ export default function ReportersClient({ initialList }: { initialList: any[] })
                       <i className="fas fa-exclamation-triangle"></i>
                     </div>
                     <div>
-                      <span style={{ fontSize: '15px', fontWeight: 800, color: '#991b1b', display: 'block', marginBottom: '2px' }}>Reporter Account Blocked / Suspended</span>
+                      <span style={{ fontSize: '15px', fontWeight: 800, color: '#991b1b', display: 'block', marginBottom: '2px' }}>संवाददाता खाता निलंबित</span>
                       <span style={{ fontSize: '13.5px', color: '#7f1d1d', fontWeight: 500 }}>
                         This profile is currently blocked from writing articles, submitting news, and using their dashboard.
                       </span>

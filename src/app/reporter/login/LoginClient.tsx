@@ -17,7 +17,7 @@ export default function LoginClient() {
     // If already logged in, redirect to dashboard
     const isReporterLoggedIn = localStorage.getItem('reporterId');
     if (isReporterLoggedIn) {
-      router.push('/reporter/dashboard');
+      router.push('/correspondent/dashboard');
     }
   }, [router]);
 
@@ -35,7 +35,7 @@ export default function LoginClient() {
         localStorage.setItem('reporterEmail', res.reporter.email);
         localStorage.setItem('reporterStatus', res.reporter.status);
         
-        router.push('/reporter/dashboard');
+        router.push('/correspondent/dashboard');
       } else {
         setError(res.message || 'Invalid email or password.');
       }
@@ -56,7 +56,7 @@ export default function LoginClient() {
         </div>
 
         <h1 className={styles.cardTitle}>
-          Reporter <span className={styles.highlightText}>Newsroom</span>
+          संवाददाता <span className={styles.highlightText}>न्यूज़रूम</span>
         </h1>
         <p className={styles.cardSubtitle}>
           Sign in to submit reports and manage your credentials
@@ -127,8 +127,8 @@ export default function LoginClient() {
         </form>
 
         <div style={{ marginTop: '24px', textAlign: 'center', fontSize: '14px', color: '#6b7280' }}>
-          Don't have a reporter account?{' '}
-          <Link href="/reporter/register" style={{ color: '#ea580c', fontWeight: '700', textDecoration: 'none' }}>
+          Don't have a correspondent account?{' '}
+          <Link href="/correspondent/register" style={{ color: '#ea580c', fontWeight: '700', textDecoration: 'none' }}>
             Apply Now
           </Link>
         </div>

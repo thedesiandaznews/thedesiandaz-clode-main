@@ -487,8 +487,8 @@ export default function AddNews() {
             </div>
 
             <div className={styles.formGroup}>
-              <label className={styles.formLabel}>Reporter Name</label>
-              <input type="text" name="reporter" className={styles.formInput} placeholder="Assign reporter..." value={formData.reporter} onChange={handleInputChange}/>
+              <label className={styles.formLabel}>संवाददाता का नाम</label>
+              <input type="text" name="reporter" className={styles.formInput} placeholder="संवाददाता का नाम..." value={formData.reporter} onChange={handleInputChange}/>
             </div>
           </div>
 

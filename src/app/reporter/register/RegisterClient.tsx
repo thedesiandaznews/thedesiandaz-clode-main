@@ -252,7 +252,7 @@ function compressImage(file: File, maxWidth = 1000, maxHeight = 1000, quality = 
 
       if (res.success) {
         alert('Application Submitted Successfully! Your KYC is now pending super admin approval.');
-        router.push('/reporter/login');
+        router.push('/correspondent/login');
       } else {
         setError(res.message || 'Failed to submit application.');
         setIsSubmitting(false);
@@ -284,10 +284,10 @@ function compressImage(file: File, maxWidth = 1000, maxHeight = 1000, quality = 
         </div>
 
         <h1 className={styles.cardTitle} style={{ marginTop: '20px' }}>
-          Reporter Onboarding <span className={styles.highlightText}>Wizard</span>
+          संवाददाता Onboarding <span className={styles.highlightText}>Wizard</span>
         </h1>
         <p className={styles.cardSubtitle}>
-          Complete your KYC details to join the official Desi Andaz reporting network
+          Complete your KYC details to join the official Desi Andaz correspondent network
         </p>
 
         {error && (
@@ -561,7 +561,7 @@ function compressImage(file: File, maxWidth = 1000, maxHeight = 1000, quality = 
                 <i className="fas fa-arrow-left"></i> Previous Step
               </button>
             ) : (
-              <Link href="/reporter/login" className={styles.btnSecondary}>
+              <Link href="/correspondent/login" className={styles.btnSecondary}>
                 Back to Login
               </Link>
             )}

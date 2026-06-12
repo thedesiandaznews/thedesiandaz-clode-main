@@ -331,7 +331,7 @@ export default function DashboardClient() {
   useEffect(() => {
     const reporterId = localStorage.getItem('reporterId');
     if (!reporterId) {
-      router.push('/reporter/login');
+      router.push('/correspondent/login');
       return;
     }
 
@@ -340,7 +340,7 @@ export default function DashboardClient() {
 
   const handleLogout = () => {
     localStorage.clear();
-    router.push('/reporter/login');
+    router.push('/correspondent/login');
   };
 
   const handleNewsImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -531,7 +531,7 @@ export default function DashboardClient() {
       {/* Header Panel */}
       <header className={styles.dashboardHeader}>
         <Link href="/" className={styles.dashboardBrand}>
-          <i className="fas fa-newspaper"></i> DESI ANDAZ <span className={styles.brandSubtitle}>Reporter Admin</span>
+          <i className="fas fa-newspaper"></i> DESI ANDAZ <span className={styles.brandSubtitle}>संवाददाता पैनल</span>
         </Link>
 
         <div className={styles.profileMenu}>
@@ -564,9 +564,9 @@ export default function DashboardClient() {
           <div className={`${styles.statusAlert}`} style={{ borderLeft: '5px solid #ea580c', background: '#fff7ed', display: 'flex', alignItems: 'start', gap: '16px', padding: '20px', borderRadius: '16px', marginBottom: '24px', boxShadow: '0 4px 12px rgba(234, 88, 12, 0.05)', border: '1px solid #ffedd5' }}>
             <i className="fas fa-exclamation-triangle" style={{ fontSize: '22px', color: '#ea580c', marginTop: '3px' }}></i>
             <div style={{ flex: 1, textAlign: 'left' }}>
-              <h4 style={{ fontWeight: 800, margin: 0, fontSize: '15px', color: '#c2410c' }}>Active Reporter Already Exists in Your Block!</h4>
+              <h4 style={{ fontWeight: 800, margin: 0, fontSize: '15px', color: '#c2410c' }}>आपके प्रखंड में संवाददाता पहले से सक्रिय हैं!</h4>
               <p style={{ margin: '6px 0 0 0', fontSize: '13.5px', color: '#475569', lineHeight: '1.5' }}>
-                There is already an active (Approved) reporter registered for block <strong style={{ color: '#1e293b' }}>{reporter.block}</strong> (District: {reporter.district}, {reporter.state}).
+                There is already an active (Approved) correspondent registered for block <strong style={{ color: '#1e293b' }}>{reporter.block}</strong> (District: {reporter.district}, {reporter.state}).
               </p>
               <div style={{ marginTop: '12px', padding: '12px 16px', background: '#ffedd5', borderRadius: '10px', fontSize: '13px', display: 'flex', flexDirection: 'column', gap: '6px', color: '#7c2d12', border: '1px solid #fed7aa' }}>
                 <div><strong style={{ fontWeight: 700 }}>Name:</strong> {activeBlockReporter.fullName} ({activeBlockReporter.reporterCode || 'No Code Assigned'})</div>
@@ -574,7 +574,7 @@ export default function DashboardClient() {
                 <div><strong style={{ fontWeight: 700 }}>Mobile:</strong> {activeBlockReporter.mobile}</div>
               </div>
               <p style={{ margin: '12px 0 0 0', fontSize: '13px', color: '#7c2d12', fontWeight: 600, lineHeight: '1.4' }}>
-                Desi Andaz policy restricts registrations to exactly <strong>1 reporter per block</strong>. Since your block has an active reporter, your profile cannot be approved at this time. Please contact support/administration for help.
+                Desi Andaz policy restricts registrations to exactly <strong>1 correspondent per block</strong>. Since your block has an active correspondent, your profile cannot be approved at this time. Please contact support/administration for help.
               </p>
             </div>
           </div>
@@ -586,7 +586,7 @@ export default function DashboardClient() {
             <i className={`fas fa-hourglass-half ${styles.alertIcon}`}></i>
             <div className={styles.alertContent}>
               <h4>KYC Registration Under Review</h4>
-              <p>Your Aadhaar identity and files are being audited by our Editorial Board. Your reporter features and News submission composer will activate once your profile is verified and approved. We appreciate your patience!</p>
+              <p>Your Aadhaar identity and files are being audited by our Editorial Board. Your correspondent features and News submission composer will activate once your profile is verified and approved. We appreciate your patience!</p>
             </div>
           </div>
         )}
@@ -608,8 +608,8 @@ export default function DashboardClient() {
           <div className={`${styles.statusAlert} ${styles.statusAlertRejected}`} style={{ borderLeft: '5px solid #dc2626', background: '#fef2f2' }}>
             <i className={`fas fa-ban ${styles.alertIcon}`} style={{ color: '#dc2626' }}></i>
             <div className={styles.alertContent}>
-              <h4 style={{ color: '#991b1b' }}>Reporter Account Suspended</h4>
-              <p style={{ color: '#7f1d1d' }}>Your reporter account has been suspended by the editorial board due to complaints or policy violations.</p>
+              <h4 style={{ color: '#991b1b' }}>संवाददाता खाता निलंबित</h4>
+              <p style={{ color: '#7f1d1d' }}>Your correspondent account has been suspended by the editorial board due to complaints or policy violations.</p>
               <p style={{ marginTop: '10px', fontWeight: 600, color: '#991b1b' }}>You are blocked from composing new articles, editing reports, or requesting reviews. Contact administration for details.</p>
             </div>
           </div>
@@ -797,12 +797,12 @@ export default function DashboardClient() {
                     />
                     <div style={{ textAlign: 'center' }}>
                       <div style={{ fontWeight: 700, fontSize: '16px', color: '#1e293b' }}>{reporter.fullName}</div>
-                      <div style={{ fontSize: '12px', color: '#64748b', marginTop: '2px' }}>Reporter ID: {reporter.reporterCode || reporter.id}</div>
+                      <div style={{ fontSize: '12px', color: '#64748b', marginTop: '2px' }}>संवाददाता पहचान पत्र (ID): {reporter.reporterCode || reporter.id}</div>
                     </div>
                   </div>
 
                   <h4 style={{ fontSize: '15px', fontWeight: 700, borderBottom: '1px solid #e2e8f0', paddingBottom: '8px' }}>
-                    Reporter Profile Details
+                    संवाददाता प्रोफ़ाइल विवरण (Correspondent Profile)
                   </h4>
                   <div style={{ fontSize: '13px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
                     <div>

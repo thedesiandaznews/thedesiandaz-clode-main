@@ -69,9 +69,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             <i className="fas fa-newspaper"></i>
             <span>News Management</span>
           </Link>
-          <Link href="/admin/reporters" className={`${styles.navItem} ${pathname?.includes('/admin/reporters') ? styles.navItemActive : ''}`}>
+          <Link href="/admin/correspondents" className={`${styles.navItem} ${pathname?.includes('/admin/reporters') || pathname?.includes('/admin/correspondents') ? styles.navItemActive : ''}`}>
             <i className="fas fa-id-card"></i>
-            <span>Reporter KYC</span>
+            <span>संवाददाता KYC</span>
           </Link>
           <Link href="/admin/news-moderation" className={`${styles.navItem} ${pathname?.includes('/admin/news-moderation') ? styles.navItemActive : ''}`}>
             <i className="fas fa-gavel"></i>

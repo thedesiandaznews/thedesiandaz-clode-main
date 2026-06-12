@@ -24,7 +24,7 @@ export default function NewsModerationClient({ initialArticles }: { initialArtic
     try {
       const res = await moderateArticle(selectedArticle.id, action);
       if (res.success) {
-        alert(action === 'Approve' ? 'Article published successfully!' : 'Article returned to reporter drafts.');
+        alert(action === 'Approve' ? 'Article published successfully!' : 'Article returned to correspondent drafts.');
         
         // Remove from current local pending list
         setArticles(prev => prev.filter(a => a.id !== selectedArticle.id));
@@ -48,7 +48,7 @@ export default function NewsModerationClient({ initialArticles }: { initialArtic
             <span>News Moderation Queue</span>
           </h1>
           <p style={{ margin: '6px 0 0 0', fontSize: '13.5px', color: '#64748b', fontWeight: 500 }}>
-            Audit reporter submissions, edit credentials, fact-check stories, and authorize global publishings.
+            Audit correspondent submissions, edit credentials, fact-check stories, and authorize global publishings.
           </p>
         </div>
       </div>
@@ -87,7 +87,7 @@ export default function NewsModerationClient({ initialArticles }: { initialArtic
               <tr style={{ color: '#64748b', fontSize: '12px', textTransform: 'uppercase', letterSpacing: '0.75px' }}>
                 <th style={{ padding: '12px 16px', fontWeight: 'bold' }}>Submission Title & Details</th>
                 <th style={{ padding: '12px 16px', fontWeight: 'bold' }}>Category</th>
-                <th style={{ padding: '12px 16px', fontWeight: 'bold' }}>Reporter Name</th>
+                <th style={{ padding: '12px 16px', fontWeight: 'bold' }}>संवाददाता का नाम</th>
                 <th style={{ padding: '12px 16px', fontWeight: 'bold' }}>Region</th>
                 <th style={{ padding: '12px 16px', fontWeight: 'bold' }}>Submission Date</th>
                 <th style={{ padding: '12px 16px', fontWeight: 'bold', textAlign: 'center' }}>Evaluation</th>
@@ -374,7 +374,7 @@ export default function NewsModerationClient({ initialArticles }: { initialArtic
                 border: '1px solid #e2e8f0'
               }}>
                 <div style={{ fontSize: '13px' }}>
-                  <span style={{ display: 'block', color: '#64748b', fontWeight: 600, fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '2px' }}>Reporter Profile</span>
+                  <span style={{ display: 'block', color: '#64748b', fontWeight: 600, fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '2px' }}>संवाददाता प्रोफ़ाइल</span>
                   <span style={{ fontWeight: 700, color: '#1e293b', display: 'flex', alignItems: 'center', gap: '6px' }}>
                     <i className="fas fa-user-circle" style={{ color: '#4f46e5' }}></i>
                     {selectedArticle.reporter}

@@ -25,7 +25,7 @@ export default function ReporterVerificationPage() {
       if (res.success && res.reporter) {
         setReporter(res.reporter);
       } else {
-        setError(res.message || 'No reporter found with this ID.');
+        setError(res.message || 'No correspondent found with this ID.');
       }
     } catch (err: any) {
       console.error(err);
@@ -53,21 +53,21 @@ export default function ReporterVerificationPage() {
           </h1>
           <div className={styles.heroDivider} />
           <p className={styles.heroSubtitle}>
-            Verify the authenticity of Desi Andaz network reporters by entering the official Reporter ID printed on their ID cards.
+            Verify the authenticity of Desi Andaz network correspondents by entering the official Correspondent ID printed on their ID cards.
             <br />
-            आईडी कार्ड पर छपे आधिकारिक रिपोर्टर आईडी नंबर को दर्ज करके रिपोर्टर की सत्यता की जांच करें।
+            परिचय पत्र पर छपे आधिकारिक संवाददाता पहचान पत्र संख्या को दर्ज करके संवाददाता की सत्यता की जांच करें।
           </p>
         </div>
 
         {/* VERIFICATION SEARCH CARD */}
         <div className={styles.verificationCard}>
           <form onSubmit={handleVerify} className={styles.form}>
-            <label htmlFor="reporter-id-input" className={styles.formLabel}>
-              Enter Official Reporter ID (जैसे: TDA/26/05/0001)
+            <label htmlFor="correspondent-id-input" className={styles.formLabel}>
+              Enter Official Correspondent ID / संवाददाता पहचान पत्र (जैसे: TDA/26/05/0001)
             </label>
             <div className={styles.searchBar}>
               <input
-                id="reporter-id-input"
+                id="correspondent-id-input"
                 type="text"
                 placeholder="TDA/YY/MM/XXXX"
                 value={searchCode}
@@ -109,8 +109,8 @@ export default function ReporterVerificationPage() {
                     <div className={`${styles.statusBanner} ${styles.bannerSuccess}`}>
                       <i className="fas fa-check-circle" style={{ fontSize: '20px' }} />
                       <div>
-                        <span style={{ display: 'block', fontWeight: 800 }}>✅ ACTIVE VERIFIED REPORTER • सक्रिय सत्यापित पत्रकार</span>
-                        <span style={{ fontSize: '13px', opacity: 0.9 }}>This reporter is an officially certified member of Desi Andaz News Network.</span>
+                        <span style={{ display: 'block', fontWeight: 800 }}>✅ ACTIVE VERIFIED CORRESPONDENT • सक्रिय सत्यापित संवाददाता</span>
+                        <span style={{ fontSize: '13px', opacity: 0.9 }}>This correspondent is an officially certified member of Desi Andaz News Network.</span>
                       </div>
                     </div>
                   )}
@@ -119,8 +119,8 @@ export default function ReporterVerificationPage() {
                     <div className={`${styles.statusBanner} ${styles.bannerDanger}`}>
                       <i className="fas fa-ban" style={{ fontSize: '20px' }} />
                       <div>
-                        <span style={{ display: 'block', fontWeight: 800 }}>🚫 SUSPENDED REPORTER • निलंबित रिपोर्टर</span>
-                        <span style={{ fontSize: '13px', opacity: 0.9 }}>This reporter account is currently suspended/blocked by the editorial board.</span>
+                        <span style={{ display: 'block', fontWeight: 800 }}>🚫 SUSPENDED CORRESPONDENT • निलंबित संवाददाता</span>
+                        <span style={{ fontSize: '13px', opacity: 0.9 }}>This correspondent account is currently suspended/blocked by the editorial board.</span>
                       </div>
                     </div>
                   )}
@@ -129,8 +129,8 @@ export default function ReporterVerificationPage() {
                     <div className={`${styles.statusBanner} ${styles.bannerWarning}`}>
                       <i className="fas fa-exclamation-triangle" style={{ fontSize: '20px' }} />
                       <div>
-                        <span style={{ display: 'block', fontWeight: 800 }}>⚠️ INACTIVE REPORTER • निष्क्रिय रिपोर्टर</span>
-                        <span style={{ fontSize: '13px', opacity: 0.9 }}>This reporter KYC credentials are inactive, rejected, or under review.</span>
+                        <span style={{ display: 'block', fontWeight: 800 }}>⚠️ INACTIVE CORRESPONDENT • निष्क्रिय संवाददाता</span>
+                        <span style={{ fontSize: '13px', opacity: 0.9 }}>This correspondent KYC credentials are inactive, rejected, or under review.</span>
                       </div>
                     </div>
                   )}

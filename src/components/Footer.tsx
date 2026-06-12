@@ -17,8 +17,8 @@ export default function Footer() {
     { href: '/contact', label: 'Contact Us'       },
     { href: '/advertise', label: 'Advertise with Us' },
     { href: '/affiliates', label: 'Affiliate Program' },
-    { href: '/reporter/login', label: 'Reporter Portal' },
-    { href: '/reporter-verification', label: 'Verify Reporter' },
+    { href: '/correspondent/login', label: 'संवाददाता पोर्टल' },
+    { href: '/correspondent-verification', label: 'संवाददाता सत्यापन' },
     { href: '#',        label: 'Privacy Policy'   },
     { href: '#',        label: 'Terms of Service' },
   ];

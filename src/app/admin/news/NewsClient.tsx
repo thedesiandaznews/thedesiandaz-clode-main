@@ -130,7 +130,7 @@ export default function NewsClient({ initialNews, categories }: { initialNews: a
                 <th style={{ padding: '12px 16px', fontWeight: 'bold' }}>Title & Category</th>
                 <th style={{ padding: '12px 16px', fontWeight: 'bold' }}>Analytics & Views</th>
                 <th style={{ padding: '12px 16px', fontWeight: 'bold' }}>Status</th>
-                <th style={{ padding: '12px 16px', fontWeight: 'bold' }}>Reporter</th>
+                <th style={{ padding: '12px 16px', fontWeight: 'bold' }}>संवाददाता</th>
                 <th style={{ padding: '12px 16px', fontWeight: 'bold', textAlign: 'center' }}>Actions</th>
               </tr>
             </thead>

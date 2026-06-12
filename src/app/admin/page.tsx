@@ -118,7 +118,7 @@ export default async function AdminDashboard() {
           alignItems: 'center'
         }}>
           <div>
-            <div style={{ fontSize: '12px', fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.75px', marginBottom: '8px' }}>Active Reporters</div>
+            <div style={{ fontSize: '12px', fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.75px', marginBottom: '8px' }}>सक्रिय संवाददातागण (Correspondents)</div>
             <div style={{ fontSize: '28px', fontWeight: 800, color: '#0f172a' }}>{stats.activeReporters}</div>
           </div>
           <div style={{
@@ -239,7 +239,7 @@ export default async function AdminDashboard() {
               <tr style={{ color: '#64748b', fontSize: '12px', textTransform: 'uppercase', letterSpacing: '0.75px' }}>
                 <th style={{ padding: '12px 16px', fontWeight: 'bold' }}>Title</th>
                 <th style={{ padding: '12px 16px', fontWeight: 'bold' }}>Category</th>
-                <th style={{ padding: '12px 16px', fontWeight: 'bold' }}>Reporter</th>
+                <th style={{ padding: '12px 16px', fontWeight: 'bold' }}>संवाददाता</th>
                 <th style={{ padding: '12px 16px', fontWeight: 'bold' }}>Status</th>
                 <th style={{ padding: '12px 16px', fontWeight: 'bold' }}>Date</th>
               </tr>

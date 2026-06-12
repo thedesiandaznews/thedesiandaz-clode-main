@@ -106,6 +106,7 @@ export async function registerReporter(data: {
     });
 
     revalidatePath('/admin/reporters');
+    revalidatePath('/admin/correspondents');
     return { success: true, reporterId: reporter.id };
   } catch (error: any) {
     console.error('Error registering reporter:', error);
@@ -317,7 +318,9 @@ export async function updateReporterStatus(
     });
 
     revalidatePath('/admin/reporters');
+    revalidatePath('/admin/correspondents');
     revalidatePath(`/reporter/dashboard`);
+    revalidatePath(`/correspondent/dashboard`);
     return { success: true };
   } catch (error: any) {
     console.error('Error updating reporter status:', error);
@@ -336,6 +339,7 @@ export async function deleteReporter(id: string) {
     });
 
     revalidatePath('/admin/reporters');
+    revalidatePath('/admin/correspondents');
     return { success: true };
   } catch (error: any) {
     console.error('Error deleting reporter:', error);
@@ -539,7 +543,9 @@ export async function updateReporterProfilePicture(reporterId: string, photoUrl:
     });
 
     revalidatePath('/admin/reporters');
+    revalidatePath('/admin/correspondents');
     revalidatePath(`/reporter/dashboard`);
+    revalidatePath(`/correspondent/dashboard`);
     return { success: true };
   } catch (error: any) {
     console.error('Error updating reporter profile picture:', error);

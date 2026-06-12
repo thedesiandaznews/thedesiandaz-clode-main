@@ -6,7 +6,7 @@ import Footer from '@/components/Footer';
 
 export default function ConditionalLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const isSpecialPortal = pathname?.startsWith('/admin') || pathname?.startsWith('/reporter') || pathname?.startsWith('/affiliates');
+  const isSpecialPortal = pathname?.startsWith('/admin') || pathname?.startsWith('/reporter') || pathname?.startsWith('/correspondent') || pathname?.startsWith('/affiliates');
 
   if (isSpecialPortal) {
     return <main className="flex-grow bg-[#F5F7FA] text-[#1a1a1a] min-h-screen">{children}</main>;
