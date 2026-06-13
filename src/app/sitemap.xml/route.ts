@@ -1,4 +1,3 @@
-import { NextResponse } from 'next/server';
 import prisma from '@/lib/db';
 
 export const dynamic = 'force-dynamic';
@@ -42,11 +41,50 @@ export async function GET() {
   </url>`;
     });
 
+    const normalizedDistricts: Record<string, string> = {
+      'ranchi': 'ranchi-news',
+      'dhanbad': 'dhanbad-news',
+      'bokaro': 'bokaro-news',
+      'eastsinghbhum': 'jamshedpur-news',
+      'westsinghbhum': 'west-singhbhum-news',
+      'seraikelakharsawan': 'saraikela-kharsawan-news',
+      'hazaribag': 'hazaribagh-news',
+      'hazaribagh': 'hazaribagh-news',
+      'ramgarh': 'ramgarh-news',
+      'chatra': 'chatra-news',
+      'koderma': 'koderma-news',
+      'giridih': 'giridih-news',
+      'palamu': 'palamu-news',
+      'garhwa': 'garhwa-news',
+      'latehar': 'latehar-news',
+      'gumla': 'gumla-news',
+      'lohardaga': 'lohardaga-news',
+      'simdega': 'simdega-news',
+      'khunti': 'khunti-news',
+      'pakur': 'pakur-news',
+      'dumka': 'dumka-news',
+      'deoghar': 'deoghar-news',
+      'godda': 'godda-news',
+      'sahibganj': 'sahibganj-news',
+      'jamtara': 'jamtara-news'
+    };
+
     // Add categories
     categories.forEach((cat) => {
+      const catLower = cat.name.toLowerCase();
+      let catSlug = '';
+      if (catLower === 'breaking news') catSlug = 'breaking-news';
+      else if (catLower === 'crime') catSlug = 'crime';
+      else if (catLower === 'politics') catSlug = 'politics';
+      else if (catLower === 'sports') catSlug = 'sports';
+      else if (catLower === 'education') catSlug = 'education';
+      else if (catLower === 'business' || catLower === 'business & finance') catSlug = 'business';
+      else if (catLower === 'entertainment') catSlug = 'entertainment';
+
+      const locUrl = catSlug ? `${baseUrl}/${catSlug}` : `${baseUrl}/latest?category=${encodeURIComponent(cat.name)}`;
       xml += `
   <url>
-    <loc>${baseUrl}/latest?category=${encodeURIComponent(cat.name)}</loc>
+    <loc>${locUrl}</loc>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url>`;
@@ -55,16 +93,29 @@ export async function GET() {
     // Add location pages
     locations.forEach((loc) => {
       if (loc.state) {
+        const stateLower = loc.state.toLowerCase();
+        let stateUrl = `${baseUrl}/state/${encodeURIComponent(loc.state)}`;
+        if (stateLower === 'jharkhand') {
+          stateUrl = `${baseUrl}/jharkhand-news`;
+        }
+
         xml += `
   <url>
-    <loc>${baseUrl}/state/${encodeURIComponent(loc.state)}</loc>
+    <loc>${stateUrl}</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>`;
+
         if (loc.district) {
+          const distKey = loc.district.toLowerCase().replace(/[^a-z0-9]/g, '');
+          const prettySlug = normalizedDistricts[distKey];
+          const distUrl = (stateLower === 'jharkhand' && prettySlug)
+            ? `${baseUrl}/${prettySlug}`
+            : `${baseUrl}/state/${encodeURIComponent(loc.state)}/${encodeURIComponent(loc.district)}`;
+
           xml += `
   <url>
-    <loc>${baseUrl}/state/${encodeURIComponent(loc.state)}/${encodeURIComponent(loc.district)}</loc>
+    <loc>${distUrl}</loc>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>`;

@@ -67,10 +67,16 @@ export default async function NewsDetailPage({ params }: { params: Promise<{ id:
     .filter(n => n.id !== article.id && n.categoryId === article.categoryId)
     .slice(0, 6);
     
-  const headlines = latestNews
+  const latestNewsItems = latestNews
     .filter(n => n.id !== article.id)
     .slice(0, 4);
 
+  const trendingNews = [...latestNews]
+    .sort((a, b) => (b.views || 0) - (a.views || 0))
+    .filter(n => n.id !== article.id)
+    .slice(0, 4);
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const localFilter = (n: any) => n.id !== article.id && (n.state === article.state || n.district === article.district);
   const primaryLocal = latestNews.filter(localFilter);
   const otherLocal = latestNews.filter(n => n.id !== article.id && !localFilter(n) && n.state);
@@ -103,6 +109,26 @@ export default async function NewsDetailPage({ params }: { params: Promise<{ id:
     }
   };
 
+  const imageObjectSchema = {
+    "@context": "https://schema.org",
+    "@type": "ImageObject",
+    "url": article.imageUrl || "https://www.thedesiandaz.com/logo.png",
+    "caption": article.title,
+    "description": article.seoDesc || article.title
+  };
+
+  const catName = article.category?.name || '';
+  const catLower = catName.toLowerCase();
+  let catUrl = 'https://www.thedesiandaz.com/latest';
+  if (catLower === 'breaking news') catUrl = 'https://www.thedesiandaz.com/breaking-news';
+  else if (catLower === 'crime') catUrl = 'https://www.thedesiandaz.com/crime';
+  else if (catLower === 'politics') catUrl = 'https://www.thedesiandaz.com/politics';
+  else if (catLower === 'sports') catUrl = 'https://www.thedesiandaz.com/sports';
+  else if (catLower === 'education') catUrl = 'https://www.thedesiandaz.com/education';
+  else if (catLower === 'business' || catLower === 'business & finance') catUrl = 'https://www.thedesiandaz.com/business';
+  else if (catLower === 'entertainment') catUrl = 'https://www.thedesiandaz.com/entertainment';
+  else if (catName) catUrl = `https://www.thedesiandaz.com/latest?category=${encodeURIComponent(catName)}`;
+
   const breadcrumbSchema = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
@@ -117,7 +143,7 @@ export default async function NewsDetailPage({ params }: { params: Promise<{ id:
         "@type": "ListItem",
         "position": 2,
         "name": article.category?.name || "News",
-        "item": `https://www.thedesiandaz.com/latest?category=${encodeURIComponent(article.category?.name || '')}`
+        "item": catUrl
       },
       {
         "@type": "ListItem",
@@ -133,6 +159,10 @@ export default async function NewsDetailPage({ params }: { params: Promise<{ id:
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(newsArticleSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(imageObjectSchema) }}
       />
       <script
         type="application/ld+json"
@@ -239,13 +269,13 @@ export default async function NewsDetailPage({ params }: { params: Promise<{ id:
               <ResponsiveBanner categoryName="News" position={3} />
             </div>
 
-            {/* Top headlines box */}
+            {/* Latest News Box */}
             <div className={styles.headlinesBox}>
               <h3 className={styles.headlinesTitle}>
                 <i className="fas fa-bolt" style={{ color: 'var(--primary)' }} />
-                आज की मुख्य खबरें
+                ⚡ ताज़ा खबरें
               </h3>
-              {headlines.length > 0 ? headlines.map(h => (
+              {latestNewsItems.length > 0 ? latestNewsItems.map(h => (
                 <Link key={h.id} href={`/news/${h.slug || h.id}`} className={styles.headlinesItem} id={`sidebar-news-${h.id}`}>
                   <div className={styles.headlinesItemTitle}>{h.title}</div>
                   <div className={styles.headlinesItemTime}>
@@ -253,7 +283,25 @@ export default async function NewsDetailPage({ params }: { params: Promise<{ id:
                   </div>
                 </Link>
               )) : (
-                <div style={{ padding: '20px', textAlign: 'center', color: '#6b7280' }}>No other headlines available</div>
+                <div style={{ padding: '20px', textAlign: 'center', color: '#6b7280' }}>कोई ताज़ा खबर उपलब्ध नहीं है</div>
+              )}
+            </div>
+
+            {/* Trending News Box */}
+            <div className={styles.headlinesBox} style={{ marginTop: '20px' }}>
+              <h3 className={styles.headlinesTitle}>
+                <i className="fas fa-fire" style={{ color: '#f97316' }} />
+                📈 ट्रेंडिंग खबरें
+              </h3>
+              {trendingNews.length > 0 ? trendingNews.map(t => (
+                <Link key={t.id} href={`/news/${t.slug || t.id}`} className={styles.headlinesItem} id={`sidebar-trending-${t.id}`}>
+                  <div className={styles.headlinesItemTitle}>{t.title}</div>
+                  <div className={styles.headlinesItemTime}>
+                    <i className="far fa-eye" /> {t.views || 0} Views
+                  </div>
+                </Link>
+              )) : (
+                <div style={{ padding: '20px', textAlign: 'center', color: '#6b7280' }}>कोई ट्रेंडिंग खबर उपलब्ध नहीं है</div>
               )}
             </div>
 

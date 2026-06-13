@@ -16,8 +16,8 @@ export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
 export const metadata: Metadata = {
-  title: 'The Desi Andaz Media Network | Digital & Print Media House',
-  description: 'The Desi Andaz is a leading Hindi news portal covering national news, politics, local updates, and ground-level journalism across India.',
+  title: 'Jharkhand News | Breaking News | Hindi News | The Desi Andaz Media Network',
+  description: 'Latest Jharkhand News, Hindi News, Breaking News, Ranchi News, Dhanbad News, Bokaro News, Jamshedpur News, Santhal Pargana News and Public Interest Stories from The Desi Andaz Media Network.',
   alternates: {
     canonical: 'https://www.thedesiandaz.com/',
   },
@@ -69,6 +69,7 @@ export default async function Home() {
   const remainingNews = latestNews.slice(5);
 
   // Group news by category (including additionalCategories)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const categoryGroups = latestNews.reduce((acc: any, n: any) => {
     // Add to primary category
     const catName = n.category?.name;
@@ -79,12 +80,12 @@ export default async function Home() {
     
     // Add to all additional categories
     if (n.additionalCategories && n.additionalCategories.length > 0) {
-      n.additionalCategories.forEach((addCat: any) => {
+      n.additionalCategories.forEach((addCat: { name: string }) => {
         const addCatName = addCat.name;
         if (addCatName) {
           if (!acc[addCatName]) acc[addCatName] = [];
           // Avoid pushing duplicate if it somehow matches primary
-          if (!acc[addCatName].find((item: any) => item.id === n.id)) {
+          if (!acc[addCatName].find((item: { id: string }) => item.id === n.id)) {
             acc[addCatName].push(n);
           }
         }
@@ -146,11 +147,43 @@ export default async function Home() {
     }
   };
 
+  const localBusinessSchema = {
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    "name": "The Desi Andaz Media Network",
+    "image": "https://www.thedesiandaz.com/logo.png",
+    "telephone": "+91-8409659560",
+    "email": "info@thedesiandaz.com",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "Near Everett Mission School Dhanush Puja, Gokulpur",
+      "addressLocality": "Pakur",
+      "addressRegion": "Jharkhand",
+      "postalCode": "816107",
+      "addressCountry": "IN"
+    },
+    "geo": {
+      "@type": "GeoCoordinates",
+      "latitude": 24.6335,
+      "longitude": 87.8285
+    },
+    "url": "https://www.thedesiandaz.com",
+    "priceRange": "$$",
+    "areaServed": {
+      "@type": "AdministrativeArea",
+      "name": "Jharkhand"
+    }
+  };
+
   return (
     <div className={styles.page}>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(orgSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessSchema) }}
       />
       {/* ── LOCATION BAR ── */}
       <LocationBar />
