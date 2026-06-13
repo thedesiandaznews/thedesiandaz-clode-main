@@ -30,6 +30,8 @@ export default function Footer() {
     { href: '/contact',               label: 'Contact Us' },
     { href: '/advertise',             label: 'Advertise with Us' },
     { href: '/affiliates',             label: 'Affiliate Program' },
+    { href: '/correspondent',          label: 'Correspondent Page' },
+    { href: '/correspondent-verification', label: 'Correspondent Verify Page' },
     { href: '/livetv',                label: 'Live TV' },
     { href: '/epaper',                label: 'E-Paper' },
     { href: '/sitemap.xml',           label: 'Sitemap' },
