@@ -8,8 +8,21 @@ import ReferralTracker from '@/components/ReferralTracker';
 import Script from 'next/script';
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://www.thedesiandaz.com'),
   title: 'The Desi Andaz - देसी नज़रिया, सच्ची खबर',
   description: 'Premium Hindi News Portal - The Desi Andaz',
+  alternates: {
+    canonical: '/',
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-image-preview': 'large',
+    },
+  },
 };
 
 export default function RootLayout({

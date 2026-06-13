@@ -10,6 +10,9 @@ export async function generateMetadata(): Promise<Metadata> {
     title: data?.seoTitle || 'Contact Us | The Desi Andaz',
     description: data?.seoDesc || 'Get in touch with The Desi Andaz team for queries, submissions, and advertising.',
     keywords: data?.seoKeys?.split(',') || ['contact', 'desi andaz', 'email'],
+    alternates: {
+      canonical: 'https://www.thedesiandaz.com/contact',
+    },
     openGraph: {
       images: data?.seoImage ? [{ url: data.seoImage }] : undefined,
     },

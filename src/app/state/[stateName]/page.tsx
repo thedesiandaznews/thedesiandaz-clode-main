@@ -5,6 +5,28 @@ import styles from '../state.module.css';
 import { getNewsArticles } from '@/actions/news';
 import ResponsiveBanner from '@/components/ResponsiveBanner';
 import { stripHtml } from '@/lib/utils';
+import { Metadata } from 'next';
+
+export async function generateMetadata({ params }: { params: Promise<{ stateName: string }> }): Promise<Metadata> {
+  const { stateName } = await params;
+  const displayStateName = stateName.charAt(0).toUpperCase() + stateName.slice(1);
+  const title = `${displayStateName} News | The Desi Andaz Media Network`;
+  const description = `Read latest updates, breaking news, politics affairs, and local stories from ${displayStateName} on The Desi Andaz Media Network.`;
+  const canonicalUrl = `https://www.thedesiandaz.com/state/${stateName}`;
+
+  return {
+    title,
+    description,
+    alternates: {
+      canonical: canonicalUrl,
+    },
+    openGraph: {
+      title,
+      description,
+      url: canonicalUrl,
+    },
+  };
+}
 
 export default async function StatePage({ params }: { params: Promise<{ stateName: string }> }) {
   const stateInfo = await params;

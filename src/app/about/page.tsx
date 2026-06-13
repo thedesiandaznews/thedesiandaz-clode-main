@@ -9,6 +9,9 @@ export async function generateMetadata({ params }: { params: any }): Promise<Met
     title: data?.seoTitle || 'About Us | The Desi Andaz Media Network',
     description: data?.seoDesc || 'Read the manifesto, mission, and vision of The Desi Andaz Media Network, an independent voice in Indian journalism.',
     keywords: data?.seoKeys?.split(',') || ['news', 'hindi news', 'india'],
+    alternates: {
+      canonical: 'https://www.thedesiandaz.com/about',
+    },
     openGraph: {
       images: data?.seoImage ? [{ url: data.seoImage }] : undefined,
     },

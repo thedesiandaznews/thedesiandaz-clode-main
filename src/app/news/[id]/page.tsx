@@ -11,25 +11,42 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
   const article = await getArticleById(id);
   if (!article) return {};
 
-  const title = article.seoTitle || `${article.title} | The Desi Andaz`;
-  const contentClean = article.content ? article.content.replace(/<[^>]*>/g, '').substring(0, 160).trim() : '';
-  const description = article.seoDesc || contentClean || 'The Desi Andaz Hindi News Portal';
+  let title = article.seoTitle || article.title;
+  if (!title.includes('The Desi Andaz Media Network')) {
+    title = `${title} | The Desi Andaz Media Network`;
+  }
+
+  const contentClean = article.content ? article.content.replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim() : '';
+  let description = article.seoDesc || contentClean;
+  if (description.length > 155) {
+    description = description.substring(0, 152) + '...';
+  } else if (description.length < 140) {
+    description = (description + ' Read complete news updates, regional coverage, and political analysis on The Desi Andaz Media Network.').substring(0, 155).trim();
+  }
+
   const keywords = article.seoKeys || `${article.category?.name || 'News'}, ${article.state}, ${article.district}, the desi andaz`;
+  const canonicalUrl = `https://www.thedesiandaz.com/news/${article.slug || article.id}`;
 
   return {
     title,
     description,
     keywords,
+    alternates: {
+      canonical: canonicalUrl,
+    },
     openGraph: {
       title,
       description,
-      images: article.imageUrl ? [{ url: article.imageUrl }] : [],
+      url: canonicalUrl,
+      type: 'article',
+      siteName: 'The Desi Andaz Media Network',
+      images: article.imageUrl ? [{ url: article.imageUrl }] : [{ url: 'https://www.thedesiandaz.com/logo.png' }],
     },
     twitter: {
       card: 'summary_large_image',
       title,
       description,
-      images: article.imageUrl ? [article.imageUrl] : [],
+      images: article.imageUrl ? [article.imageUrl] : ['https://www.thedesiandaz.com/logo.png'],
     }
   };
 }
@@ -59,8 +76,68 @@ export default async function NewsDetailPage({ params }: { params: Promise<{ id:
   const otherLocal = latestNews.filter(n => n.id !== article.id && !localFilter(n) && n.state);
   const localNews = [...primaryLocal, ...otherLocal].slice(0, 6);
 
+  const articleUrl = `https://www.thedesiandaz.com/news/${article.slug || article.id}`;
+  const newsArticleSchema = {
+    "@context": "https://schema.org",
+    "@type": "NewsArticle",
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": articleUrl
+    },
+    "headline": article.title,
+    "description": article.seoDesc || article.content.replace(/<[^>]*>/g, '').substring(0, 160).trim(),
+    "image": article.imageUrl ? [article.imageUrl] : ["https://www.thedesiandaz.com/logo.png"],
+    "datePublished": new Date(article.createdAt).toISOString(),
+    "dateModified": new Date(article.updatedAt).toISOString(),
+    "author": {
+      "@type": "Person",
+      "name": article.reporter || "संवाददाता"
+    },
+    "publisher": {
+      "@type": "NewsMediaOrganization",
+      "name": "The Desi Andaz Media Network",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://www.thedesiandaz.com/logo.png"
+      }
+    }
+  };
+
+  const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": "https://www.thedesiandaz.com/"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": article.category?.name || "News",
+        "item": `https://www.thedesiandaz.com/latest?category=${encodeURIComponent(article.category?.name || '')}`
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": article.title,
+        "item": articleUrl
+      }
+    ]
+  };
+
   return (
     <article className={styles.page}>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(newsArticleSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
       <ViewCounter id={article.id} />
       <div className={styles.inner}>
         

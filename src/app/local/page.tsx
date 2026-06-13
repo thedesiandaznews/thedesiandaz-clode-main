@@ -2,6 +2,15 @@ import styles from './local.module.css';
 import LocalClient from './LocalClient';
 import { getNewsArticles } from '@/actions/news';
 import ResponsiveBanner from '@/components/ResponsiveBanner';
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Jharkhand Local News | The Desi Andaz Media Network',
+  description: 'Breaking regional news, local updates, municipal issues, and block-level stories from Pakur, Ranchi, and districts of Jharkhand.',
+  alternates: {
+    canonical: 'https://www.thedesiandaz.com/local',
+  },
+};
 
 export default async function LocalPage() {
   const news = await getNewsArticles({ category: 'Jharkhand News', status: 'Published' });

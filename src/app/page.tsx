@@ -10,9 +10,18 @@ import BlockRenderer from '@/components/BlockRenderer';
 import { stripHtml } from '@/lib/utils';
 import { getSiteSettings } from '@/actions/settings';
 import HomeMediaWidget from '@/components/HomeMediaWidget';
+import { Metadata } from 'next';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
+
+export const metadata: Metadata = {
+  title: 'The Desi Andaz Media Network | Digital & Print Media House',
+  description: 'The Desi Andaz is a leading Hindi news portal covering national news, politics, local updates, and ground-level journalism across India.',
+  alternates: {
+    canonical: 'https://www.thedesiandaz.com/',
+  },
+};
 
 export default async function Home() {
   const pageData = await getPageContent('home');
@@ -112,8 +121,37 @@ export default async function Home() {
     targetUrl: '/livetv'
   };
 
+  const orgSchema = {
+    "@context": "https://schema.org",
+    "@type": "NewsMediaOrganization",
+    "name": "The Desi Andaz Media Network",
+    "url": "https://www.thedesiandaz.com",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://www.thedesiandaz.com/logo.png"
+    },
+    "sameAs": [
+      "https://facebook.com/thedesiandaznews",
+      "https://twitter.com/thedesiandaznews",
+      "https://youtube.com/@thedesiandaznews",
+      "https://instagram.com/thedesiandaznews"
+    ],
+    "contactPoint": {
+      "@type": "ContactPoint",
+      "telephone": "+91-8409659560",
+      "contactType": "editorial desk",
+      "email": "info@thedesiandaz.com",
+      "areaServed": "IN",
+      "availableLanguage": ["Hindi", "English"]
+    }
+  };
+
   return (
     <div className={styles.page}>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(orgSchema) }}
+      />
       {/* ── LOCATION BAR ── */}
       <LocationBar />
 

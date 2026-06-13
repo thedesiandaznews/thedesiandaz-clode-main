@@ -5,6 +5,29 @@ import styles from '../../state.module.css';
 import { getNewsArticles } from '@/actions/news';
 import ResponsiveBanner from '@/components/ResponsiveBanner';
 import { stripHtml } from '@/lib/utils';
+import { Metadata } from 'next';
+
+export async function generateMetadata({ params }: { params: Promise<{ stateName: string; districtName: string }> }): Promise<Metadata> {
+  const { stateName, districtName } = await params;
+  const displayStateName = stateName.charAt(0).toUpperCase() + stateName.slice(1);
+  const displayDistrictName = districtName.charAt(0).toUpperCase() + districtName.slice(1);
+  const title = `${displayDistrictName} News, ${displayStateName} | The Desi Andaz Media Network`;
+  const description = `Breaking local news, municipal issues, block updates, and local citizen stories from ${displayDistrictName}, ${displayStateName} on The Desi Andaz.`;
+  const canonicalUrl = `https://www.thedesiandaz.com/state/${stateName}/${districtName}`;
+
+  return {
+    title,
+    description,
+    alternates: {
+      canonical: canonicalUrl,
+    },
+    openGraph: {
+      title,
+      description,
+      url: canonicalUrl,
+    },
+  };
+}
 
 export default async function DistrictPage({ params }: { params: Promise<{ stateName: string; districtName: string }> }) {
   const { stateName, districtName } = await params;
