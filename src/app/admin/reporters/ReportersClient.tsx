@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import styles from '../admin.module.css';
-import { updateReporterStatus, deleteReporter, approveReporterWithLetterAction, getReporterById } from '@/actions/reporter';
+import { updateReporterStatus, deleteReporter, approveReporterWithLetterAction, getReporterById, updateReporterRoleAction } from '@/actions/reporter';
 import { getReporterMessages, sendReporterMessage, markReporterMessagesAsRead, getReportersListWithUnreadCounts } from '@/actions/chat';
 import {
   verifySuperAdminCredentials,
@@ -18,6 +18,7 @@ export default function ReportersClient({ initialList }: { initialList: any[] })
   const [reporters, setReporters] = useState<any[]>(initialList);
   const [activeTab, setActiveTab] = useState<'Pending' | 'Approved' | 'Rejected' | 'Suspended' | 'Chat' | 'Passwords'>('Pending');
   const [selectedReporter, setSelectedReporter] = useState<any | null>(null);
+  const [sectionTab, setSectionTab] = useState<'Correspondents' | 'Admins'>('Correspondents');
 
   // State & District Filters
   const [selectedState, setSelectedState] = useState<string>('');
@@ -173,6 +174,11 @@ export default function ReportersClient({ initialList }: { initialList: any[] })
     : reporters.filter(r => r.status === activeTab);
 
   const filteredList = tabFilteredList.filter(r => {
+    // Filter by Section (Correspondents vs Admin/Super Admin)
+    const isReservedAdmin = ['COMPANY_ADMIN', 'PRINT_ADMIN', 'SUPER_ADMIN'].includes(r.role);
+    if (sectionTab === 'Correspondents' && isReservedAdmin) return false;
+    if (sectionTab === 'Admins' && !isReservedAdmin) return false;
+
     if (selectedState && r.state?.trim().toLowerCase() !== selectedState.trim().toLowerCase()) {
       return false;
     }
@@ -185,6 +191,10 @@ export default function ReportersClient({ initialList }: { initialList: any[] })
   const getFilteredReportersCount = (status: string) => {
     return reporters.filter(r => {
       if (r.status !== status) return false;
+      const isReservedAdmin = ['COMPANY_ADMIN', 'PRINT_ADMIN', 'SUPER_ADMIN'].includes(r.role);
+      if (sectionTab === 'Correspondents' && isReservedAdmin) return false;
+      if (sectionTab === 'Admins' && !isReservedAdmin) return false;
+
       if (selectedState && r.state?.trim().toLowerCase() !== selectedState.trim().toLowerCase()) return false;
       if (selectedDistrict && r.district?.trim().toLowerCase() !== selectedDistrict.trim().toLowerCase()) return false;
       return true;
@@ -193,6 +203,10 @@ export default function ReportersClient({ initialList }: { initialList: any[] })
 
   const getFilteredUnreadChatCount = () => {
     return reporters.filter(r => {
+      const isReservedAdmin = ['COMPANY_ADMIN', 'PRINT_ADMIN', 'SUPER_ADMIN'].includes(r.role);
+      if (sectionTab === 'Correspondents' && isReservedAdmin) return false;
+      if (sectionTab === 'Admins' && !isReservedAdmin) return false;
+
       if (selectedState && r.state?.trim().toLowerCase() !== selectedState.trim().toLowerCase()) return false;
       if (selectedDistrict && r.district?.trim().toLowerCase() !== selectedDistrict.trim().toLowerCase()) return false;
       return true;
@@ -1270,6 +1284,64 @@ export default function ReportersClient({ initialList }: { initialList: any[] })
         </div>
       </div>
 
+      {/* Premium Segmented Control to toggle between Correspondents and Admins/Super Admins */}
+      <div style={{
+        display: 'inline-flex',
+        background: '#f1f5f9',
+        padding: '5px',
+        borderRadius: '14px',
+        border: '1px solid #cbd5e1',
+        marginBottom: '24px',
+        gap: '4px',
+        boxShadow: 'inset 0 2px 4px rgba(15, 23, 42, 0.03)'
+      }}>
+        <button
+          type="button"
+          onClick={() => setSectionTab('Correspondents')}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            padding: '10px 20px',
+            borderRadius: '10px',
+            fontSize: '13.5px',
+            fontWeight: 800,
+            cursor: 'pointer',
+            transition: 'all 0.2s ease',
+            border: 'none',
+            background: sectionTab === 'Correspondents' ? 'linear-gradient(135deg, #ef4444 0%, #cc2200 100%)' : 'transparent',
+            color: sectionTab === 'Correspondents' ? '#ffffff' : '#64748b',
+            boxShadow: sectionTab === 'Correspondents' ? '0 4px 10px rgba(239, 68, 68, 0.2)' : 'none',
+          }}
+        >
+          <i className="fas fa-users" style={{ fontSize: '14px' }}></i>
+          <span>संवाददाता (Correspondents)</span>
+        </button>
+        
+        <button
+          type="button"
+          onClick={() => setSectionTab('Admins')}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            padding: '10px 20px',
+            borderRadius: '10px',
+            fontSize: '13.5px',
+            fontWeight: 800,
+            cursor: 'pointer',
+            transition: 'all 0.2s ease',
+            border: 'none',
+            background: sectionTab === 'Admins' ? 'linear-gradient(135deg, #ef4444 0%, #cc2200 100%)' : 'transparent',
+            color: sectionTab === 'Admins' ? '#ffffff' : '#64748b',
+            boxShadow: sectionTab === 'Admins' ? '0 4px 10px rgba(239, 68, 68, 0.2)' : 'none',
+          }}
+        >
+          <i className="fas fa-user-shield" style={{ fontSize: '14px' }}></i>
+          <span>एडमिन & सुपर एडमिन (Admin & Super Admin)</span>
+        </button>
+      </div>
+
       {/* Premium Capsule Tabs Selector */}
       <div style={{
         display: 'flex',
@@ -1737,6 +1809,35 @@ export default function ReportersClient({ initialList }: { initialList: any[] })
                                 </span>
                               )}
                             </span>
+
+                            {/* Designation/Role Badge */}
+                            <div style={{ marginTop: '5px', marginBottom: '2px' }}>
+                              <span style={{
+                                background: rep.role === 'SUPER_ADMIN' ? '#fdf2f8' : rep.role === 'COMPANY_ADMIN' ? '#f0fdfa' : rep.role === 'PRINT_ADMIN' ? '#f5f3ff' : rep.role === 'STATE_CORRESPONDENT' ? '#eff6ff' : rep.role === 'DISTRICT_CORRESPONDENT' ? '#f0fdf4' : '#f8fafc',
+                                color: rep.role === 'SUPER_ADMIN' ? '#db2777' : rep.role === 'COMPANY_ADMIN' ? '#0d9488' : rep.role === 'PRINT_ADMIN' ? '#7c3aed' : rep.role === 'STATE_CORRESPONDENT' ? '#2563eb' : rep.role === 'DISTRICT_CORRESPONDENT' ? '#16a34a' : '#64748b',
+                                fontSize: '10.5px',
+                                fontWeight: 800,
+                                padding: '2px 8px',
+                                borderRadius: '6px',
+                                border: `1px solid ${rep.role === 'SUPER_ADMIN' ? '#fbcfe8' : rep.role === 'COMPANY_ADMIN' ? '#99f6e4' : rep.role === 'PRINT_ADMIN' ? '#ddd6fe' : rep.role === 'STATE_CORRESPONDENT' ? '#bfdbfe' : rep.role === 'DISTRICT_CORRESPONDENT' ? '#bbf7d0' : '#e2e8f0'}`,
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: '4px',
+                                textTransform: 'uppercase',
+                                letterSpacing: '0.5px',
+                                lineHeight: '1.2'
+                              }}>
+                                <i className={`fas ${rep.role === 'SUPER_ADMIN' ? 'fa-crown' : rep.role === 'COMPANY_ADMIN' ? 'fa-user-tie' : rep.role === 'PRINT_ADMIN' ? 'fa-print' : 'fa-user-edit'}`} style={{ fontSize: '9px' }}></i>
+                                <span>
+                                  {rep.role === 'BLOCK_CORRESPONDENT' ? 'Block Correspondent' :
+                                   rep.role === 'DISTRICT_CORRESPONDENT' ? 'District Correspondent' :
+                                   rep.role === 'STATE_CORRESPONDENT' ? 'State Correspondent' :
+                                   rep.role === 'COMPANY_ADMIN' ? 'Company Admin' :
+                                   rep.role === 'PRINT_ADMIN' ? 'Print Admin' :
+                                   rep.role === 'SUPER_ADMIN' ? 'Super Admin' : (rep.role || 'Block Correspondent')}
+                                </span>
+                              </span>
+                            </div>
                             
                             {activeTab === 'Chat' ? (
                               <div style={{ marginTop: '4px' }}>
@@ -2698,6 +2799,44 @@ export default function ReportersClient({ initialList }: { initialList: any[] })
                   <div>
                     <span style={{ color: '#64748b', display: 'block', fontWeight: 600, fontSize: '11.5px', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '2px' }}>Aadhaar Card Number</span>
                     <span style={{ fontWeight: 750, color: '#1e293b', fontFamily: 'monospace' }}>{selectedReporter.aadhaarNumber || 'Not Uploaded'}</span>
+                  </div>
+                  <div>
+                    <span style={{ color: '#64748b', display: 'block', fontWeight: 600, fontSize: '11.5px', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '2px' }}>पद (Designation)</span>
+                    <select
+                      value={selectedReporter.role || 'BLOCK_CORRESPONDENT'}
+                      onChange={async (e) => {
+                        const newRole = e.target.value;
+                        if (confirm(`Are you sure you want to change designation/role to ${newRole}?`)) {
+                          const res = await updateReporterRoleAction(selectedReporter.id, newRole);
+                          if (res.success && res.reporter) {
+                            setSelectedReporter((prev: any) => ({ ...prev, role: newRole }));
+                            setReporters((prev: any[]) => prev.map((r: any) => r.id === selectedReporter.id ? { ...r, role: newRole } : r));
+                            alert('Designation updated successfully.');
+                          } else {
+                            alert('Failed to update designation: ' + (res.message || 'Unknown error'));
+                          }
+                        }
+                      }}
+                      style={{
+                        width: '100%',
+                        padding: '8px 12px',
+                        borderRadius: '8px',
+                        border: '1px solid #cbd5e1',
+                        fontSize: '13px',
+                        fontWeight: 700,
+                        background: '#ffffff',
+                        color: '#1e293b',
+                        outline: 'none',
+                        cursor: 'pointer'
+                      }}
+                    >
+                      <option value="BLOCK_CORRESPONDENT">Block Correspondent (ब्लॉक संवाददाता)</option>
+                      <option value="DISTRICT_CORRESPONDENT">District Correspondent (जिला संवाददाता)</option>
+                      <option value="STATE_CORRESPONDENT">State Correspondent (राज्य संवाददाता)</option>
+                      <option value="COMPANY_ADMIN">Company Admin (कंपनी एडमिन)</option>
+                      <option value="PRINT_ADMIN">Print Admin (प्रिंट एडमिन)</option>
+                      <option value="SUPER_ADMIN">Super Admin (सुपर एडमिन)</option>
+                    </select>
                   </div>
                   <div style={{ gridColumn: 'span 3' }}>
                     <span style={{ color: '#64748b', display: 'block', fontWeight: 600, fontSize: '11.5px', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '2px' }}>PO + PS Info & Area</span>

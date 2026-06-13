@@ -1,15 +1,25 @@
 'use client';
 
 import React, { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import styles from '../reporter.module.css';
 import { registerReporter } from '@/actions/reporter';
 import { uploadFileAction } from '@/actions/upload';
 import { stateDistricts, allStates, jharkhandBlocks } from '@/lib/localization';
 
-export default function RegisterClient() {
+export default function RegisterClient({ defaultRole }: { defaultRole?: string } = {}) {
   const router = useRouter();
+  const searchParams = useSearchParams();
+
+  // Read role parameter if provided in URL (e.g. ?role=DISTRICT_CORRESPONDENT)
+  const roleParam = searchParams.get('role');
+  const initialRole = (roleParam && [
+    'BLOCK_CORRESPONDENT',
+    'DISTRICT_CORRESPONDENT',
+    'STATE_CORRESPONDENT'
+  ].includes(roleParam)) ? roleParam : (defaultRole || 'BLOCK_CORRESPONDENT');
+
   const [step, setStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
@@ -21,7 +31,7 @@ export default function RegisterClient() {
   const [fatherHusbandName, setFatherHusbandName] = useState('');
   const [mobile, setMobile] = useState('');
   const [bloodGroup, setBloodGroup] = useState('');
-  const [role, setRole] = useState('BLOCK_CORRESPONDENT');
+  const [role, setRole] = useState(initialRole);
 
   // Step 2: Geography
   const [state, setState] = useState('Jharkhand');
@@ -308,7 +318,13 @@ function compressImage(file: File, maxWidth = 1000, maxHeight = 1000, quality = 
         </div>
 
         <h1 className={styles.cardTitle} style={{ marginTop: '20px' }}>
-          संवाददाता Onboarding <span className={styles.highlightText}>Wizard</span>
+          {role === 'DISTRICT_CORRESPONDENT' ? (
+            <>जिला संवाददाता Onboarding <span className={styles.highlightText}>Wizard</span></>
+          ) : role === 'STATE_CORRESPONDENT' ? (
+            <>राज्य संवाददाता Onboarding <span className={styles.highlightText}>Wizard</span></>
+          ) : (
+            <>संवाददाता Onboarding <span className={styles.highlightText}>Wizard</span></>
+          )}
         </h1>
         <p className={styles.cardSubtitle}>
           Complete your KYC details to join the official Desi Andaz correspondent network
@@ -337,19 +353,21 @@ function compressImage(file: File, maxWidth = 1000, maxHeight = 1000, quality = 
           {/* STEP 1: ACCOUNT DETAILS */}
           {step === 1 && (
             <div className={styles.formGrid}>
-              <div className={styles.formGroup}>
-                <label className={styles.label}>Designation / पद <span style={{ color: 'red' }}>*</span></label>
-                <select 
-                  className={styles.select} 
-                  value={role} 
-                  onChange={(e) => setRole(e.target.value)}
-                  required
-                >
-                  <option value="BLOCK_CORRESPONDENT">Block Correspondent (ब्लॉक संवाददाता)</option>
-                  <option value="DISTRICT_CORRESPONDENT">District Correspondent (जिला संवाददाता)</option>
-                  <option value="STATE_CORRESPONDENT">State Correspondent (राज्य संवाददाता)</option>
-                </select>
-              </div>
+              {roleParam && (
+                <div className={styles.formGroup}>
+                  <label className={styles.label}>Designation / पद <span style={{ color: 'red' }}>*</span></label>
+                  <select 
+                    className={styles.select} 
+                    value={role} 
+                    onChange={(e) => setRole(e.target.value)}
+                    required
+                  >
+                    <option value="BLOCK_CORRESPONDENT">Block Correspondent (ब्लॉक संवाददाता)</option>
+                    <option value="DISTRICT_CORRESPONDENT">District Correspondent (जिला संवाददाता)</option>
+                    <option value="STATE_CORRESPONDENT">State Correspondent (राज्य संवाददाता)</option>
+                  </select>
+                </div>
+              )}
 
               <div className={styles.formGroup}>
                 <label className={styles.label}>Full Name <span style={{ color: 'red' }}>*</span></label>

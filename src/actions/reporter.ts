@@ -329,7 +329,8 @@ export async function getReportersList(status?: string) {
         createdAt: true,
         updatedAt: true,
         photoUrl: true,
-        aadhaarNumber: true
+        aadhaarNumber: true,
+        role: true
       },
       orderBy: { createdAt: 'desc' }
     });
@@ -1028,6 +1029,42 @@ export async function getArticlesForModeration(
   } catch (error) {
     console.error('Error fetching articles for moderation:', error);
     return [];
+  }
+}
+
+export async function updateReporterRoleAction(id: string, role: string) {
+  try {
+    const reporter = await prisma.reporter.findUnique({ where: { id } });
+    if (!reporter) {
+      return { success: false, message: 'Reporter not found.' };
+    }
+
+    const updated = await prisma.reporter.update({
+      where: { id },
+      data: { role }
+    });
+
+    // Handle audit log
+    try {
+      const { logActivity } = await import('./logs');
+      await logActivity({
+        userId: id,
+        userEmail: reporter.email,
+        userName: reporter.fullName,
+        role: role,
+        action: 'Role Promotion/Change',
+        ipAddress: '127.0.0.1',
+        remarks: `Role updated from ${reporter.role} to ${role} by admin.`
+      });
+    } catch (e) {
+      console.error('Failed to log role update activity:', e);
+    }
+
+    revalidatePath('/admin/reporters');
+    return { success: true, reporter: updated };
+  } catch (error: any) {
+    console.error('Error updating reporter role:', error);
+    return { success: false, message: error.message || 'Failed to update role.' };
   }
 }
 

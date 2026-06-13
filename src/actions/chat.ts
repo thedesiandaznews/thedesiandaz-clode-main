@@ -116,7 +116,8 @@ export async function getReportersListWithUnreadCounts() {
         createdAt: true,
         updatedAt: true,
         photoUrl: true,
-        aadhaarNumber: true
+        aadhaarNumber: true,
+        role: true
       },
       orderBy: { fullName: 'asc' }
     });
