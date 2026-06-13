@@ -39,7 +39,13 @@ export async function getNewsArticles(filters?: {
   try {
     const whereClause: any = {};
     if (filters?.category) whereClause.category = { name: filters.category };
-    if (filters?.status) whereClause.status = filters.status;
+    if (filters?.status) {
+      if (filters.status === 'Published') {
+        whereClause.status = { in: ['Published', 'Website Published', 'Print Published'] };
+      } else {
+        whereClause.status = filters.status;
+      }
+    }
     if (filters?.state) whereClause.state = filters.state;
     if (filters?.district) whereClause.district = filters.district;
     if (filters?.q) {
@@ -146,11 +152,19 @@ export async function getDashboardStats() {
       await Promise.all([
         prisma.article.count(),
         prisma.article.aggregate({ _sum: { views: true } }),
-        prisma.article.count({ where: { status: 'Pending' } }),
+        prisma.article.count({
+          where: {
+            status: {
+              in: ['Pending', 'Submitted', 'Under District Review', 'Under State Review', 'Under Company Review']
+            }
+          }
+        }),
         prisma.article.findMany({ select: { reporter: true }, distinct: ['reporter'] }),
         prisma.article.count({
           where: {
-            status: 'Published',
+            status: {
+              in: ['Published', 'Website Published', 'Print Published']
+            },
             createdAt: { gte: new Date(new Date().setHours(0, 0, 0, 0)) }
           }
         })

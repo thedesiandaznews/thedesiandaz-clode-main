@@ -37,6 +37,12 @@ export async function registerReporter(data: {
   educationUrl?: string;
   videoUrl?: string;
   password?: string;
+  // new optional fields
+  role?: string;
+  signatureUrl?: string;
+  addressProofUrl?: string;
+  experienceUrl?: string;
+  policeVerificationUrl?: string;
 }) {
   try {
     if (!data.email || !data.password || !data.fullName || !data.mobile) {
@@ -99,9 +105,43 @@ export async function registerReporter(data: {
         photoUrl: data.photoUrl || null,
         educationUrl: data.educationUrl || null,
         videoUrl: data.videoUrl || null,
-        status: 'Pending'
+        status: 'Pending',
+        // New role and KYC fields
+        role: data.role || 'BLOCK_CORRESPONDENT',
+        signatureUrl: data.signatureUrl || null,
+        addressProofUrl: data.addressProofUrl || null,
+        experienceUrl: data.experienceUrl || null,
+        policeVerificationUrl: data.policeVerificationUrl || null,
       }
     });
+
+    // Create a notification for KYC Submission
+    try {
+      const { createNotification } = await import('./notifications');
+      await createNotification(
+        reporter.id,
+        'KYC Application Submitted',
+        `Your KYC application for ${data.role || 'BLOCK_CORRESPONDENT'} is pending admin review.`
+      );
+    } catch (notifErr) {
+      console.warn('Failed to send notification on register:', notifErr);
+    }
+
+    // Log KYC Submission
+    try {
+      const { logActivity } = await import('./logs');
+      await logActivity({
+        userId: reporter.id,
+        userEmail: reporter.email,
+        userName: reporter.fullName,
+        role: reporter.role,
+        action: 'KYC Submission',
+        ipAddress: '127.0.0.1',
+        remarks: 'New correspondent registered and KYC documents submitted.'
+      });
+    } catch (logErr) {
+      console.warn('Failed to log activity on register:', logErr);
+    }
 
     revalidatePath('/admin/reporters');
     revalidatePath('/admin/correspondents');
@@ -157,6 +197,22 @@ export async function loginReporter(email: string, password: string) {
 
     // Save dynamic last login timestamp & IP
     await saveLastLogin(reporter.id, ipAddress);
+
+    // Log Login activity
+    try {
+      const { logActivity } = await import('./logs');
+      await logActivity({
+        userId: reporter.id,
+        userEmail: reporter.email,
+        userName: reporter.fullName,
+        role: reporter.role || 'BLOCK_CORRESPONDENT',
+        action: 'Login',
+        ipAddress,
+        remarks: `User logged in from IP ${ipAddress}`
+      });
+    } catch (logErr) {
+      console.warn('Failed to log login activity:', logErr);
+    }
 
     // Dynamic on-the-fly backfill for older registered accounts
     if (!reporter.reporterCode) {
@@ -328,6 +384,11 @@ export async function updateReporterStatus(
   rejectionReason?: string
 ) {
   try {
+    const reporter = await prisma.reporter.findUnique({ where: { id } });
+    if (!reporter) {
+      return { success: false, message: 'Reporter not found.' };
+    }
+
     const data: any = { status };
     if (status === 'Approved' && joiningLetterUrl) {
       data.joiningLetter = joiningLetterUrl;
@@ -341,6 +402,62 @@ export async function updateReporterStatus(
       where: { id },
       data
     });
+
+    // Handle notifications and logging
+    try {
+      const { createNotification } = await import('./notifications');
+      const { logActivity } = await import('./logs');
+
+      if (status === 'Approved') {
+        // Log KYC Approval
+        await logActivity({
+          userId: reporter.id,
+          userEmail: reporter.email,
+          userName: reporter.fullName,
+          role: reporter.role,
+          action: 'KYC Approval',
+          ipAddress: '127.0.0.1',
+          remarks: `KYC approved by admin. Role: ${reporter.role}`
+        });
+
+        // Send Notifications
+        await createNotification(
+          reporter.id,
+          'KYC Approved',
+          `Congratulations! Your KYC for the role of ${reporter.role} has been approved.`
+        );
+        await createNotification(
+          reporter.id,
+          'Appointment Generated',
+          'Your official appointment letter has been signed and is ready for download.'
+        );
+        await createNotification(
+          reporter.id,
+          'ID Card Generated',
+          'Your official Desi Andaz identity card has been generated and is ready for download.'
+        );
+      } else if (status === 'Rejected') {
+        // Log KYC Rejection
+        await logActivity({
+          userId: reporter.id,
+          userEmail: reporter.email,
+          userName: reporter.fullName,
+          role: reporter.role,
+          action: 'KYC Rejection',
+          ipAddress: '127.0.0.1',
+          remarks: `KYC rejected by admin. Reason: ${rejectionReason}`
+        });
+
+        // Send Notification
+        await createNotification(
+          reporter.id,
+          'KYC Rejected',
+          `Your KYC application has been rejected. Reason: ${rejectionReason || 'Documents incorrect'}`
+        );
+      }
+    } catch (notifErr) {
+      console.warn('Failed to log or notify status update:', notifErr);
+    }
 
     revalidatePath('/admin/reporters');
     revalidatePath('/admin/correspondents');
@@ -421,10 +538,12 @@ export async function submitReporterArticle(data: {
   imageUrl?: string;
   reporterId: string;
   reporterName: string;
-  status: 'Draft' | 'Pending';
+  status: 'Draft' | 'Submitted' | 'Pending';
 }) {
   try {
     const slug = await generateUniqueSlug(data.title, (s) => isArticleSlugTaken(s));
+
+    const finalStatus = data.status === 'Pending' ? 'Submitted' : data.status;
 
     const article = await prisma.article.create({
       data: {
@@ -440,10 +559,29 @@ export async function submitReporterArticle(data: {
         imageUrl: data.imageUrl || null,
         reporter: data.reporterName,
         reporterId: data.reporterId,
-        status: data.status,
+        status: finalStatus,
         views: 0
       }
     });
+
+    // Log News Submission activity
+    if (finalStatus === 'Submitted') {
+      try {
+        const reporter = await prisma.reporter.findUnique({ where: { id: data.reporterId } });
+        const { logActivity } = await import('./logs');
+        await logActivity({
+          userId: data.reporterId,
+          userEmail: reporter?.email || '',
+          userName: data.reporterName,
+          role: reporter?.role || 'BLOCK_CORRESPONDENT',
+          action: 'News Submission',
+          ipAddress: '127.0.0.1',
+          remarks: `Submitted news article: "${data.title}"`
+        });
+      } catch (logErr) {
+        console.warn('Failed to log news submission:', logErr);
+      }
+    }
 
     revalidatePath('/admin/news');
     revalidatePath('/admin/news-moderation');
@@ -466,7 +604,7 @@ export async function updateReporterArticle(
     district: string;
     content: string;
     imageUrl?: string;
-    status: 'Draft' | 'Pending';
+    status: 'Draft' | 'Submitted' | 'Pending' | 'Correction Requested';
   }
 ) {
   try {
@@ -481,6 +619,8 @@ export async function updateReporterArticle(
 
     const slug = await generateUniqueSlug(data.title, (s) => isArticleSlugTaken(s, articleId));
 
+    const finalStatus = data.status === 'Pending' ? 'Submitted' : data.status;
+
     const updateData: any = {
       title: data.title,
       slug,
@@ -492,7 +632,7 @@ export async function updateReporterArticle(
       district: data.district,
       content: data.content,
       imageUrl: data.imageUrl !== undefined ? data.imageUrl : existing.imageUrl,
-      status: data.status
+      status: finalStatus
     };
 
     if (existing.status === 'Published') {
@@ -508,6 +648,24 @@ export async function updateReporterArticle(
       data: updateData
     });
 
+    if (finalStatus === 'Submitted') {
+      try {
+        const reporter = await prisma.reporter.findUnique({ where: { id: reporterId } });
+        const { logActivity } = await import('./logs');
+        await logActivity({
+          userId: reporterId,
+          userEmail: reporter?.email || '',
+          userName: reporter?.fullName || '',
+          role: reporter?.role || 'BLOCK_CORRESPONDENT',
+          action: 'News Submission',
+          ipAddress: '127.0.0.1',
+          remarks: `Updated and submitted news article: "${data.title}"`
+        });
+      } catch (logErr) {
+        console.warn('Failed to log news update/submission:', logErr);
+      }
+    }
+
     revalidatePath('/admin/news');
     revalidatePath('/admin/news-moderation');
     revalidatePath('/');
@@ -521,8 +679,20 @@ export async function updateReporterArticle(
 export async function getPendingArticlesForModeration() {
   try {
     return await prisma.article.findMany({
-      where: { status: 'Pending' },
-      include: { category: true },
+      where: {
+        status: {
+          in: ['Pending', 'Submitted', 'District Approved', 'State Approved']
+        }
+      },
+      include: {
+        category: true,
+        reporterRel: {
+          select: {
+            reporterCode: true,
+            role: true
+          }
+        }
+      },
       orderBy: { createdAt: 'desc' }
     });
   } catch (error) {
@@ -533,17 +703,140 @@ export async function getPendingArticlesForModeration() {
 
 export async function moderateArticle(
   articleId: string,
-  action: 'Approve' | 'Reject',
-  comments?: string
+  action: 'Approve' | 'Reject' | 'RequestCorrection',
+  comments?: string,
+  moderatorRole?: string,
+  moderatorId?: string
 ) {
   try {
-    const status = action === 'Approve' ? 'Published' : 'Draft';
-    
-    // We update status. If rejected, it returns to 'Draft' status for the reporter to edit and resubmit
+    const article = await prisma.article.findUnique({
+      where: { id: articleId },
+      include: { reporterRel: true }
+    });
+
+    if (!article) {
+      return { success: false, message: 'Article not found.' };
+    }
+
+    const role = moderatorRole || 'SUPER_ADMIN';
+    let status = '';
+
+    if (action === 'Approve') {
+      if (role === 'DISTRICT_CORRESPONDENT') {
+        status = 'District Approved';
+      } else if (role === 'STATE_CORRESPONDENT') {
+        status = 'State Approved';
+      } else {
+        status = 'Website Published';
+      }
+    } else if (action === 'Reject') {
+      if (role === 'DISTRICT_CORRESPONDENT') {
+        status = 'District Rejected';
+      } else if (role === 'STATE_CORRESPONDENT') {
+        status = 'State Rejected';
+      } else {
+        status = 'Draft';
+      }
+    } else if (action === 'RequestCorrection') {
+      status = 'Correction Requested';
+    }
+
+    const updateData: any = { status };
+    if (comments) {
+      updateData.remarks = comments;
+    }
+
+    // Website Live Automation
+    if (status === 'Website Published') {
+      updateData.publishTimestamp = new Date();
+      // Generate Schema Markup dynamically on approval and store it
+      const articleUrl = `https://www.thedesiandaz.com/news/${article.slug || article.id}`;
+      const newsArticleSchema = {
+        "@context": "https://schema.org",
+        "@type": "NewsArticle",
+        "mainEntityOfPage": {
+          "@type": "WebPage",
+          "@id": articleUrl
+        },
+        "headline": article.title,
+        "description": article.seoDesc || article.content.replace(/<[^>]*>/g, '').substring(0, 160).trim(),
+        "image": article.imageUrl ? [article.imageUrl] : ["https://www.thedesiandaz.com/logo.png"],
+        "datePublished": new Date().toISOString(),
+        "dateModified": new Date().toISOString(),
+        "author": {
+          "@type": "Person",
+          "name": article.reporter || "संवाददाता"
+        },
+        "publisher": {
+          "@type": "NewsMediaOrganization",
+          "name": "The Desi Andaz Media Network",
+          "logo": {
+            "@type": "ImageObject",
+            "url": "https://www.thedesiandaz.com/logo.png"
+          }
+        }
+      };
+      updateData.schemaMarkup = JSON.stringify(newsArticleSchema);
+    }
+
     await prisma.article.update({
       where: { id: articleId },
-      data: { status }
+      data: updateData
     });
+
+    // Logging & Notifications
+    try {
+      const { createNotification } = await import('./notifications');
+      const { logActivity } = await import('./logs');
+
+      // 1. Log Activity
+      let logAction = 'News Review';
+      if (action === 'Approve') logAction = 'News Approval';
+      else if (action === 'Reject') logAction = 'News Rejection';
+      else if (action === 'RequestCorrection') logAction = 'Correction Requested';
+
+      await logActivity({
+        userId: moderatorId || 'SYSTEM',
+        userEmail: 'admin@thedesiandaz.com',
+        userName: `Moderator (${role})`,
+        role: role,
+        action: logAction,
+        ipAddress: '127.0.0.1',
+        remarks: `Article ID: ${articleId}. Status changed to: ${status}. Comments: ${comments || 'None'}`
+      });
+
+      // 2. Send Notifications
+      if (article.reporterId) {
+        if (action === 'Approve') {
+          await createNotification(
+            article.reporterId,
+            'News Approved',
+            `Your report "${article.title.substring(0, 30)}..." has been approved at the ${role} level.`
+          );
+          if (status === 'Website Published') {
+            await createNotification(
+              article.reporterId,
+              'Website Published',
+              `Your report "${article.title.substring(0, 30)}..." is now LIVE on the website.`
+            );
+          }
+        } else if (action === 'Reject') {
+          await createNotification(
+            article.reporterId,
+            'News Rejected',
+            `Your report "${article.title.substring(0, 30)}..." has been rejected. Comments: ${comments || 'No remarks'}`
+          );
+        } else if (action === 'RequestCorrection') {
+          await createNotification(
+            article.reporterId,
+            'Correction Requested',
+            `Correction requested for "${article.title.substring(0, 30)}...". Please review remarks: ${comments || ''}`
+          );
+        }
+      }
+    } catch (logErr) {
+      console.warn('Failed to log or notify moderation step:', logErr);
+    }
 
     revalidatePath('/admin/news');
     revalidatePath('/admin/news-moderation');
@@ -661,5 +954,82 @@ export async function approveReporterWithLetterAction(formData: FormData) {
     return { success: false, message: error.message || 'Operation failed.' };
   }
 }
+
+export async function getCorrespondentsForHierarchy(filters: {
+  role?: string;
+  state?: string;
+  district?: string;
+  status?: string;
+}) {
+  try {
+    const where: any = {};
+    if (filters.role) where.role = filters.role;
+    if (filters.state) where.state = filters.state;
+    if (filters.district) where.district = filters.district;
+    if (filters.status) where.status = filters.status;
+
+    return await prisma.reporter.findMany({
+      where,
+      select: {
+        id: true,
+        reporterCode: true,
+        fullName: true,
+        email: true,
+        mobile: true,
+        role: true,
+        state: true,
+        district: true,
+        block: true,
+        status: true,
+        photoUrl: true,
+        createdAt: true,
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+  } catch (error) {
+    console.error('Error fetching correspondents for hierarchy:', error);
+    return [];
+  }
+}
+
+export async function getArticlesForModeration(
+  role: string,
+  state: string,
+  district?: string
+) {
+  try {
+    const where: any = {};
+    if (role === 'DISTRICT_CORRESPONDENT') {
+      where.status = 'Submitted';
+      where.state = state;
+      if (district) where.district = district;
+    } else if (role === 'STATE_CORRESPONDENT') {
+      where.status = 'District Approved';
+      where.state = state;
+    } else {
+      where.status = { in: ['Submitted', 'District Approved', 'State Approved', 'Pending'] };
+    }
+
+    return await prisma.article.findMany({
+      where,
+      include: {
+        category: true,
+        additionalCategories: true,
+        reporterRel: {
+          select: {
+            fullName: true,
+            reporterCode: true,
+            role: true,
+          }
+        }
+      },
+      orderBy: { createdAt: 'desc' }
+    });
+  } catch (error) {
+    console.error('Error fetching articles for moderation:', error);
+    return [];
+  }
+}
+
 
 

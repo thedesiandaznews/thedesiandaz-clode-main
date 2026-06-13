@@ -83,6 +83,14 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             <i className="fas fa-gavel"></i>
             <span>News Moderation</span>
           </Link>
+          <Link href="/admin/print" onClick={startNavigation} className={`${styles.navItem} ${pathname?.includes('/admin/print') ? styles.navItemActive : ''}`}>
+            <i className="fas fa-print"></i>
+            <span>Print Edition</span>
+          </Link>
+          <Link href="/admin/logs" onClick={startNavigation} className={`${styles.navItem} ${pathname?.includes('/admin/logs') ? styles.navItemActive : ''}`}>
+            <i className="fas fa-history"></i>
+            <span>Activity Logs</span>
+          </Link>
           <Link href="/admin/anonymous" onClick={startNavigation} className={`${styles.navItem} ${pathname === '/admin/anonymous' ? styles.navItemActive : ''}`}>
             <i className="fas fa-user-secret"></i>
             <span>Anonymous Accounts KYC</span>

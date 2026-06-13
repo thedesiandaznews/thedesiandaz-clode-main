@@ -21,6 +21,7 @@ export default function RegisterClient() {
   const [fatherHusbandName, setFatherHusbandName] = useState('');
   const [mobile, setMobile] = useState('');
   const [bloodGroup, setBloodGroup] = useState('');
+  const [role, setRole] = useState('BLOCK_CORRESPONDENT');
 
   // Step 2: Geography
   const [state, setState] = useState('Jharkhand');
@@ -38,6 +39,10 @@ export default function RegisterClient() {
   const [photoUrl, setPhotoUrl] = useState('');
   const [educationUrl, setEducationUrl] = useState('');
   const [videoUrl, setVideoUrl] = useState('');
+  const [signatureUrl, setSignatureUrl] = useState('');
+  const [addressProofUrl, setAddressProofUrl] = useState('');
+  const [experienceUrl, setExperienceUrl] = useState('');
+  const [policeVerificationUrl, setPoliceVerificationUrl] = useState('');
 
   // File Upload Status States
   const [uploadStatus, setUploadStatus] = useState<Record<string, 'idle' | 'uploading' | 'success' | 'error'>>({
@@ -48,6 +53,10 @@ export default function RegisterClient() {
     photo: 'idle',
     education: 'idle',
     video: 'idle',
+    signature: 'idle',
+    addressProof: 'idle',
+    experience: 'idle',
+    policeVerification: 'idle',
   });
 
   const handleStateChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -167,6 +176,10 @@ function compressImage(file: File, maxWidth = 1000, maxHeight = 1000, quality = 
           else if (type === 'photo') setPhotoUrl(res.url);
           else if (type === 'education') setEducationUrl(res.url);
           else if (type === 'video') setVideoUrl(res.url);
+          else if (type === 'signature') setSignatureUrl(res.url);
+          else if (type === 'addressProof') setAddressProofUrl(res.url);
+          else if (type === 'experience') setExperienceUrl(res.url);
+          else if (type === 'policeVerification') setPoliceVerificationUrl(res.url);
         } else {
           setUploadStatus(prev => ({ ...prev, [type]: 'error' }));
           alert('Upload failed: ' + (res.message || 'Unknown error'));
@@ -220,8 +233,14 @@ function compressImage(file: File, maxWidth = 1000, maxHeight = 1000, quality = 
     }
 
     // Ensure all critical docs uploaded
+    const isBlock = role === 'BLOCK_CORRESPONDENT';
     if (!aadhaarUrl || !aadhaarBackUrl || !panUrl || !voterIdUrl || !photoUrl || !educationUrl) {
-      setError('Please upload all documents (Aadhaar Card Front, Aadhaar Card Back, PAN Card, Voter ID, Passport Photo, and Education Certs).');
+      setError('Please upload all required documents (Aadhaar Front, Aadhaar Back, PAN Card, Voter ID, Passport Photo, and Education Certs).');
+      return;
+    }
+
+    if (!isBlock && (!signatureUrl || !addressProofUrl)) {
+      setError('Please upload both Signature and Address Proof documents.');
       return;
     }
 
@@ -247,7 +266,12 @@ function compressImage(file: File, maxWidth = 1000, maxHeight = 1000, quality = 
         voterIdUrl: voterIdUrl || '',
         photoUrl,
         educationUrl,
-        videoUrl: videoUrl || ''
+        videoUrl: videoUrl || '',
+        role,
+        signatureUrl,
+        addressProofUrl,
+        experienceUrl: experienceUrl || '',
+        policeVerificationUrl: policeVerificationUrl || '',
       });
 
       if (res.success) {
@@ -313,6 +337,20 @@ function compressImage(file: File, maxWidth = 1000, maxHeight = 1000, quality = 
           {/* STEP 1: ACCOUNT DETAILS */}
           {step === 1 && (
             <div className={styles.formGrid}>
+              <div className={styles.formGroup}>
+                <label className={styles.label}>Designation / पद <span style={{ color: 'red' }}>*</span></label>
+                <select 
+                  className={styles.select} 
+                  value={role} 
+                  onChange={(e) => setRole(e.target.value)}
+                  required
+                >
+                  <option value="BLOCK_CORRESPONDENT">Block Correspondent (ब्लॉक संवाददाता)</option>
+                  <option value="DISTRICT_CORRESPONDENT">District Correspondent (जिला संवाददाता)</option>
+                  <option value="STATE_CORRESPONDENT">State Correspondent (राज्य संवाददाता)</option>
+                </select>
+              </div>
+
               <div className={styles.formGroup}>
                 <label className={styles.label}>Full Name <span style={{ color: 'red' }}>*</span></label>
                 <input 
@@ -550,6 +588,55 @@ function compressImage(file: File, maxWidth = 1000, maxHeight = 1000, quality = 
                   <span className={styles.uploadSubtitle}>Short clip (MP4, max 50MB)</span>
                   <input type="file" id="videoUpload" style={{ display: 'none' }} accept="video/*" onChange={(e) => handleFileUpload(e, 'video')} />
                 </div>
+
+                {/* Additional hierarchy KYC uploads - only shown for District and State Roles */}
+                {role !== 'BLOCK_CORRESPONDENT' && (
+                  <>
+                    {/* Signature */}
+                    <div 
+                      className={`${styles.uploadZone} ${uploadStatus.signature === 'success' ? styles.uploadSuccess : ''}`}
+                      onClick={() => document.getElementById('signatureUpload')?.click()}
+                    >
+                      <i className={`fas ${uploadStatus.signature === 'success' ? 'fa-check-circle' : uploadStatus.signature === 'uploading' ? 'fa-spinner fa-spin' : 'fa-signature'} ${styles.uploadIcon}`}></i>
+                      <span className={styles.uploadTitle}>Signature <span style={{ color: 'red' }}>*</span></span>
+                      <span className={styles.uploadSubtitle}>PNG or JPG supported</span>
+                      <input type="file" id="signatureUpload" style={{ display: 'none' }} accept="image/*" onChange={(e) => handleFileUpload(e, 'signature')} />
+                    </div>
+
+                    {/* Address Proof */}
+                    <div 
+                      className={`${styles.uploadZone} ${uploadStatus.addressProof === 'success' ? styles.uploadSuccess : ''}`}
+                      onClick={() => document.getElementById('addressProofUpload')?.click()}
+                    >
+                      <i className={`fas ${uploadStatus.addressProof === 'success' ? 'fa-check-circle' : uploadStatus.addressProof === 'uploading' ? 'fa-spinner fa-spin' : 'fa-home'} ${styles.uploadIcon}`}></i>
+                      <span className={styles.uploadTitle}>Address Proof <span style={{ color: 'red' }}>*</span></span>
+                      <span className={styles.uploadSubtitle}>PDF, PNG or JPG supported</span>
+                      <input type="file" id="addressProofUpload" style={{ display: 'none' }} accept="image/*,application/pdf" onChange={(e) => handleFileUpload(e, 'addressProof')} />
+                    </div>
+
+                    {/* Experience Certificate */}
+                    <div 
+                      className={`${styles.uploadZone} ${uploadStatus.experience === 'success' ? styles.uploadSuccess : ''}`}
+                      onClick={() => document.getElementById('experienceUpload')?.click()}
+                    >
+                      <i className={`fas ${uploadStatus.experience === 'success' ? 'fa-check-circle' : uploadStatus.experience === 'uploading' ? 'fa-spinner fa-spin' : 'fa-briefcase'} ${styles.uploadIcon}`}></i>
+                      <span className={styles.uploadTitle}>Experience Cert <span style={{ fontSize: '12px', opacity: 0.7, fontWeight: 'normal' }}>(Optional)</span></span>
+                      <span className={styles.uploadSubtitle}>PDF, PNG or JPG supported</span>
+                      <input type="file" id="experienceUpload" style={{ display: 'none' }} accept="image/*,application/pdf" onChange={(e) => handleFileUpload(e, 'experience')} />
+                    </div>
+
+                    {/* Police Verification */}
+                    <div 
+                      className={`${styles.uploadZone} ${uploadStatus.policeVerification === 'success' ? styles.uploadSuccess : ''}`}
+                      onClick={() => document.getElementById('policeVerificationUpload')?.click()}
+                    >
+                      <i className={`fas ${uploadStatus.policeVerification === 'success' ? 'fa-check-circle' : uploadStatus.policeVerification === 'uploading' ? 'fa-spinner fa-spin' : 'fa-shield-alt'} ${styles.uploadIcon}`}></i>
+                      <span className={styles.uploadTitle}>Police Verification <span style={{ fontSize: '12px', opacity: 0.7, fontWeight: 'normal' }}>(Optional)</span></span>
+                      <span className={styles.uploadSubtitle}>PDF, PNG or JPG supported</span>
+                      <input type="file" id="policeVerificationUpload" style={{ display: 'none' }} accept="image/*,application/pdf" onChange={(e) => handleFileUpload(e, 'policeVerification')} />
+                    </div>
+                  </>
+                )}
               </div>
             </div>
           )}

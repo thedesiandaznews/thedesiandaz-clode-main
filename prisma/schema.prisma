@@ -44,6 +44,14 @@ model Article {
   contributorId String?
   contributor   Contributor? @relation(fields: [contributorId], references: [id], onDelete: SetNull)
   
+  // New Moderation & Print workflow fields
+  remarks          String?
+  publishTimestamp DateTime?
+  schemaMarkup     String?
+  printPage        Int?
+  printHeadline    String?
+  isPrintSelected  Boolean  @default(false)
+
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 }
@@ -70,13 +78,20 @@ model Reporter {
   photoUrl      String?
   educationUrl  String?
   videoUrl      String?
-  status        String    @default("Pending") // Pending, Approved, Rejected
+  status        String    @default("Pending") // Pending, Approved, Rejected, Suspended
   joiningLetter String?   // PDF Joining Letter URL
   rejectionReason String?
   articles      Article[]
   messages      ReporterMessage[]
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
+
+  // New hierarchy & KYC fields
+  role                  String    @default("BLOCK_CORRESPONDENT") // BLOCK_CORRESPONDENT, DISTRICT_CORRESPONDENT, STATE_CORRESPONDENT, COMPANY_ADMIN, PRINT_ADMIN, SUPER_ADMIN
+  signatureUrl          String?
+  addressProofUrl       String?
+  experienceUrl         String?
+  policeVerificationUrl String?
 }
 
 model AdCategory {
@@ -358,3 +373,25 @@ model AffiliateAgreement {
   userAgent   String?
   acceptedAt  DateTime  @default(now())
 }
+
+model ActivityLog {
+  id        String   @id @default(cuid())
+  userId    String
+  userEmail String
+  userName  String
+  role      String
+  action    String   // Login, Logout, KYC Submission, KYC Approval, KYC Rejection, News Submission, News Approval, News Rejection, Website Publishing, Print Publishing
+  ipAddress String
+  remarks   String?
+  createdAt DateTime @default(now())
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String   // Recipient user ID (Reporter/Correspondent)
+  title     String
+  message   String
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+

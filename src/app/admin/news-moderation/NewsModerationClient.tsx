@@ -8,23 +8,31 @@ export default function NewsModerationClient({ initialArticles }: { initialArtic
   const [articles, setArticles] = useState<any[]>(initialArticles);
   const [selectedArticle, setSelectedArticle] = useState<any | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [comments, setComments] = useState('');
 
   const handleOpenReview = (art: any) => {
     setSelectedArticle(art);
+    setComments('');
   };
 
   const handleCloseReview = () => {
     setSelectedArticle(null);
+    setComments('');
   };
 
-  const handleModerate = async (action: 'Approve' | 'Reject') => {
+  const handleModerate = async (action: 'Approve' | 'Reject' | 'RequestCorrection') => {
     if (!selectedArticle) return;
     setIsProcessing(true);
 
     try {
-      const res = await moderateArticle(selectedArticle.id, action);
+      const res = await moderateArticle(selectedArticle.id, action, comments);
       if (res.success) {
-        alert(action === 'Approve' ? 'Article published successfully!' : 'Article returned to correspondent drafts.');
+        let successMsg = '';
+        if (action === 'Approve') successMsg = 'Article approved successfully!';
+        else if (action === 'Reject') successMsg = 'Article rejected and returned to drafts.';
+        else if (action === 'RequestCorrection') successMsg = 'Correction request sent to correspondent.';
+
+        alert(successMsg);
         
         // Remove from current local pending list
         setArticles(prev => prev.filter(a => a.id !== selectedArticle.id));
@@ -131,7 +139,7 @@ export default function NewsModerationClient({ initialArticles }: { initialArtic
                       <div style={{ fontWeight: 750, color: '#1e293b', fontSize: '14.5px', marginBottom: '6px', lineHeight: '1.4' }}>
                         {art.title}
                       </div>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '11px', color: '#64748b' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '11px', color: '#64748b', flexWrap: 'wrap' }}>
                         <span style={{
                           padding: '2px 6px',
                           background: '#f1f5f9',
@@ -143,6 +151,24 @@ export default function NewsModerationClient({ initialArticles }: { initialArtic
                         </span>
                         <span>•</span>
                         <span>📍 {art.district}</span>
+                        <span>•</span>
+                        <span style={{
+                          padding: '2px 6px',
+                          background: 
+                            art.status === 'Submitted' || art.status === 'Pending' ? '#fef3c7' :
+                            art.status === 'District Approved' ? '#e0f2fe' :
+                            art.status === 'State Approved' ? '#dcfce7' : '#f1f5f9',
+                          color: 
+                            art.status === 'Submitted' || art.status === 'Pending' ? '#d97706' :
+                            art.status === 'District Approved' ? '#0284c7' :
+                            art.status === 'State Approved' ? '#16a34a' : '#475569',
+                          borderRadius: '4px',
+                          fontWeight: 800
+                        }}>
+                          {art.status === 'Submitted' || art.status === 'Pending' ? 'Pending District' :
+                           art.status === 'District Approved' ? 'District Approved' :
+                           art.status === 'State Approved' ? 'State Approved' : art.status}
+                        </span>
                       </div>
                     </td>
                     <td style={{ 
@@ -474,70 +500,138 @@ export default function NewsModerationClient({ initialArticles }: { initialArtic
               <div style={{ 
                 borderTop: '1px solid #f1f5f9', 
                 paddingTop: '24px', 
-                display: 'flex', 
-                gap: '16px', 
-                justifyContent: 'flex-end',
                 marginTop: '12px'
               }}>
-                <button 
-                  onClick={() => handleModerate('Reject')} 
-                  style={{
-                    background: 'linear-gradient(135deg, #fff5f5 0%, #ffe3e3 100%)',
-                    border: '1px solid #fca5a5',
-                    color: '#b91c1c',
-                    padding: '12px 24px',
-                    fontSize: '14px',
-                    fontWeight: 700,
-                    borderRadius: '12px',
-                    cursor: 'pointer',
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '8px',
-                    transition: 'all 0.2s',
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.background = 'linear-gradient(135deg, #fee2e2 0%, #fca5a5 100%)';
-                    e.currentTarget.style.transform = 'translateY(-1px)';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.background = 'linear-gradient(135deg, #fff5f5 0%, #ffe3e3 100%)';
-                    e.currentTarget.style.transform = 'translateY(0)';
-                  }}
-                  disabled={isProcessing}
-                >
-                  <i className="fas fa-reply"></i>
-                  <span>{isProcessing ? 'Processing...' : 'Reject & Return to Drafts'}</span>
-                </button>
-                <button 
-                  onClick={() => handleModerate('Approve')} 
-                  style={{ 
-                    background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)', 
-                    color: '#ffffff',
-                    border: 'none',
-                    padding: '12px 24px', 
-                    fontSize: '14px',
-                    fontWeight: 700,
-                    borderRadius: '12px',
-                    cursor: 'pointer',
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '8px',
-                    boxShadow: '0 4px 12px rgba(16, 185, 129, 0.25)', 
-                    transition: 'all 0.2s',
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.transform = 'translateY(-1px)';
-                    e.currentTarget.style.boxShadow = '0 6px 16px rgba(16, 185, 129, 0.35)';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.transform = 'translateY(0)';
-                    e.currentTarget.style.boxShadow = '0 4px 12px rgba(16, 185, 129, 0.25)';
-                  }}
-                  disabled={isProcessing}
-                >
-                  <i className="fas fa-globe"></i>
-                  <span>{isProcessing ? 'Processing...' : 'Approve & Publish Live'}</span>
-                </button>
+                <div style={{ marginBottom: '20px' }}>
+                  <label style={{ 
+                    display: 'block', 
+                    fontSize: '13px', 
+                    fontWeight: 800, 
+                    color: '#334155', 
+                    marginBottom: '8px', 
+                    textTransform: 'uppercase', 
+                    letterSpacing: '0.5px' 
+                  }}>
+                    Remarks / Correction Notes (टिप्पणी)
+                  </label>
+                  <textarea
+                    value={comments}
+                    onChange={(e) => setComments(e.target.value)}
+                    placeholder="Enter reason for rejection or details on what the correspondent needs to correct..."
+                    style={{
+                      width: '100%',
+                      minHeight: '80px',
+                      padding: '12px 16px',
+                      borderRadius: '12px',
+                      border: '1px solid #cbd5e1',
+                      fontSize: '13.5px',
+                      fontFamily: 'inherit',
+                      outline: 'none',
+                      transition: 'border-color 0.2s',
+                      resize: 'vertical'
+                    }}
+                    onFocus={(e) => e.target.style.borderColor = '#6366f1'}
+                    onBlur={(e) => e.target.style.borderColor = '#cbd5e1'}
+                  />
+                </div>
+
+                <div style={{ 
+                  display: 'flex', 
+                  gap: '12px', 
+                  justifyContent: 'flex-end',
+                  flexWrap: 'wrap'
+                }}>
+                  <button 
+                    onClick={() => handleModerate('Reject')} 
+                    style={{
+                      background: 'linear-gradient(135deg, #fff5f5 0%, #ffe3e3 100%)',
+                      border: '1px solid #fca5a5',
+                      color: '#b91c1c',
+                      padding: '12px 20px',
+                      fontSize: '13.5px',
+                      fontWeight: 700,
+                      borderRadius: '12px',
+                      cursor: 'pointer',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                      transition: 'all 0.2s',
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.background = 'linear-gradient(135deg, #fee2e2 0%, #fca5a5 100%)';
+                      e.currentTarget.style.transform = 'translateY(-1px)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.background = 'linear-gradient(135deg, #fff5f5 0%, #ffe3e3 100%)';
+                      e.currentTarget.style.transform = 'translateY(0)';
+                    }}
+                    disabled={isProcessing}
+                  >
+                    <i className="fas fa-ban"></i>
+                    <span>{isProcessing ? 'Processing...' : 'Reject Article'}</span>
+                  </button>
+
+                  <button 
+                    onClick={() => handleModerate('RequestCorrection')} 
+                    style={{
+                      background: 'linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%)',
+                      border: '1px solid #fde047',
+                      color: '#d97706',
+                      padding: '12px 20px',
+                      fontSize: '13.5px',
+                      fontWeight: 700,
+                      borderRadius: '12px',
+                      cursor: 'pointer',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                      transition: 'all 0.2s',
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.background = 'linear-gradient(135deg, #fef3c7 0%, #fde047 100%)';
+                      e.currentTarget.style.transform = 'translateY(-1px)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.background = 'linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%)';
+                      e.currentTarget.style.transform = 'translateY(0)';
+                    }}
+                    disabled={isProcessing}
+                  >
+                    <i className="fas fa-edit"></i>
+                    <span>{isProcessing ? 'Processing...' : 'Request Correction'}</span>
+                  </button>
+
+                  <button 
+                    onClick={() => handleModerate('Approve')} 
+                    style={{ 
+                      background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)', 
+                      color: '#ffffff',
+                      border: 'none',
+                      padding: '12px 24px', 
+                      fontSize: '13.5px',
+                      fontWeight: 700,
+                      borderRadius: '12px',
+                      cursor: 'pointer',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                      boxShadow: '0 4px 12px rgba(16, 185, 129, 0.25)', 
+                      transition: 'all 0.2s',
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.transform = 'translateY(-1px)';
+                      e.currentTarget.style.boxShadow = '0 6px 16px rgba(16, 185, 129, 0.35)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.transform = 'translateY(0)';
+                      e.currentTarget.style.boxShadow = '0 4px 12px rgba(16, 185, 129, 0.25)';
+                    }}
+                    disabled={isProcessing}
+                  >
+                    <i className="fas fa-globe"></i>
+                    <span>{isProcessing ? 'Processing...' : 'Approve & Publish Live'}</span>
+                  </button>
+                </div>
               </div>
 
             </div>

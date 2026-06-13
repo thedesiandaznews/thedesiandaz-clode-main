@@ -63,6 +63,63 @@ export default function ReportersClient({ initialList }: { initialList: any[] })
   const [previewPdfBlob, setPreviewPdfBlob] = useState<Blob | null>(null);
   const [isPreviewLoading, setIsPreviewLoading] = useState(false);
 
+  // ID Card States
+  const [isIDCardModalOpen, setIsIDCardModalOpen] = useState(false);
+  const [isGeneratingCard, setIsGeneratingCard] = useState(false);
+
+  const downloadCardImage = async () => {
+    const cardElement = document.getElementById('desiandaz-id-card-element');
+    if (!cardElement) return;
+    
+    setIsGeneratingCard(true);
+    try {
+      const canvas = await html2canvas(cardElement, {
+        useCORS: true,
+        scale: 3,
+        backgroundColor: '#ffffff'
+      });
+      
+      const link = document.createElement('a');
+      link.download = `TDA_ID_Card_${selectedReporter?.reporterCode || 'correspondent'}.png`;
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    } catch (err) {
+      console.error('Error generating card image:', err);
+      alert('Failed to generate card image. Please try again.');
+    } finally {
+      setIsGeneratingCard(false);
+    }
+  };
+
+  const downloadCardPDF = async () => {
+    const cardElement = document.getElementById('desiandaz-id-card-element');
+    if (!cardElement) return;
+    
+    setIsGeneratingCard(true);
+    try {
+      const canvas = await html2canvas(cardElement, {
+        useCORS: true,
+        scale: 3,
+        backgroundColor: '#ffffff'
+      });
+      
+      const imgData = canvas.toDataURL('image/png');
+      const pdf = new jsPDF({
+        orientation: 'portrait',
+        unit: 'mm',
+        format: [54, 86]
+      });
+      
+      pdf.addImage(imgData, 'PNG', 0, 0, 54, 86);
+      pdf.save(`TDA_ID_Card_${selectedReporter?.reporterCode || 'correspondent'}.pdf`);
+    } catch (err) {
+      console.error('Error generating card PDF:', err);
+      alert('Failed to generate card PDF. Please try again.');
+    } finally {
+      setIsGeneratingCard(false);
+    }
+  };
+
   // Password Management States
   const [isPasswordsAuthorized, setIsPasswordsAuthorized] = useState(false);
   const [adminUsernameInput, setAdminUsernameInput] = useState('');
@@ -214,6 +271,28 @@ export default function ReportersClient({ initialList }: { initialList: any[] })
   };
 
   const generateAppointmentLetterBlob = async (reporter: any, parentName: string, probationDate: string): Promise<Blob | null> => {
+    let designationHi = 'संवाददाता (Official Correspondent)';
+    let designationEn = 'Official Block Correspondent';
+    let assignedArea = `${reporter.block} प्रखंड (Block)`;
+
+    if (reporter.role === 'DISTRICT_CORRESPONDENT') {
+      designationHi = 'जिला संवाददाता (District Correspondent)';
+      designationEn = 'District Correspondent';
+      assignedArea = `${reporter.district} जिला (District)`;
+    } else if (reporter.role === 'STATE_CORRESPONDENT') {
+      designationHi = 'राज्य संवाददाता (State Correspondent)';
+      designationEn = 'State Correspondent';
+      assignedArea = `${reporter.state} राज्य (State)`;
+    } else if (reporter.role === 'COMPANY_ADMIN') {
+      designationHi = 'कंपनी एडमिन (Company Admin)';
+      designationEn = 'Company Admin';
+      assignedArea = 'Entire Network';
+    } else if (reporter.role === 'PRINT_ADMIN') {
+      designationHi = 'प्रिंट एडमिन (Print Admin)';
+      designationEn = 'Print Admin';
+      assignedArea = 'Print Publication Division';
+    }
+
     const tempContainer = document.createElement('div');
     tempContainer.style.position = 'absolute';
     tempContainer.style.top = '-9999px';
@@ -470,8 +549,8 @@ export default function ReportersClient({ initialList }: { initialList: any[] })
             <tr>
                 <td class="label">पिता/पति:</td>
                 <td class="value">${parentName}</td>
-                <td class="label">प्रखंड:</td>
-                <td class="value">${reporter.block}</td>
+                <td class="label">पद (Designation):</td>
+                <td class="value" style="font-weight: 700;">${designationHi}</td>
             </tr>
             <tr>
                 <td class="label">ग्राम/पता:</td>
@@ -486,16 +565,16 @@ export default function ReportersClient({ initialList }: { initialList: any[] })
         </table>
 
         <div class="section">
-            <div class="sec-title">विषय: The Desi Andaz Media Network में संवाददाता (Official Correspondent) के पद पर नियुक्ति।</div>
+            <div class="sec-title">विषय: The Desi Andaz Media Network में ${designationHi} के पद पर नियुक्ति।</div>
         </div>
 
         <div class="section">
             <p class="body-text"><strong>महोदय/महोदया,</strong></p>
             <p class="body-text" style="margin-top:2mm;">
-                हमें यह बताते हुए प्रसन्नता हो रही है कि आपके द्वारा प्रस्तुत आवेदन, पहचान दस्तावेजों, शैक्षणिक प्रमाण-पत्रों एवं अन्य आवश्यक अभिलेखों के सत्यापन उपरांत आपको The Desi Andaz Media Network में <strong>संवाददाता (Official Correspondent)</strong> के पद पर नियुक्त किया जाता है।
+                हमें यह बताते हुए प्रसन्नता हो रही है कि आपके द्वारा प्रस्तुत आवेदन, पहचान दस्तावेजों, शैक्षणिक प्रमाण-पत्रों एवं अन्य आवश्यक अभिलेखों के सत्यापन उपरांत आपको The Desi Andaz Media Network में <strong>${designationHi}</strong> के पद पर नियुक्त किया जाता है।
             </p>
             <p class="body-text" style="margin-top:2mm;">
-                आपको <strong>${reporter.block}</strong> क्षेत्र के लिए संस्था के अधिकृत प्रतिनिधि एवं संवाददाता के रूप में नियुक्त किया जाता है। आप अपने क्षेत्र से समाचार संकलन, जनहित से जुड़े विषयों की रिपोर्टिंग, सामाजिक एवं प्रशासनिक गतिविधियों का कवरेज तथा स्थानीय समस्याओं एवं विकास कार्यों की जानकारी संगठन तक पहुँचाने का कार्य करेंगे।
+                आपको <strong>${assignedArea}</strong> क्षेत्र के लिए संस्था के अधिकृत प्रतिनिधि एवं ${designationHi} के रूप में नियुक्त किया जाता है। आप अपने क्षेत्र से समाचार संकलन, जनहित से जुड़े विषयों की रिपोर्टिंग, सामाजिक एवं प्रशासनिक गतिविधियों का कवरेज तथा स्थानीय समस्याओं एवं विकास कार्यों की जानकारी संगठन तक पहुँचाने का कार्य करेंगे।
             </p>
         </div>
 
@@ -3039,6 +3118,318 @@ export default function ReportersClient({ initialList }: { initialList: any[] })
                     </div>
                   </div>
                 )}
+
+                {/* Signature Card */}
+                {selectedReporter.signatureUrl ? (
+                  <a 
+                    href={selectedReporter.signatureUrl} 
+                    target="_blank" 
+                    rel="noopener noreferrer" 
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '14px',
+                      padding: '16px',
+                      background: '#ffffff',
+                      border: '1px solid #e2e8f0',
+                      borderRadius: '12px',
+                      textDecoration: 'none',
+                      transition: 'all 0.2s',
+                      boxShadow: '0 1px 3px rgba(0,0,0,0.02)',
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.borderColor = '#4f46e5';
+                      e.currentTarget.style.transform = 'translateY(-2px)';
+                      e.currentTarget.style.boxShadow = '0 6px 16px rgba(79, 70, 229, 0.08)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.borderColor = '#e2e8f0';
+                      e.currentTarget.style.transform = 'translateY(0)';
+                      e.currentTarget.style.boxShadow = '0 1px 3px rgba(0,0,0,0.02)';
+                    }}
+                  >
+                    <div style={{
+                      width: '40px',
+                      height: '40px',
+                      borderRadius: '10px',
+                      background: '#faf5ff',
+                      color: '#9333ea',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: '18px',
+                    }}>
+                      <i className="fas fa-signature"></i>
+                    </div>
+                    <div>
+                      <span style={{ fontSize: '13px', fontWeight: 700, color: '#1e293b', display: 'block' }}>Signature</span>
+                      <span style={{ fontSize: '11px', color: '#64748b', fontWeight: 500 }}>View / Download File <i className="fas fa-external-link-alt" style={{ fontSize: '9px', marginLeft: '2px' }}></i></span>
+                    </div>
+                  </a>
+                ) : selectedReporter.role !== 'BLOCK_CORRESPONDENT' ? (
+                  <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '14px',
+                    padding: '16px',
+                    background: '#f8fafc',
+                    border: '1px dashed #cbd5e1',
+                    borderRadius: '12px',
+                    opacity: 0.6,
+                  }}>
+                    <div style={{
+                      width: '40px',
+                      height: '40px',
+                      borderRadius: '10px',
+                      background: '#f1f5f9',
+                      color: '#94a3b8',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: '18px',
+                    }}>
+                      <i className="fas fa-signature"></i>
+                    </div>
+                    <div>
+                      <span style={{ fontSize: '13px', fontWeight: 700, color: '#64748b', display: 'block' }}>Signature</span>
+                      <span style={{ fontSize: '11.5px', color: '#94a3b8', fontWeight: 500 }}>Not Uploaded</span>
+                    </div>
+                  </div>
+                ) : null}
+
+                {/* Address Proof Card */}
+                {selectedReporter.addressProofUrl ? (
+                  <a 
+                    href={selectedReporter.addressProofUrl} 
+                    target="_blank" 
+                    rel="noopener noreferrer" 
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '14px',
+                      padding: '16px',
+                      background: '#ffffff',
+                      border: '1px solid #e2e8f0',
+                      borderRadius: '12px',
+                      textDecoration: 'none',
+                      transition: 'all 0.2s',
+                      boxShadow: '0 1px 3px rgba(0,0,0,0.02)',
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.borderColor = '#4f46e5';
+                      e.currentTarget.style.transform = 'translateY(-2px)';
+                      e.currentTarget.style.boxShadow = '0 6px 16px rgba(79, 70, 229, 0.08)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.borderColor = '#e2e8f0';
+                      e.currentTarget.style.transform = 'translateY(0)';
+                      e.currentTarget.style.boxShadow = '0 1px 3px rgba(0,0,0,0.02)';
+                    }}
+                  >
+                    <div style={{
+                      width: '40px',
+                      height: '40px',
+                      borderRadius: '10px',
+                      background: '#f0fdf4',
+                      color: '#15803d',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: '18px',
+                    }}>
+                      <i className="fas fa-home"></i>
+                    </div>
+                    <div>
+                      <span style={{ fontSize: '13px', fontWeight: 700, color: '#1e293b', display: 'block' }}>Address Proof</span>
+                      <span style={{ fontSize: '11px', color: '#64748b', fontWeight: 500 }}>View / Download File <i className="fas fa-external-link-alt" style={{ fontSize: '9px', marginLeft: '2px' }}></i></span>
+                    </div>
+                  </a>
+                ) : selectedReporter.role !== 'BLOCK_CORRESPONDENT' ? (
+                  <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '14px',
+                    padding: '16px',
+                    background: '#f8fafc',
+                    border: '1px dashed #cbd5e1',
+                    borderRadius: '12px',
+                    opacity: 0.6,
+                  }}>
+                    <div style={{
+                      width: '40px',
+                      height: '40px',
+                      borderRadius: '10px',
+                      background: '#f1f5f9',
+                      color: '#94a3b8',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: '18px',
+                    }}>
+                      <i className="fas fa-home"></i>
+                    </div>
+                    <div>
+                      <span style={{ fontSize: '13px', fontWeight: 700, color: '#64748b', display: 'block' }}>Address Proof</span>
+                      <span style={{ fontSize: '11.5px', color: '#94a3b8', fontWeight: 500 }}>Not Uploaded</span>
+                    </div>
+                  </div>
+                ) : null}
+
+                {/* Experience Cert Card */}
+                {selectedReporter.experienceUrl ? (
+                  <a 
+                    href={selectedReporter.experienceUrl} 
+                    target="_blank" 
+                    rel="noopener noreferrer" 
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '14px',
+                      padding: '16px',
+                      background: '#ffffff',
+                      border: '1px solid #e2e8f0',
+                      borderRadius: '12px',
+                      textDecoration: 'none',
+                      transition: 'all 0.2s',
+                      boxShadow: '0 1px 3px rgba(0,0,0,0.02)',
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.borderColor = '#4f46e5';
+                      e.currentTarget.style.transform = 'translateY(-2px)';
+                      e.currentTarget.style.boxShadow = '0 6px 16px rgba(79, 70, 229, 0.08)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.borderColor = '#e2e8f0';
+                      e.currentTarget.style.transform = 'translateY(0)';
+                      e.currentTarget.style.boxShadow = '0 1px 3px rgba(0,0,0,0.02)';
+                    }}
+                  >
+                    <div style={{
+                      width: '40px',
+                      height: '40px',
+                      borderRadius: '10px',
+                      background: '#eff6ff',
+                      color: '#2563eb',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: '18px',
+                    }}>
+                      <i className="fas fa-briefcase"></i>
+                    </div>
+                    <div>
+                      <span style={{ fontSize: '13px', fontWeight: 700, color: '#1e293b', display: 'block' }}>Experience Cert</span>
+                      <span style={{ fontSize: '11px', color: '#64748b', fontWeight: 500 }}>View / Download File <i className="fas fa-external-link-alt" style={{ fontSize: '9px', marginLeft: '2px' }}></i></span>
+                    </div>
+                  </a>
+                ) : selectedReporter.role !== 'BLOCK_CORRESPONDENT' ? (
+                  <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '14px',
+                    padding: '16px',
+                    background: '#f8fafc',
+                    border: '1px dashed #cbd5e1',
+                    borderRadius: '12px',
+                    opacity: 0.6,
+                  }}>
+                    <div style={{
+                      width: '40px',
+                      height: '40px',
+                      borderRadius: '10px',
+                      background: '#f1f5f9',
+                      color: '#94a3b8',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: '18px',
+                    }}>
+                      <i className="fas fa-briefcase"></i>
+                    </div>
+                    <div>
+                      <span style={{ fontSize: '13px', fontWeight: 700, color: '#64748b', display: 'block' }}>Experience Cert</span>
+                      <span style={{ fontSize: '11.5px', color: '#94a3b8', fontWeight: 500 }}>Not Uploaded</span>
+                    </div>
+                  </div>
+                ) : null}
+
+                {/* Police Verification Card */}
+                {selectedReporter.policeVerificationUrl ? (
+                  <a 
+                    href={selectedReporter.policeVerificationUrl} 
+                    target="_blank" 
+                    rel="noopener noreferrer" 
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '14px',
+                      padding: '16px',
+                      background: '#ffffff',
+                      border: '1px solid #e2e8f0',
+                      borderRadius: '12px',
+                      textDecoration: 'none',
+                      transition: 'all 0.2s',
+                      boxShadow: '0 1px 3px rgba(0,0,0,0.02)',
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.borderColor = '#4f46e5';
+                      e.currentTarget.style.transform = 'translateY(-2px)';
+                      e.currentTarget.style.boxShadow = '0 6px 16px rgba(79, 70, 229, 0.08)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.borderColor = '#e2e8f0';
+                      e.currentTarget.style.transform = 'translateY(0)';
+                      e.currentTarget.style.boxShadow = '0 1px 3px rgba(0,0,0,0.02)';
+                    }}
+                  >
+                    <div style={{
+                      width: '40px',
+                      height: '40px',
+                      borderRadius: '10px',
+                      background: '#fef2f2',
+                      color: '#dc2626',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: '18px',
+                    }}>
+                      <i className="fas fa-shield-alt"></i>
+                    </div>
+                    <div>
+                      <span style={{ fontSize: '13px', fontWeight: 700, color: '#1e293b', display: 'block' }}>Police Verification</span>
+                      <span style={{ fontSize: '11px', color: '#64748b', fontWeight: 500 }}>View / Download File <i className="fas fa-external-link-alt" style={{ fontSize: '9px', marginLeft: '2px' }}></i></span>
+                    </div>
+                  </a>
+                ) : selectedReporter.role !== 'BLOCK_CORRESPONDENT' ? (
+                  <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '14px',
+                    padding: '16px',
+                    background: '#f8fafc',
+                    border: '1px dashed #cbd5e1',
+                    borderRadius: '12px',
+                    opacity: 0.6,
+                  }}>
+                    <div style={{
+                      width: '40px',
+                      height: '40px',
+                      borderRadius: '10px',
+                      background: '#f1f5f9',
+                      color: '#94a3b8',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: '18px',
+                    }}>
+                      <i className="fas fa-shield-alt"></i>
+                    </div>
+                    <div>
+                      <span style={{ fontSize: '13px', fontWeight: 700, color: '#64748b', display: 'block' }}>Police Verification</span>
+                      <span style={{ fontSize: '11.5px', color: '#94a3b8', fontWeight: 500 }}>Not Uploaded</span>
+                    </div>
+                  </div>
+                ) : null}
               </div>
 
               {/* Introduction Video Section */}
@@ -3125,6 +3516,53 @@ export default function ReportersClient({ initialList }: { initialList: any[] })
                       </div>
                     </div>
                   )}
+
+                  {/* Press ID Card Download Box */}
+                  <div style={{ 
+                    background: '#f8fafc', 
+                    border: '1px solid #e2e8f0', 
+                    padding: '20px', 
+                    borderRadius: '16px', 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    gap: '16px',
+                    boxShadow: '0 4px 6px -1px rgba(15, 23, 42, 0.03)'
+                  }}>
+                    <div style={{
+                      width: '48px',
+                      height: '48px',
+                      borderRadius: '12px',
+                      background: '#f1f5f9',
+                      color: '#475569',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: '22px',
+                    }}>
+                      <i className="fas fa-id-card"></i>
+                    </div>
+                    <div style={{ flex: 1 }}>
+                      <span style={{ fontSize: '15px', fontWeight: 800, color: '#1e293b', display: 'block', marginBottom: '2px' }}>Press Identity Card (पहचान पत्र)</span>
+                      <button 
+                        onClick={() => setIsIDCardModalOpen(true)}
+                        style={{
+                          background: 'none',
+                          border: 'none',
+                          color: '#4f46e5',
+                          fontWeight: 700,
+                          cursor: 'pointer',
+                          fontSize: '13.5px',
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '6px',
+                          padding: 0
+                        }}
+                      >
+                        <span>View & Download Identity Card</span>
+                        <i className="fas fa-arrow-right"></i>
+                      </button>
+                    </div>
+                  </div>
                   <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
                     <button 
                       onClick={handleSuspendReporter} 
@@ -3942,6 +4380,204 @@ export default function ReportersClient({ initialList }: { initialList: any[] })
               </div>
             )}
 
+          </div>
+        </div>
+      </div>
+    )}
+
+    {/* ID CARD DOWNLOAD PORTAL */}
+    {isIDCardModalOpen && selectedReporter && (
+      <div style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        backgroundColor: 'rgba(15, 23, 42, 0.6)',
+        backdropFilter: 'blur(8px)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        zIndex: 99999,
+        fontFamily: 'system-ui, -apple-system, sans-serif'
+      }}>
+        <div style={{
+          backgroundColor: '#ffffff',
+          borderRadius: '24px',
+          padding: '28px',
+          maxWidth: '420px',
+          width: '100%',
+          boxShadow: '0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04)',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          gap: '20px'
+        }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', alignItems: 'center', borderBottom: '1px solid #e2e8f0', paddingBottom: '12px' }}>
+            <h3 style={{ margin: 0, fontSize: '18px', fontWeight: 800, color: '#0f172a' }}>Identity Card Preview</h3>
+            <button 
+              onClick={() => setIsIDCardModalOpen(false)}
+              style={{ border: 'none', background: 'none', cursor: 'pointer', fontSize: '20px', color: '#64748b' }}
+            >
+              <i className="fas fa-times-circle"></i>
+            </button>
+          </div>
+
+          {/* The ID Card element captured by html2canvas */}
+          <div 
+            id="desiandaz-id-card-element"
+            style={{
+              width: '320px',
+              height: '500px',
+              background: 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)',
+              borderRadius: '16px',
+              padding: '16px',
+              boxShadow: '0 10px 15px -3px rgba(0,0,0,0.3)',
+              color: '#ffffff',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'space-between',
+              position: 'relative',
+              overflow: 'hidden',
+              border: '2px solid #d97706'
+            }}
+          >
+            {/* Top subtle glow effect */}
+            <div style={{
+              position: 'absolute',
+              top: '-50px',
+              left: '-50px',
+              width: '150px',
+              height: '150px',
+              borderRadius: '50%',
+              background: 'rgba(217, 119, 6, 0.15)',
+              filter: 'blur(30px)',
+              pointerEvents: 'none'
+            }}></div>
+
+            {/* Header */}
+            <div style={{ textAlign: 'center', borderBottom: '1px solid rgba(217, 119, 6, 0.4)', paddingBottom: '8px' }}>
+              <div style={{ fontSize: '18px', fontWeight: 900, letterSpacing: '1px', color: '#f59e0b', fontFamily: 'serif' }}>THE DESI ANDAZ</div>
+              <div style={{ fontSize: '9px', fontWeight: 600, letterSpacing: '3px', color: '#cbd5e1', textTransform: 'uppercase', marginTop: '2px' }}>Media Network</div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '7px', color: '#94a3b8', marginTop: '6px', fontWeight: 600 }}>
+                <span>RNI: JHBIL/26/A3245</span>
+                <span style={{ color: '#ef4444' }}>PRESS CARD</span>
+              </div>
+            </div>
+
+            {/* Body */}
+            <div style={{ display: 'flex', gap: '14px', margin: '12px 0', alignItems: 'center', flex: 1 }}>
+              {/* Photo */}
+              <div style={{ border: '2px solid #f59e0b', borderRadius: '8px', overflow: 'hidden', width: '90px', height: '110px', background: '#334155', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <img 
+                  src={selectedReporter.photoUrl || `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23cbd5e1"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>`}
+                  alt={selectedReporter.fullName}
+                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                />
+              </div>
+
+              {/* Basic Info */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', flex: 1 }}>
+                <div>
+                  <div style={{ fontSize: '8px', color: '#94a3b8', fontWeight: 600 }}>NAME</div>
+                  <div style={{ fontSize: '13px', fontWeight: 800, color: '#ffffff' }}>{selectedReporter.fullName}</div>
+                </div>
+                <div>
+                  <div style={{ fontSize: '8px', color: '#94a3b8', fontWeight: 600 }}>DESIGNATION</div>
+                  <div style={{ fontSize: '10px', fontWeight: 700, color: '#f59e0b' }}>
+                    {selectedReporter.role === 'BLOCK_CORRESPONDENT' ? 'Block Correspondent' : 
+                     selectedReporter.role === 'DISTRICT_CORRESPONDENT' ? 'District Correspondent' : 
+                     selectedReporter.role === 'STATE_CORRESPONDENT' ? 'State Correspondent' : selectedReporter.role}
+                  </div>
+                </div>
+                <div>
+                  <div style={{ fontSize: '8px', color: '#94a3b8', fontWeight: 600 }}>REPORTER CODE</div>
+                  <div style={{ fontSize: '11px', fontWeight: 800, fontFamily: 'monospace', color: '#38bdf8' }}>{selectedReporter.reporterCode || 'TDA/TEMP'}</div>
+                </div>
+              </div>
+            </div>
+
+            {/* Geographic coverage details & QR */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '8px', gap: '10px' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', fontSize: '9px', color: '#cbd5e1', flex: 1 }}>
+                <div><span style={{ fontWeight: 600, color: '#94a3b8' }}>State:</span> {selectedReporter.state}</div>
+                {selectedReporter.role !== 'STATE_CORRESPONDENT' && <div><span style={{ fontWeight: 600, color: '#94a3b8' }}>District:</span> {selectedReporter.district}</div>}
+                {selectedReporter.role === 'BLOCK_CORRESPONDENT' && <div><span style={{ fontWeight: 600, color: '#94a3b8' }}>Block:</span> {selectedReporter.block}</div>}
+                <div style={{ fontSize: '8px', color: '#94a3b8', marginTop: '2px' }}>Blood: <span style={{ color: '#ef4444', fontWeight: 700 }}>{selectedReporter.bloodGroup || 'N/A'}</span></div>
+              </div>
+              {/* QR Code */}
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px' }}>
+                <div style={{ background: '#ffffff', padding: '3px', borderRadius: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <img 
+                    src={`https://api.qrserver.com/v1/create-qr-code/?size=60x60&data=${encodeURIComponent('https://www.thedesiandaz.com/correspondent-verification?code=' + (selectedReporter.reporterCode || selectedReporter.id))}`}
+                    alt="QR"
+                    style={{ width: '50px', height: '50px', display: 'block' }}
+                  />
+                </div>
+                <span style={{ fontSize: '6px', color: '#94a3b8', fontWeight: 700 }}>VERIFY PRESS</span>
+              </div>
+            </div>
+
+            {/* Authorized Signature Footer */}
+            <div style={{ borderTop: '1px solid rgba(217, 119, 6, 0.4)', paddingTop: '6px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '6px' }}>
+              <div style={{ fontSize: '7px', color: '#94a3b8' }}>
+                <div>Issued: {new Date(selectedReporter.createdAt).toLocaleDateString()}</div>
+                <div style={{ fontWeight: 700, color: '#f59e0b', marginTop: '1px' }}>COVERAGE AREA: JHARKHAND</div>
+              </div>
+              <div style={{ textAlign: 'right', display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
+                <div style={{ fontSize: '8px', color: '#10b981', fontWeight: 700, fontStyle: 'italic', letterSpacing: '0.5px' }}>✓ VERIFIED</div>
+                <div style={{ fontSize: '7px', color: '#94a3b8', fontWeight: 600 }}>Editor-in-Chief</div>
+              </div>
+            </div>
+          </div>
+
+          {/* Buttons */}
+          <div style={{ display: 'flex', gap: '12px', width: '100%', marginTop: '10px' }}>
+            <button 
+              onClick={downloadCardImage}
+              disabled={isGeneratingCard}
+              style={{ 
+                flex: 1, 
+                padding: '12px', 
+                background: '#475569', 
+                color: '#ffffff', 
+                border: 'none', 
+                borderRadius: '12px', 
+                fontWeight: 700, 
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '6px',
+                fontSize: '13px'
+              }}
+            >
+              <i className="fas fa-image"></i>
+              {isGeneratingCard ? 'Generating...' : 'Save PNG'}
+            </button>
+            <button 
+              onClick={downloadCardPDF}
+              disabled={isGeneratingCard}
+              style={{ 
+                flex: 1, 
+                padding: '12px', 
+                background: 'linear-gradient(135deg, #4f46e5 0%, #3730a3 100%)', 
+                color: '#ffffff', 
+                border: 'none', 
+                borderRadius: '12px', 
+                fontWeight: 700, 
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '6px',
+                fontSize: '13px',
+                boxShadow: '0 4px 12px rgba(79, 70, 229, 0.2)'
+              }}
+            >
+              <i className="fas fa-file-pdf"></i>
+              {isGeneratingCard ? 'Generating...' : 'Save PDF'}
+            </button>
           </div>
         </div>
       </div>
