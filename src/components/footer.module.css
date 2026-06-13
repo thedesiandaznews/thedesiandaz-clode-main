@@ -119,7 +119,7 @@
 @media (min-width: 960px) {
   .inner { padding: 0 24px; }
   .footer { padding-top: 56px; }
-  .grid { grid-template-columns: 2fr 1fr 1fr; gap: 40px; }
+  .grid { grid-template-columns: 2fr 1fr 1fr 1fr; gap: 40px; }
   .brand { grid-column: span 1; }
   .brandName { font-size: 26px; }
 }

@@ -3,7 +3,7 @@ import { Metadata } from 'next';
 import { getPageContent } from '@/actions/pages';
 import BlockRenderer from '@/components/BlockRenderer';
 
-export async function generateMetadata({ params }: { params: any }): Promise<Metadata> {
+export async function generateMetadata(): Promise<Metadata> {
   const data = await getPageContent('about');
   return {
     title: data?.seoTitle || 'About Us | The Desi Andaz Media Network',
@@ -41,6 +41,9 @@ export default async function AboutPage() {
       <header className={styles.headerSection}>
         <h1 className={styles.headerTitle}>{content.heading || 'The Desi Andaz'}</h1>
         <div className={styles.headerSubtitle}>{content.subheading || 'Official Information & Editorial Stance'}</div>
+        <div style={{ marginTop: '16px', fontSize: '13.5px', color: 'var(--primary, #CC2200)', fontWeight: 'bold', letterSpacing: '0.5px', textTransform: 'uppercase', fontFamily: 'system-ui, -apple-system, sans-serif' }}>
+          Publication: The Desi Andaz Media Network &nbsp;|&nbsp; RNI Registration Number: JHBIL/26/A3245
+        </div>
       </header>
 
       {/* 2. EDITORIAL ARTICLE */}
@@ -80,7 +83,7 @@ export default async function AboutPage() {
       {/* 4. EDITOR'S DESK (FOUNDER DETAIL) */}
       <section className={styles.editorSection}>
         <div className={styles.editorHeader}>
-          <h2>From the Editor's Desk</h2>
+          <h2>From the Editor&apos;s Desk</h2>
         </div>
         <div className={styles.editorContent}>
           <img src={content.founderImage || '/founder.png'} alt={content.founderName || 'Sonu Kumar Saha'} className={styles.editorPortrait} />

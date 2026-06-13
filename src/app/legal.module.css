@@ -1,0 +1,217 @@
+/* ==========================================================================
+   LEGAL PAGES — PREMIUM EDITORIAL COMPLIANCE STYLES
+   ========================================================================== */
+
+.page {
+  background: #ffffff;
+  min-height: 100vh;
+  color: #1f2937;
+  font-family: 'Merriweather', 'Georgia', serif;
+  line-height: 1.8;
+  padding-bottom: 5rem;
+}
+
+[data-theme="dark"] .page {
+  background: #0f172a;
+  color: #e2e8f0;
+}
+
+.inner {
+  max-width: 850px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+/* ── Header ── */
+.headerSection {
+  padding: 4rem 0 2.5rem 0;
+  text-align: center;
+  border-bottom: 2px solid #e2e8f0;
+  margin-bottom: 3rem;
+}
+
+[data-theme="dark"] .headerSection {
+  border-color: #334155;
+}
+
+.headerTitle {
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 850;
+  color: #0f172a;
+  margin-bottom: 0.75rem;
+  font-family: 'Georgia', serif;
+  letter-spacing: -0.5px;
+}
+
+[data-theme="dark"] .headerTitle {
+  color: #f8fafc;
+}
+
+.headerSubtitle {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  font-family: system-ui, -apple-system, sans-serif;
+}
+
+[data-theme="dark"] .headerSubtitle {
+  color: #94a3b8;
+}
+
+/* ── Content Body ── */
+.contentSection h2 {
+  font-size: 1.6rem;
+  font-family: 'Georgia', serif;
+  color: #0f172a;
+  margin-top: 3rem;
+  margin-bottom: 1.25rem;
+  border-left: 4px solid var(--primary, #CC2200);
+  padding-left: 1rem;
+  font-weight: 750;
+}
+
+[data-theme="dark"] .contentSection h2 {
+  color: #f8fafc;
+}
+
+.contentSection h3 {
+  font-size: 1.25rem;
+  font-family: 'Georgia', serif;
+  color: #1e293b;
+  margin-top: 2.25rem;
+  margin-bottom: 0.75rem;
+  font-weight: 700;
+}
+
+[data-theme="dark"] .contentSection h3 {
+  color: #e2e8f0;
+}
+
+.contentSection p {
+  font-size: 1.05rem;
+  margin-bottom: 1.5rem;
+  color: #334155;
+}
+
+[data-theme="dark"] .contentSection p {
+  color: #cbd5e1;
+}
+
+.contentSection ul, 
+.contentSection ol {
+  margin-bottom: 1.75rem;
+  padding-left: 2rem;
+  font-size: 1.05rem;
+  color: #334155;
+}
+
+[data-theme="dark"] .contentSection ul, 
+[data-theme="dark"] .contentSection ol {
+  color: #cbd5e1;
+}
+
+.contentSection li {
+  margin-bottom: 0.75rem;
+}
+
+.contentSection strong {
+  color: #0f172a;
+}
+
+[data-theme="dark"] .contentSection strong {
+  color: #f8fafc;
+}
+
+/* ── Details Box ── */
+.badgeBox {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  padding: 1.75rem;
+  border-radius: 12px;
+  margin: 2.5rem 0;
+  font-size: 0.95rem;
+  color: #475569;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
+
+[data-theme="dark"] .badgeBox {
+  background: #1e293b;
+  border-color: #334155;
+  color: #cbd5e1;
+  box-shadow: none;
+}
+
+.badgeBox strong {
+  color: #0f172a;
+}
+
+[data-theme="dark"] .badgeBox strong {
+  color: #f8fafc;
+}
+
+/* ── Profiles for Editorial Team ── */
+.teamGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+  margin-top: 3rem;
+}
+
+@media (min-width: 640px) {
+  .teamGrid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.profileCard {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 2rem;
+  text-align: center;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+[data-theme="dark"] .profileCard {
+  background: #1e293b;
+  border-color: #334155;
+}
+
+.profileCard:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+}
+
+.profileRole {
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  color: var(--primary, #CC2200);
+  font-weight: 700;
+  letter-spacing: 1px;
+  margin-bottom: 0.5rem;
+  font-family: system-ui, sans-serif;
+}
+
+.profileName {
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin-bottom: 0.75rem;
+  font-family: 'Georgia', serif;
+}
+
+[data-theme="dark"] .profileName {
+  color: #f8fafc;
+}
+
+.profileBio {
+  font-size: 0.95rem;
+  color: #475569;
+  line-height: 1.6;
+}
+
+[data-theme="dark"] .profileBio {
+  color: #cbd5e1;
+}
