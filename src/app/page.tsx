@@ -12,8 +12,7 @@ import { getSiteSettings } from '@/actions/settings';
 import HomeMediaWidget from '@/components/HomeMediaWidget';
 import { Metadata } from 'next';
 
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
+export const revalidate = 60; // Cache page for 60 seconds, revalidate on demand or in background
 
 export const metadata: Metadata = {
   title: 'Jharkhand News | Breaking News | Hindi News | The Desi Andaz Media Network',

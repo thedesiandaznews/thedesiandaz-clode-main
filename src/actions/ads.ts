@@ -173,18 +173,21 @@ export async function getBannersByCategory(categoryId: string) {
 
 export async function getActiveBannersByCategoryName(categoryName: string) {
   try {
-    const trimmedName = categoryName.trim().toLowerCase();
+    const trimmedName = categoryName.trim();
     
-    // SQLite doesn't support mode: 'insensitive', so we fetch all and filter in JS
-    const allCategories = await prisma.adCategory.findMany({
+    const category = await prisma.adCategory.findFirst({
+      where: {
+        name: {
+          equals: trimmedName,
+          mode: 'insensitive'
+        }
+      },
       include: {
         banners: {
           where: { isActive: true },
         },
       },
     });
-    
-    const category = allCategories.find(c => c.name.trim().toLowerCase() === trimmedName);
     
     console.log(`Fetching active banners for category "${trimmedName}":`, category?.banners?.length ?? 0, 'banners');
     return category?.banners || [];

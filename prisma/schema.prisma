@@ -54,6 +54,12 @@ model Article {
 
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
+
+  @@index([status])
+  @@index([state])
+  @@index([district])
+  @@index([isPrintSelected])
+  @@index([createdAt])
 }
 
 model Reporter {
@@ -92,6 +98,9 @@ model Reporter {
   addressProofUrl       String?
   experienceUrl         String?
   policeVerificationUrl String?
+
+  @@index([status])
+  @@index([role])
 }
 
 model AdCategory {
