@@ -546,6 +546,8 @@ export async function submitReporterArticle(data: {
 
     const finalStatus = data.status === 'Pending' ? 'Submitted' : data.status;
 
+    const cleanContent = data.content ? data.content.replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').substring(0, 160).trim() : '';
+
     const article = await prisma.article.create({
       data: {
         title: data.title,
@@ -561,6 +563,7 @@ export async function submitReporterArticle(data: {
         reporter: data.reporterName,
         reporterId: data.reporterId,
         status: finalStatus,
+        seoDesc: cleanContent || null,
         views: 0
       }
     });
@@ -622,6 +625,8 @@ export async function updateReporterArticle(
 
     const finalStatus = data.status === 'Pending' ? 'Submitted' : data.status;
 
+    const cleanContent = data.content ? data.content.replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').substring(0, 160).trim() : '';
+
     const updateData: any = {
       title: data.title,
       slug,
@@ -633,7 +638,8 @@ export async function updateReporterArticle(
       district: data.district,
       content: data.content,
       imageUrl: data.imageUrl !== undefined ? data.imageUrl : existing.imageUrl,
-      status: finalStatus
+      status: finalStatus,
+      seoDesc: cleanContent || null
     };
 
     if (existing.status === 'Published') {

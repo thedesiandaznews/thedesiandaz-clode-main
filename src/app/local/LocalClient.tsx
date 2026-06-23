@@ -50,7 +50,7 @@ export default function LocalClient({ initialNews = [] }: { initialNews: any[] }
                 </div>
                 <div className={styles.cardBody}>
                   <h3 className={styles.cardTitle}>{n?.title || 'No Title'}</h3>
-                  <p className={styles.cardExcerpt}>{typeof n?.content === 'string' ? n.content.replace(/<[^>]*>?/gm, '').slice(0, 120) : ''}...</p>
+                  <p className={styles.cardExcerpt}>{n?.seoDesc || (typeof n?.content === 'string' ? n.content.replace(/<[^>]*>?/gm, '').slice(0, 120) : '')}...</p>
                   <div className={styles.cardFooter}>
                     <span>{n?.createdAt && !isNaN(new Date(n.createdAt).getTime()) ? new Date(n.createdAt).toLocaleDateString('hi-IN', { day: 'numeric', month: 'long', year: 'numeric' }) : ''}</span>
                     <span className={styles.readMore}>पढ़ें →</span>

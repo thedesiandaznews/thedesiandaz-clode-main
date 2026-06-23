@@ -101,7 +101,7 @@ export default function LatestClient({ initialNews }: { initialNews: any[] }) {
                     <h2 className={idx === 0 ? `${styles.cardTitle} ${styles.cardTitleFeatured}` : styles.cardTitle}>
                       {news.title}
                     </h2>
-                    <p className={styles.cardSummary}>{news.content.replace(/<[^>]*>/g, '').slice(0, 150)}...</p>
+                    <p className={styles.cardSummary}>{(news.seoDesc || news.content || '').replace(/<[^>]*>/g, '').slice(0, 150)}...</p>
                     <div className={styles.cardFooter}>
                       <span className={styles.cardAuthor}>By {news.reporter || 'डेस्क'}</span>
                       <span className={styles.cardReadMore}>पढ़ें →</span>

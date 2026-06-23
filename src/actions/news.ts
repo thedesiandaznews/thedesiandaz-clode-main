@@ -57,9 +57,32 @@ export async function getNewsArticles(filters?: {
 
     const queryOptions: any = {
       where: whereClause,
-      include: {
+      select: {
+        id: true,
+        title: true,
+        slug: true,
+        categoryId: true,
         category: true,
         additionalCategories: true,
+        state: true,
+        district: true,
+        reporter: true,
+        reporterId: true,
+        status: true,
+        views: true,
+        editCount: true,
+        seoTitle: true,
+        seoDesc: true,
+        seoKeys: true,
+        contributorId: true,
+        remarks: true,
+        publishTimestamp: true,
+        printPage: true,
+        printHeadline: true,
+        isPrintSelected: true,
+        createdAt: true,
+        updatedAt: true,
+        imageUrl: true,
         reporterRel: {
           select: {
             id: true,
@@ -190,6 +213,10 @@ export async function addNewsArticle(data: {
   try {
     const slug = await generateUniqueSlug(data.title, (s) => isSlugTaken(s));
 
+    // Auto-generate seoDesc from content if not provided
+    const cleanContent = data.content ? data.content.replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').substring(0, 160).trim() : '';
+    const finalSeoDesc = data.seoDesc || cleanContent || null;
+
     await prisma.article.create({
       data: {
         title: data.title,
@@ -205,7 +232,7 @@ export async function addNewsArticle(data: {
         imageUrl: data.imageUrl,
         status: data.status,
         seoTitle: data.seoTitle || null,
-        seoDesc: data.seoDesc || null,
+        seoDesc: finalSeoDesc,
         seoKeys: data.seoKeys || null,
         views: 0
       }
@@ -242,6 +269,10 @@ export async function updateNewsArticle(
     // Regenerate slug when title changes
     const slug = await generateUniqueSlug(data.title, (s) => isSlugTaken(s, id));
 
+    // Auto-generate seoDesc from content if not provided
+    const cleanContent = data.content ? data.content.replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').substring(0, 160).trim() : '';
+    const finalSeoDesc = data.seoDesc || cleanContent || null;
+
     await prisma.article.update({
       where: { id },
       data: {
@@ -258,7 +289,7 @@ export async function updateNewsArticle(
         imageUrl: data.imageUrl,
         status: data.status,
         seoTitle: data.seoTitle || null,
-        seoDesc: data.seoDesc || null,
+        seoDesc: finalSeoDesc,
         seoKeys: data.seoKeys || null
       }
     });

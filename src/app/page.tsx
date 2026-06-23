@@ -217,7 +217,7 @@ export default async function Home() {
                     />
                   </div>
                   <p className={styles.mainStoryCaption}>
-                    {topStory.content ? stripHtml(topStory.content).slice(0, 240) + '...' : ''}
+                    {topStory.seoDesc || (topStory.content ? stripHtml(topStory.content).slice(0, 240) + '...' : '')}
                   </p>
                 </Link>
               ) : (

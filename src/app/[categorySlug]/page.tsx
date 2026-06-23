@@ -166,7 +166,7 @@ export default async function CategorySlugPage({ params }: { params: Promise<{ c
                       </div>
                       <h2 className={styles.cardTitle}>{news.title}</h2>
                       <p className={styles.cardDesc}>
-                        {stripHtml(news.content).slice(0, 150)}...
+                        {news.seoDesc || stripHtml(news.content || '').slice(0, 150)}...
                       </p>
                       <div className={styles.cardFooter}>
                         <span className={styles.cardTime}>
