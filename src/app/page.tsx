@@ -12,7 +12,7 @@ import { getSiteSettings } from '@/actions/settings';
 import HomeMediaWidget from '@/components/HomeMediaWidget';
 import { Metadata } from 'next';
 
-export const revalidate = 60; // Cache page for 60 seconds, revalidate on demand or in background
+export const dynamic = 'force-dynamic'; // Prevent build-time static rendering size limits and compile successfully
 
 export const metadata: Metadata = {
   title: 'Jharkhand News | Breaking News | Hindi News | The Desi Andaz Media Network',
@@ -366,7 +366,7 @@ export default async function Home() {
                               </div>
                               <h3 className={styles.splitFeaturedTitle}>{articles[0].title}</h3>
                               <p className={styles.splitFeaturedText}>
-                                {articles[0].content ? stripHtml(articles[0].content).slice(0, 160) + '...' : ''}
+                                {articles[0].seoDesc || (articles[0].content ? stripHtml(articles[0].content).slice(0, 160) + '...' : '')}
                               </p>
                             </div>
                           </Link>
