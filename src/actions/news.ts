@@ -79,17 +79,7 @@ export async function getNewsArticles(filters?: {
 
     const articles = await prisma.article.findMany(queryOptions);
 
-    // On-the-fly slug backfill — run SEQUENTIALLY to avoid unique-slug race conditions
-    // OPTIMIZATION: Push synchronously if the article already has a slug
-    const withSlugs: any[] = [];
-    for (const article of articles) {
-      if (article.slug) {
-        withSlugs.push(article);
-      } else {
-        withSlugs.push(await backfillSlug(article));
-      }
-    }
-    return withSlugs;
+    return articles as any[];
   } catch (error) {
     console.error('Error fetching articles:', error);
     return [];
@@ -159,7 +149,7 @@ export async function getDashboardStats() {
             }
           }
         }),
-        prisma.article.findMany({ select: { reporter: true }, distinct: ['reporter'] }),
+        prisma.reporter.count({ where: { status: 'Approved' } }),
         prisma.article.count({
           where: {
             status: {
@@ -173,7 +163,7 @@ export async function getDashboardStats() {
     return {
       totalArticles,
       totalViews: totalViewsAgg._sum.views || 0,
-      activeReporters: allReporters.length,
+      activeReporters: allReporters,
       pendingApprovals,
       todayPublished: articlesToday
     };
