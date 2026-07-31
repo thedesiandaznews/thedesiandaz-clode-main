@@ -5,7 +5,7 @@ import { revalidatePath } from 'next/cache';
 
 export async function getCompanyApprovedNews() {
   try {
-    return await prisma.article.findMany({
+    const articles = await prisma.article.findMany({
       where: {
         status: {
           in: [
@@ -20,6 +20,12 @@ export async function getCompanyApprovedNews() {
       include: { category: true },
       orderBy: { createdAt: 'desc' }
     });
+    return articles.map(art => ({
+      ...art,
+      imageUrl: art.imageUrl && art.imageUrl.startsWith('data:')
+        ? `/api/news/image?id=${art.id}`
+        : art.imageUrl
+    }));
   } catch (error) {
     console.error('Error fetching company approved news for print:', error);
     return [];

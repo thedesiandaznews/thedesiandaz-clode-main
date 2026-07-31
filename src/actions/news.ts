@@ -104,7 +104,12 @@ export async function getNewsArticles(filters?: {
 
     const articles = await prisma.article.findMany(queryOptions);
 
-    return articles as any[];
+    return (articles as any[]).map(art => ({
+      ...art,
+      imageUrl: art.imageUrl && art.imageUrl.startsWith('data:')
+        ? `/api/news/image?id=${art.id}`
+        : art.imageUrl
+    }));
   } catch (error) {
     console.error('Error fetching articles:', error);
     return [];
@@ -160,7 +165,12 @@ export async function getArticleById(identifier: string) {
     if (finalArticle.slug) {
       cacheTag(`article-${finalArticle.slug}`);
     }
-    return finalArticle;
+    return {
+      ...finalArticle,
+      imageUrl: finalArticle.imageUrl && finalArticle.imageUrl.startsWith('data:')
+        ? `/api/news/image?id=${finalArticle.id}`
+        : finalArticle.imageUrl
+    };
   } catch (error) {
     console.error('Error fetching exact article:', error);
     return null;

@@ -518,11 +518,17 @@ export async function getReporterStats(reporterId: string) {
 
 export async function getReporterArticles(reporterId: string) {
   try {
-    return await prisma.article.findMany({
+    const articles = await prisma.article.findMany({
       where: { reporterId },
       include: { category: true },
       orderBy: { createdAt: 'desc' }
     });
+    return articles.map(art => ({
+      ...art,
+      imageUrl: art.imageUrl && art.imageUrl.startsWith('data:')
+        ? `/api/news/image?id=${art.id}`
+        : art.imageUrl
+    }));
   } catch (error) {
     console.error('Error fetching reporter articles:', error);
     return [];
@@ -685,7 +691,7 @@ export async function updateReporterArticle(
 
 export async function getPendingArticlesForModeration() {
   try {
-    return await prisma.article.findMany({
+    const articles = await prisma.article.findMany({
       where: {
         status: {
           in: ['Pending', 'Submitted', 'District Approved', 'State Approved']
@@ -702,6 +708,12 @@ export async function getPendingArticlesForModeration() {
       },
       orderBy: { createdAt: 'desc' }
     });
+    return articles.map(art => ({
+      ...art,
+      imageUrl: art.imageUrl && art.imageUrl.startsWith('data:')
+        ? `/api/news/image?id=${art.id}`
+        : art.imageUrl
+    }));
   } catch (error) {
     console.error('Error fetching moderation queue:', error);
     return [];
@@ -1017,7 +1029,7 @@ export async function getArticlesForModeration(
       where.status = { in: ['Submitted', 'District Approved', 'State Approved', 'Pending'] };
     }
 
-    return await prisma.article.findMany({
+    const articles = await prisma.article.findMany({
       where,
       include: {
         category: true,
@@ -1032,6 +1044,12 @@ export async function getArticlesForModeration(
       },
       orderBy: { createdAt: 'desc' }
     });
+    return articles.map(art => ({
+      ...art,
+      imageUrl: art.imageUrl && art.imageUrl.startsWith('data:')
+        ? `/api/news/image?id=${art.id}`
+        : art.imageUrl
+    }));
   } catch (error) {
     console.error('Error fetching articles for moderation:', error);
     return [];
