@@ -15,7 +15,7 @@ export default function EpaperClient({ initialEpapers }: { initialEpapers: any[]
 
   const [epapers, setEpapers] = useState(initialEpapers);
   const [loading, setLoading] = useState(false);
-  const [uploading, setUploading] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [formData, setFormData] = useState({
     date: getLocalDateString(),
     pdfUrl: '',
@@ -24,32 +24,57 @@ export default function EpaperClient({ initialEpapers }: { initialEpapers: any[]
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (uploading) {
-      alert('Please wait for the file upload to complete.');
-      return;
-    }
-    if (!formData.pdfUrl) {
+    if (!formData.pdfUrl && !selectedFile) {
       alert('Please upload a PDF file or paste a direct PDF URL first.');
       return;
     }
     setLoading(true);
     
-    const submissionData = {
-      date: formData.date,
-      pdfUrl: formData.pdfUrl,
-      title: formData.title,
-      thumbnailUrl: '',
-      pages: '[]'
-    };
+    try {
+      if (selectedFile) {
+        // Single-request upload and save directly via API route (bypasses Server Actions payload overhead)
+        const uploadFormData = new FormData();
+        uploadFormData.append('file', selectedFile);
+        uploadFormData.append('date', formData.date);
+        uploadFormData.append('title', formData.title);
 
-    const res = await addEpaper(submissionData);
-    if (res.success) {
+        const response = await fetch('/api/epaper/upload', {
+          method: 'POST',
+          body: uploadFormData
+        });
+        
+        if (!response.ok) {
+          throw new Error(`Server returned status ${response.status}`);
+        }
+        
+        const result = await response.json();
+        if (!result.success) {
+          throw new Error(result.message || 'API upload and save failed');
+        }
+      } else {
+        // Save URL string via Server Action
+        const submissionData = {
+          date: formData.date,
+          pdfUrl: formData.pdfUrl,
+          title: formData.title,
+          thumbnailUrl: '',
+          pages: '[]'
+        };
+
+        const res = await addEpaper(submissionData);
+        if (!res.success) {
+          throw new Error(res.message || 'Failed to save E-Paper link');
+        }
+      }
+
       alert('E-Paper saved successfully!');
       window.location.reload();
-    } else {
-      alert('Error: ' + res.message);
+    } catch (err: any) {
+      console.error(err);
+      alert('Failed to save E-Paper: ' + (err.message || 'An unexpected error occurred.'));
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   const handleDelete = async (id: string) => {
@@ -90,46 +115,30 @@ export default function EpaperClient({ initialEpapers }: { initialEpapers: any[]
               <input 
                 type="file" 
                 accept="application/pdf"
-                onChange={async (e) => {
+                onChange={(e) => {
                   const file = e.target.files?.[0];
                   if (!file) return;
-                  setUploading(true);
-                  try {
-                    const uploadFormData = new FormData();
-                    uploadFormData.append('file', file);
-                    const result = await uploadFileAction(uploadFormData);
-                    if (!result.success) {
-                      alert('PDF upload failed: ' + result.message);
-                      return;
-                    }
-                    setFormData({ ...formData, pdfUrl: result.url || '' });
-                  } catch (err: any) {
-                    console.error('PDF upload error:', err);
-                    alert('PDF upload failed: ' + (err.message || 'File might exceed Vercel size limit.'));
-                  } finally {
-                    setUploading(false);
-                  }
+                  setSelectedFile(file);
+                  setFormData({ ...formData, pdfUrl: '' }); // Clear manual url input if file selected
                 }}
                 style={{ fontSize: '12px', marginBottom: '8px' }}
-                disabled={uploading || loading}
+                disabled={loading}
               />
-              {uploading && (
-                <div style={{ fontSize: '11px', color: '#dc2626', marginBottom: '8px' }}>
-                  <i className="fas fa-spinner fa-spin"></i> Uploading PDF... Please wait.
-                </div>
-              )}
               <div style={{ fontSize: '11px', color: '#666', marginBottom: '8px', fontWeight: 'bold' }}>— OR —</div>
               <input 
                 type="text"
                 className={styles.formInput}
                 placeholder="Paste direct PDF URL (e.g. Google Drive, Dropbox link)"
                 value={formData.pdfUrl}
-                onChange={e => setFormData({ ...formData, pdfUrl: e.target.value })}
-                disabled={uploading || loading}
+                onChange={e => {
+                  setFormData({ ...formData, pdfUrl: e.target.value });
+                  setSelectedFile(null); // Clear selected file if manual url typed
+                }}
+                disabled={loading}
               />
-              {formData.pdfUrl && (
+              {(selectedFile || formData.pdfUrl) && (
                 <div style={{ fontSize: '10px', color: '#10b981', marginTop: '6px', wordBreak: 'break-all' }}>
-                  Selected: {formData.pdfUrl.startsWith('data:') ? 'Base64 Uploaded File' : formData.pdfUrl}
+                  Selected: {selectedFile ? `File: ${selectedFile.name} (${(selectedFile.size / (1024 * 1024)).toFixed(2)} MB)` : (formData.pdfUrl.startsWith('data:') ? 'Base64 Uploaded File' : formData.pdfUrl)}
                 </div>
               )}
             </div>
@@ -180,6 +189,7 @@ export default function EpaperClient({ initialEpapers }: { initialEpapers: any[]
                           pdfUrl: p.pdfUrl || '',
                           title: p.title || ''
                         });
+                        setSelectedFile(null);
                         window.scrollTo(0, 0);
                       }} style={{ color: '#3b82f6', border: 'none', background: 'none', cursor: 'pointer', marginRight: '10px' }}>
                         <i className="fas fa-edit"></i>
