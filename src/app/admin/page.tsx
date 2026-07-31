@@ -3,8 +3,10 @@ import styles from './admin.module.css';
 import Link from 'next/link';
 import { getDashboardStats, getNewsArticles, wipeAdminMockData } from '@/actions/news';
 import DashboardClient from './DashboardClient'; // For client iteractivity like reset
+import { connection } from 'next/server';
 
 export default async function AdminDashboard() {
+  await connection();
   const stats = await getDashboardStats();
   // Get 5 most recent
   const recentNews = await getNewsArticles({ limit: 5 });
