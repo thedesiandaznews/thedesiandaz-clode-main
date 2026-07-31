@@ -13,9 +13,9 @@ export const metadata: Metadata = {
 };
 
 export default async function LocalPage() {
-  const news = await getNewsArticles({ category: 'Jharkhand News', status: 'Published' });
+  const news = await getNewsArticles({ category: 'Jharkhand News', status: 'Published', limit: 50 });
   // Also include "Local News" category
-  const moreNews = await getNewsArticles({ category: 'Local News', status: 'Published' });
+  const moreNews = await getNewsArticles({ category: 'Local News', status: 'Published', limit: 50 });
   
   const allLocal = [...(news || []), ...(moreNews || [])].sort((a, b) => {
     const timeA = a?.createdAt ? new Date(a.createdAt).getTime() : 0;

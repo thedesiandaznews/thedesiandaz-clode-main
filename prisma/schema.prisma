@@ -60,6 +60,9 @@ model Article {
   @@index([district])
   @@index([isPrintSelected])
   @@index([createdAt])
+  @@index([categoryId])
+  @@index([reporterId])
+  @@index([contributorId])
 }
 
 model Reporter {

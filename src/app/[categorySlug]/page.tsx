@@ -98,11 +98,11 @@ export default async function CategorySlugPage({ params }: { params: Promise<{ c
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let newsItems: any[] = [];
   if (entry.type === 'state') {
-    newsItems = await getNewsArticles({ state: entry.value, status: 'Published' });
+    newsItems = await getNewsArticles({ state: entry.value, status: 'Published', limit: 100 });
   } else if (entry.type === 'district') {
-    newsItems = await getNewsArticles({ district: entry.value, status: 'Published' });
+    newsItems = await getNewsArticles({ district: entry.value, status: 'Published', limit: 100 });
   } else if (entry.type === 'category') {
-    newsItems = await getNewsArticles({ category: entry.value, status: 'Published' });
+    newsItems = await getNewsArticles({ category: entry.value, status: 'Published', limit: 100 });
   }
 
   const jharkhandDistricts = stateDistricts['Jharkhand'] || [];

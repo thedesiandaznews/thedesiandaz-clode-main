@@ -44,7 +44,7 @@ export default async function DistrictPage({ params }: { params: Promise<{ state
   const displayDistrictName = actualDistrictName || districtName.charAt(0).toUpperCase() + districtName.slice(1);
 
   // Fetch news for this district
-  const districtNews = await getNewsArticles({ district: actualDistrictName || displayDistrictName, status: 'Published' });
+  const districtNews = await getNewsArticles({ district: actualDistrictName || displayDistrictName, status: 'Published', limit: 100 });
 
   return (
     <div className={styles.page}>

@@ -38,7 +38,7 @@ export async function generateMetadata({
 }
 
 export default async function LatestNewsPage() {
-  const news = await getNewsArticles({ status: 'Published' });
+  const news = await getNewsArticles({ status: 'Published', limit: 100 });
 
   return (
     <div className={styles.page}>

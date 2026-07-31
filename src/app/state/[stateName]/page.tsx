@@ -40,7 +40,7 @@ export default async function StatePage({ params }: { params: Promise<{ stateNam
   const districts = actualStateName ? stateDistricts[actualStateName as keyof typeof stateDistricts] : [];
 
   // Fetch real news for this state
-  const newsItems = await getNewsArticles({ state: actualStateName || displayStateName, status: 'Published' });
+  const newsItems = await getNewsArticles({ state: actualStateName || displayStateName, status: 'Published', limit: 100 });
 
   const buzzItems = [
     { title: `${displayStateName} विकास प्राधिकरण की नई पहल`, img: 'https://picsum.photos/100/100?random=411' },

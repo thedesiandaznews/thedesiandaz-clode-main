@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 };
 
 export default async function PoliticsPage() {
-  const news = await getNewsArticles({ category: 'Politics', status: 'Published' });
+  const news = await getNewsArticles({ category: 'Politics', status: 'Published', limit: 100 });
 
   return (
     <div className={styles.page}>
