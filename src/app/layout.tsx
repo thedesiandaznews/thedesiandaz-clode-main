@@ -13,7 +13,8 @@ import { getSiteSettings } from '@/actions/settings';
 export async function generateMetadata(): Promise<Metadata> {
   const settings = await getSiteSettings();
   const siteName = settings.siteName || 'The Desi Andaz';
-  const siteIcon = settings.siteIcon || '/favicon.ico';
+  const version = settings.siteIcon ? settings.siteIcon.length : 'default';
+  const siteIcon = `/api/site/icon?v=${version}`;
 
   return {
     metadataBase: new URL('https://www.thedesiandaz.com'),
