@@ -1,7 +1,7 @@
 'use server';
 
 import { prisma } from "@/lib/prisma";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, cacheTag, updateTag } from "next/cache";
 
 // Helper function: Haversine distance calculator in kilometers
 function getDistanceInKm(lat1: number, lon1: number, lat2: number, lon2: number) {
@@ -90,6 +90,7 @@ export async function deleteAdClient(id: string) {
     });
     revalidatePath("/admin/ads");
     revalidatePath("/", "layout");
+    updateTag('client-ads');
     return { success: true };
   } catch (error: any) {
     console.error("Error deleting ad client:", error);
@@ -156,6 +157,7 @@ export async function createClientAd(data: {
     });
     revalidatePath("/admin/ads");
     revalidatePath("/", "layout");
+    updateTag('client-ads');
     return { success: true, ad };
   } catch (error: any) {
     console.error("Error creating client ad campaign:", error);
@@ -210,6 +212,7 @@ export async function updateClientAd(
     });
     revalidatePath("/admin/ads");
     revalidatePath("/", "layout");
+    updateTag('client-ads');
     return { success: true, ad };
   } catch (error: any) {
     console.error("Error updating client ad campaign:", error);
@@ -224,6 +227,7 @@ export async function deleteClientAd(id: string) {
     });
     revalidatePath("/admin/ads");
     revalidatePath("/", "layout");
+    updateTag('client-ads');
     return { success: true };
   } catch (error: any) {
     console.error("Error deleting client ad campaign:", error);
@@ -239,6 +243,7 @@ export async function toggleClientAdActive(id: string, isActive: boolean) {
     });
     revalidatePath("/admin/ads");
     revalidatePath("/", "layout");
+    updateTag('client-ads');
     return { success: true };
   } catch (error: any) {
     console.error("Error toggling client ad campaign status:", error);
@@ -262,6 +267,17 @@ export async function resetClientAdStats(id: string) {
 
 // ── Dynamic Rotation and Stats Tracking Actions ──────────────────────────────
 
+async function getCachedActiveAdsForPosition(position: number) {
+  'use cache';
+  cacheTag('client-ads');
+  return prisma.clientAd.findMany({
+    where: {
+      isActive: true,
+      position: position
+    }
+  });
+}
+
 export async function getRandomActiveAd(
   categoryName: string,
   position: number,
@@ -276,12 +292,7 @@ export async function getRandomActiveAd(
     const now = new Date();
     
     // SQLite doesn't do case-insensitive lookups easily, so we filter active ads by position
-    const activeAds = await prisma.clientAd.findMany({
-      where: {
-        isActive: true,
-        position: position
-      }
-    });
+    const activeAds = await getCachedActiveAdsForPosition(position);
 
     const targetCategory = categoryName.trim().toLowerCase();
 

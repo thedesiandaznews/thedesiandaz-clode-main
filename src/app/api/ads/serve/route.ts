@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getRandomActiveAd } from '@/actions/client-ads';
 
-export const dynamic = 'force-dynamic';
 
 export async function GET(request: Request) {
   try {

@@ -1,10 +1,12 @@
 'use server';
 
 import { prisma } from '@/lib/prisma';
-import { revalidatePath } from 'next/cache';
+import { revalidatePath, cacheTag, updateTag } from 'next/cache';
 
 // Fetch all settings as a key-value object
 export async function getSiteSettings() {
+  'use cache';
+  cacheTag('site-settings');
   try {
     let settings = await prisma.siteSetting.findMany();
     
@@ -51,6 +53,8 @@ export async function getSiteSettings() {
 
 // Fetch a single setting
 export async function getSiteSetting(key: string) {
+  'use cache';
+  cacheTag('site-settings', `site-setting-${key}`);
   try {
     const setting = await prisma.siteSetting.findUnique({
       where: { key }
@@ -73,6 +77,7 @@ export async function updateSiteSettings(settings: Record<string, string>) {
       });
     }
     revalidatePath('/', 'layout');
+    updateTag('site-settings');
     return { success: true };
   } catch (error) {
     console.error("Error updating settings:", error);

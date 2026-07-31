@@ -1,9 +1,11 @@
 'use server';
 
 import { prisma } from '@/lib/prisma';
-import { revalidatePath } from 'next/cache';
+import { revalidatePath, cacheTag, updateTag } from 'next/cache';
 
 export async function getPageContent(pageSlug: string) {
+  'use cache';
+  cacheTag(`page-content-${pageSlug}`);
   try {
     const page = await prisma.pageContent.findUnique({
       where: { pageSlug }
@@ -59,6 +61,7 @@ export async function updatePageContent(
       revalidatePath(routeMap[pageSlug]);
     }
     
+    updateTag(`page-content-${pageSlug}`);
     return { success: true };
   } catch (error) {
     console.error("Error updating page content:", error);

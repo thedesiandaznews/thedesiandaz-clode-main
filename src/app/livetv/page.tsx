@@ -2,7 +2,6 @@ import ResponsiveBanner from '@/components/ResponsiveBanner';
 import LiveTVClient from './LiveTVClient';
 import { getSiteSettings } from '@/actions/settings';
 
-export const revalidate = 60; // Cache page for 60 seconds, revalidate in background
 
 export default async function LiveTVPage() {
   const settings = await getSiteSettings();

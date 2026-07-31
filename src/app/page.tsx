@@ -12,7 +12,6 @@ import { getSiteSettings } from '@/actions/settings';
 import HomeMediaWidget from '@/components/HomeMediaWidget';
 import { Metadata } from 'next';
 
-export const dynamic = 'force-dynamic'; // Prevent build-time static rendering size limits and compile successfully
 
 export const metadata: Metadata = {
   title: 'Jharkhand News | Breaking News | Hindi News | The Desi Andaz Media Network',

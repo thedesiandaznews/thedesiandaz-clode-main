@@ -1,9 +1,11 @@
 'use server';
 
-import { revalidatePath } from 'next/cache';
+import { revalidatePath, cacheTag, updateTag } from 'next/cache';
 import prisma from '@/lib/db';
 
 export async function getCategories() {
+  'use cache';
+  cacheTag('categories');
   try {
     return await prisma.category.findMany({
       orderBy: { name: 'asc' }
@@ -28,6 +30,7 @@ export async function addCategory(name: string) {
     revalidatePath('/admin/categories');
     revalidatePath('/admin/news/add');
     revalidatePath('/', 'layout');
+    updateTag('categories');
     return { success: true };
   } catch (error) {
     console.error('Failed to add category', error);
@@ -42,6 +45,7 @@ export async function deleteCategory(id: string) {
     });
     revalidatePath('/admin/categories');
     revalidatePath('/', 'layout');
+    updateTag('categories');
     return { success: true };
   } catch (error) {
     console.error('Failed to delete category', error);
@@ -62,6 +66,7 @@ export async function updateCategory(id: string, name: string) {
     
     revalidatePath('/admin/categories');
     revalidatePath('/', 'layout');
+    updateTag('categories');
     return { success: true };
   } catch (error) {
     console.error('Failed to update category', error);
@@ -103,6 +108,7 @@ export async function seedDefaultCategoriesAction() {
     revalidatePath('/admin/categories');
     revalidatePath('/admin/news/add');
     revalidatePath('/', 'layout');
+    updateTag('categories');
     return { success: true, count: createdCount };
   } catch (error: any) {
     console.error('Failed to seed categories', error);

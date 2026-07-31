@@ -1,9 +1,11 @@
 'use server';
 
-import { revalidatePath } from 'next/cache';
+import { revalidatePath, cacheTag, updateTag } from 'next/cache';
 import prisma from '@/lib/db';
 
 export async function getEpapers(filters?: { date?: string }) {
+  'use cache';
+  cacheTag('epaper');
   try {
     const where: any = {};
     if (filters?.date) {
@@ -66,6 +68,7 @@ export async function addEpaper(data: {
 
     revalidatePath('/admin/epaper');
     revalidatePath('/epaper');
+    updateTag('epaper');
     return { success: true };
   } catch (error) {
     console.error('Failed to save epaper:', error);
@@ -80,6 +83,7 @@ export async function deleteEpaper(id: string) {
     });
     revalidatePath('/admin/epaper');
     revalidatePath('/epaper');
+    updateTag('epaper');
     return { success: true };
   } catch (error) {
     console.error('Failed to delete epaper:', error);

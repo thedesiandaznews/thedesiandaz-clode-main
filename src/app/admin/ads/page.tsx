@@ -4,8 +4,6 @@ import { getAdClients } from '@/actions/client-ads';
 import AdminAdsDashboardClient from './AdminAdsDashboardClient';
 import styles from '../admin.module.css';
 
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
 
 export default async function AdsManagementPage() {
   const categories = await getAdCategories();

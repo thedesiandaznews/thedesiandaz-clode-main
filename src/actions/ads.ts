@@ -1,7 +1,7 @@
 'use server';
 
 import prisma from "@/lib/db";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, cacheTag, updateTag } from "next/cache";
 import { writeFile, mkdir, unlink } from "fs/promises";
 import path from "path";
 import { existsSync } from "fs";
@@ -75,6 +75,8 @@ async function saveFile(file: File, categoryId: string, type: string, position: 
 // -- Category Actions --
 
 export async function getAdCategories() {
+  'use cache';
+  cacheTag('ad-banners');
   try {
     let categories = await prisma.adCategory.findMany({
       include: {
@@ -120,6 +122,7 @@ export async function createAdCategory(name: string) {
       data: { name },
     });
     revalidatePath("/", "layout");
+    updateTag('ad-banners');
     return { success: true };
   } catch (error: any) {
     console.error("Error creating ad category:", error);
@@ -134,6 +137,7 @@ export async function updateAdCategory(id: string, name: string) {
       data: { name },
     });
     revalidatePath("/", "layout");
+    updateTag('ad-banners');
     return { success: true };
   } catch (error: any) {
     console.error("Error updating ad category:", error);
@@ -147,6 +151,7 @@ export async function deleteAdCategory(id: string) {
       where: { id },
     });
     revalidatePath("/", "layout");
+    updateTag('ad-banners');
     return { success: true };
   } catch (error: any) {
     console.error("Error deleting ad category:", error);
@@ -157,6 +162,8 @@ export async function deleteAdCategory(id: string) {
 // -- Banner Actions --
 
 export async function getBannersByCategory(categoryId: string) {
+  'use cache';
+  cacheTag('ad-banners', `ad-banners-category-${categoryId}`);
   try {
     return await prisma.banner.findMany({
       where: { categoryId },
@@ -172,6 +179,8 @@ export async function getBannersByCategory(categoryId: string) {
 }
 
 export async function getActiveBannersByCategoryName(categoryName: string) {
+  'use cache';
+  cacheTag('ad-banners', `ad-banners-categoryname-${categoryName}`);
   try {
     const trimmedName = categoryName.trim();
     
@@ -254,6 +263,7 @@ export async function upsertBanner(formData: FormData) {
 
     // Revalidate the entire site so ads update on all pages
     revalidatePath("/", "layout");
+    updateTag('ad-banners');
     console.log("All banners published and paths revalidated");
     return { success: true };
   } catch (error: any) {
@@ -269,6 +279,7 @@ export async function deleteBanner(id: string) {
     });
     // Revalidate the entire site so ads update on all pages
     revalidatePath("/", "layout");
+    updateTag('ad-banners');
     return { success: true };
   } catch (error: any) {
     console.error("Error deleting banner:", error);

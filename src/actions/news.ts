@@ -1,6 +1,6 @@
 'use server';
 
-import { revalidatePath } from 'next/cache';
+import { revalidatePath, cacheTag, updateTag } from 'next/cache';
 import prisma from '@/lib/db';
 import { generateUniqueSlug } from '@/lib/slug';
 
@@ -36,6 +36,8 @@ export async function getNewsArticles(filters?: {
   q?: string;
   limit?: number;
 }) {
+  'use cache';
+  cacheTag('news-articles');
   try {
     const whereClause: any = {};
     if (filters?.category) whereClause.category = { name: filters.category };
@@ -110,6 +112,7 @@ export async function getNewsArticles(filters?: {
 }
 
 export async function getArticleById(identifier: string) {
+  'use cache';
   try {
     // 1️⃣ Try finding by slug first (SEO-friendly URL)
     let article = await prisma.article.findUnique({
@@ -152,7 +155,12 @@ export async function getArticleById(identifier: string) {
     if (!article) return null;
 
     // Backfill slug if missing
-    return await backfillSlug(article);
+    const finalArticle = await backfillSlug(article);
+    cacheTag('news-articles', `article-${finalArticle.id}`);
+    if (finalArticle.slug) {
+      cacheTag(`article-${finalArticle.slug}`);
+    }
+    return finalArticle;
   } catch (error) {
     console.error('Error fetching exact article:', error);
     return null;
@@ -241,6 +249,7 @@ export async function addNewsArticle(data: {
     revalidatePath('/admin/news');
     revalidatePath('/admin');
     revalidatePath('/');
+    updateTag('news-articles');
     return { success: true };
   } catch (error) {
     console.error('Failed to create article', error);
@@ -298,6 +307,8 @@ export async function updateNewsArticle(
     revalidatePath(`/admin/news/edit/${id}`);
     revalidatePath(`/news/${id}`);
     revalidatePath('/');
+    updateTag('news-articles');
+    updateTag(`article-${id}`);
     return { success: true };
   } catch (error) {
     console.error('Failed to update article', error);
@@ -328,6 +339,8 @@ export async function updateArticleStatus(id: string, newStatus: string) {
     revalidatePath('/admin/news');
     revalidatePath('/admin');
     revalidatePath('/');
+    updateTag('news-articles');
+    updateTag(`article-${id}`);
     return { success: true };
   } catch (error) {
     console.error('Failed to change status', error);
@@ -342,6 +355,8 @@ export async function deleteNewsArticle(id: string) {
     revalidatePath('/admin/news');
     revalidatePath('/admin');
     revalidatePath('/');
+    updateTag('news-articles');
+    updateTag(`article-${id}`);
     return { success: true };
   } catch (error) {
     console.error('Failed to delete article', error);
@@ -356,6 +371,7 @@ export async function wipeAdminMockData() {
     revalidatePath('/admin');
     revalidatePath('/admin/news');
     revalidatePath('/');
+    updateTag('news-articles');
     return { success: true };
   } catch (error) {
     console.error('Failed to wipe data', error);
