@@ -8,23 +8,36 @@ import ReferralTracker from '@/components/ReferralTracker';
 import Script from 'next/script';
 import { Suspense } from 'react';
 
-export const metadata: Metadata = {
-  metadataBase: new URL('https://www.thedesiandaz.com'),
-  title: 'The Desi Andaz - देसी नज़रिया, सच्ची खबर',
-  description: 'Premium Hindi News Portal - The Desi Andaz',
-  alternates: {
-    canonical: '/',
-  },
-  robots: {
-    index: true,
-    follow: true,
-    googleBot: {
+import { getSiteSettings } from '@/actions/settings';
+
+export async function generateMetadata(): Promise<Metadata> {
+  const settings = await getSiteSettings();
+  const siteName = settings.siteName || 'The Desi Andaz';
+  const siteIcon = settings.siteIcon || '/favicon.ico';
+
+  return {
+    metadataBase: new URL('https://www.thedesiandaz.com'),
+    title: `${siteName} - देसी नज़रिया, सच्ची खबर`,
+    description: `Premium Hindi News Portal - ${siteName}`,
+    icons: {
+      icon: siteIcon,
+      shortcut: siteIcon,
+      apple: siteIcon,
+    },
+    alternates: {
+      canonical: '/',
+    },
+    robots: {
       index: true,
       follow: true,
-      'max-image-preview': 'large',
+      googleBot: {
+        index: true,
+        follow: true,
+        'max-image-preview': 'large',
+      },
     },
-  },
-};
+  };
+}
 
 export default function RootLayout({
   children,
