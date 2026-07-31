@@ -112,7 +112,7 @@ export default function Footer() {
 
       <div className={styles.bottomBar}>
         <div style={{ marginBottom: '8px', fontWeight: 'bold', color: '#888' }}>
-          © {new Date().getFullYear()} The Desi Andaz Media Network
+          © 2026 The Desi Andaz Media Network
         </div>
         <div style={{ fontSize: '11px', color: '#666' }}>
           RNI Registration Number: JHBIL/26/A3245 | All Rights Reserved.

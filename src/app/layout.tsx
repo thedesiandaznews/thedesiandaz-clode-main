@@ -6,6 +6,7 @@ import ResponsiveBanner from '@/components/ResponsiveBanner';
 import SiteMetadata from '@/components/SiteMetadata';
 import ReferralTracker from '@/components/ReferralTracker';
 import Script from 'next/script';
+import { Suspense } from 'react';
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://www.thedesiandaz.com'),
@@ -48,11 +49,15 @@ export default function RootLayout({
       <body suppressHydrationWarning>
         <ThemeScript />
         <ReferralTracker />
-        <SiteMetadata />
+        <Suspense fallback={null}>
+          <SiteMetadata />
+        </Suspense>
         <div className="flex flex-col min-h-screen">
-          <ConditionalLayout>
-            {children}
-          </ConditionalLayout>
+          <Suspense fallback={null}>
+            <ConditionalLayout>
+              {children}
+            </ConditionalLayout>
+          </Suspense>
         </div>
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-7CTKGE7ZXR"
