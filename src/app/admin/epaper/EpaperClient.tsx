@@ -15,6 +15,7 @@ export default function EpaperClient({ initialEpapers }: { initialEpapers: any[]
 
   const [epapers, setEpapers] = useState(initialEpapers);
   const [loading, setLoading] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const [formData, setFormData] = useState({
     date: getLocalDateString(),
     pdfUrl: '',
@@ -23,8 +24,12 @@ export default function EpaperClient({ initialEpapers }: { initialEpapers: any[]
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (uploading) {
+      alert('Please wait for the file upload to complete.');
+      return;
+    }
     if (!formData.pdfUrl) {
-      alert('Please upload a PDF file first.');
+      alert('Please upload a PDF file or paste a direct PDF URL first.');
       return;
     }
     setLoading(true);
@@ -81,25 +86,52 @@ export default function EpaperClient({ initialEpapers }: { initialEpapers: any[]
               />
             </div>
             <div>
-              <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, marginBottom: '6px' }}>PDF File (High Quality)</label>
+              <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, marginBottom: '6px' }}>PDF File or Direct URL</label>
               <input 
                 type="file" 
                 accept="application/pdf"
                 onChange={async (e) => {
                   const file = e.target.files?.[0];
                   if (!file) return;
-                  const uploadFormData = new FormData();
-                  uploadFormData.append('file', file);
-                  const result = await uploadFileAction(uploadFormData);
-                  if (!result.success) {
-                    alert('PDF upload failed: ' + result.message);
-                    return;
+                  setUploading(true);
+                  try {
+                    const uploadFormData = new FormData();
+                    uploadFormData.append('file', file);
+                    const result = await uploadFileAction(uploadFormData);
+                    if (!result.success) {
+                      alert('PDF upload failed: ' + result.message);
+                      return;
+                    }
+                    setFormData({ ...formData, pdfUrl: result.url || '' });
+                  } catch (err: any) {
+                    console.error('PDF upload error:', err);
+                    alert('PDF upload failed: ' + (err.message || 'File might exceed Vercel size limit.'));
+                  } finally {
+                    setUploading(false);
                   }
-                  setFormData({ ...formData, pdfUrl: result.url || '' });
                 }}
                 style={{ fontSize: '12px', marginBottom: '8px' }}
+                disabled={uploading || loading}
               />
-              {formData.pdfUrl && <div style={{ fontSize: '10px', color: '#10b981' }}>Uploaded: {formData.pdfUrl}</div>}
+              {uploading && (
+                <div style={{ fontSize: '11px', color: '#dc2626', marginBottom: '8px' }}>
+                  <i className="fas fa-spinner fa-spin"></i> Uploading PDF... Please wait.
+                </div>
+              )}
+              <div style={{ fontSize: '11px', color: '#666', marginBottom: '8px', fontWeight: 'bold' }}>— OR —</div>
+              <input 
+                type="text"
+                className={styles.formInput}
+                placeholder="Paste direct PDF URL (e.g. Google Drive, Dropbox link)"
+                value={formData.pdfUrl}
+                onChange={e => setFormData({ ...formData, pdfUrl: e.target.value })}
+                disabled={uploading || loading}
+              />
+              {formData.pdfUrl && (
+                <div style={{ fontSize: '10px', color: '#10b981', marginTop: '6px', wordBreak: 'break-all' }}>
+                  Selected: {formData.pdfUrl.startsWith('data:') ? 'Base64 Uploaded File' : formData.pdfUrl}
+                </div>
+              )}
             </div>
             <div>
               <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, marginBottom: '6px' }}>Title (Optional)</label>
