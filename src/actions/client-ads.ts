@@ -21,12 +21,24 @@ function getDistanceInKm(lat1: number, lon1: number, lat2: number, lon2: number)
 
 export async function getAdClients() {
   try {
-    return await prisma.adClient.findMany({
+    const clients = await prisma.adClient.findMany({
       include: {
         ads: true
       },
       orderBy: { name: 'asc' }
     });
+    return clients.map(client => ({
+      ...client,
+      ads: client.ads.map(ad => ({
+        ...ad,
+        desktopImgUrl: ad.desktopImgUrl && ad.desktopImgUrl.startsWith('data:') 
+          ? `/api/ads/image?type=clientad&screen=desktop&id=${ad.id}` 
+          : ad.desktopImgUrl,
+        mobileImgUrl: ad.mobileImgUrl && ad.mobileImgUrl.startsWith('data:') 
+          ? `/api/ads/image?type=clientad&screen=mobile&id=${ad.id}` 
+          : ad.mobileImgUrl,
+      }))
+    }));
   } catch (error) {
     console.error("Error fetching ad clients:", error);
     return [];
@@ -102,12 +114,21 @@ export async function deleteAdClient(id: string) {
 
 export async function getClientAds() {
   try {
-    return await prisma.clientAd.findMany({
+    const ads = await prisma.clientAd.findMany({
       include: {
         client: true
       },
       orderBy: { createdAt: 'desc' }
     });
+    return ads.map(ad => ({
+      ...ad,
+      desktopImgUrl: ad.desktopImgUrl && ad.desktopImgUrl.startsWith('data:') 
+        ? `/api/ads/image?type=clientad&screen=desktop&id=${ad.id}` 
+        : ad.desktopImgUrl,
+      mobileImgUrl: ad.mobileImgUrl && ad.mobileImgUrl.startsWith('data:') 
+        ? `/api/ads/image?type=clientad&screen=mobile&id=${ad.id}` 
+        : ad.mobileImgUrl,
+    }));
   } catch (error) {
     console.error("Error fetching client campaigns:", error);
     return [];
@@ -270,12 +291,21 @@ export async function resetClientAdStats(id: string) {
 async function getCachedActiveAdsForPosition(position: number) {
   'use cache';
   cacheTag('client-ads');
-  return prisma.clientAd.findMany({
+  const ads = await prisma.clientAd.findMany({
     where: {
       isActive: true,
       position: position
     }
   });
+  return ads.map(ad => ({
+    ...ad,
+    desktopImgUrl: ad.desktopImgUrl && ad.desktopImgUrl.startsWith('data:') 
+      ? `/api/ads/image?type=clientad&screen=desktop&id=${ad.id}` 
+      : ad.desktopImgUrl,
+    mobileImgUrl: ad.mobileImgUrl && ad.mobileImgUrl.startsWith('data:') 
+      ? `/api/ads/image?type=clientad&screen=mobile&id=${ad.id}` 
+      : ad.mobileImgUrl,
+  }));
 }
 
 export async function getRandomActiveAd(

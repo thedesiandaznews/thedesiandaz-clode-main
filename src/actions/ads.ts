@@ -109,7 +109,15 @@ export async function getAdCategories() {
       });
     }
 
-    return categories;
+    return categories.map(cat => ({
+      ...cat,
+      banners: cat.banners.map(b => ({
+        ...b,
+        imageUrl: b.imageUrl && b.imageUrl.startsWith('data:') 
+          ? `/api/ads/image?type=banner&id=${b.id}` 
+          : b.imageUrl
+      }))
+    }));
   } catch (error) {
     console.error("Error fetching ad categories:", error);
     return [];
@@ -165,12 +173,18 @@ export async function getBannersByCategory(categoryId: string) {
   'use cache';
   cacheTag('ad-banners', `ad-banners-category-${categoryId}`);
   try {
-    return await prisma.banner.findMany({
+    const banners = await prisma.banner.findMany({
       where: { categoryId },
       orderBy: [
         { type: "asc" },
         { position: "asc" }
       ]
+    });
+    return banners.map(b => {
+      if (b.imageUrl && b.imageUrl.startsWith('data:')) {
+        return { ...b, imageUrl: `/api/ads/image?type=banner&id=${b.id}` };
+      }
+      return b;
     });
   } catch (error) {
     console.error("Error fetching banners:", error);
@@ -199,7 +213,13 @@ export async function getActiveBannersByCategoryName(categoryName: string) {
     });
     
     console.log(`Fetching active banners for category "${trimmedName}":`, category?.banners?.length ?? 0, 'banners');
-    return category?.banners || [];
+    const banners = category?.banners || [];
+    return banners.map(b => {
+      if (b.imageUrl && b.imageUrl.startsWith('data:')) {
+        return { ...b, imageUrl: `/api/ads/image?type=banner&id=${b.id}` };
+      }
+      return b;
+    });
   } catch (error) {
     console.error("Error fetching active banners:", error);
     return [];
