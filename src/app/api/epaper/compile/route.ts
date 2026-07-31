@@ -24,7 +24,7 @@ export async function POST(request: Request) {
 
     // 2. Map and verify chunks are complete
     const chunksMap = new Map(chunkRecords.map(r => [r.pageSlug, r.content]));
-    let combinedBase64 = '';
+    const buffers: Buffer[] = [];
     
     for (let i = 0; i < total; i++) {
       const key = `chunk-${sessionId}-${i}`;
@@ -35,10 +35,11 @@ export async function POST(request: Request) {
           message: `Chunk compilation failed: Missing chunk index ${i}. Please try uploading again.` 
         }, { status: 400 });
       }
-      combinedBase64 += content;
+      buffers.push(Buffer.from(content, 'base64'));
     }
 
-    const pdfUrl = `data:application/pdf;base64,${combinedBase64}`;
+    const combinedBuffer = Buffer.concat(buffers);
+    const pdfUrl = `data:application/pdf;base64,${combinedBuffer.toString('base64')}`;
     const [year, month, day] = dateStr.split('-').map(Number);
     const date = new Date(Date.UTC(year, month - 1, day, 0, 0, 0, 0));
 
