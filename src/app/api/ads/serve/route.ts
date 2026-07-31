@@ -1,8 +1,9 @@
-import { NextResponse } from 'next/server';
+import { NextResponse, connection } from 'next/server';
 import { getRandomActiveAd } from '@/actions/client-ads';
 
 
 export async function GET(request: Request) {
+  await connection();
   try {
     const { searchParams } = new URL(request.url);
     const category = searchParams.get('category');
