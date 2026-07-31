@@ -36,17 +36,20 @@ export async function GET(request: Request) {
     }
 
     // Parse Base64 Data URL if matches
-    const match = dataUrl.match(/^data:([^;]+);base64,(.+)$/);
-    if (match) {
-      const contentType = match[1];
-      const base64Data = match[2];
-      const buffer = Buffer.from(base64Data, 'base64');
-      return new Response(buffer, {
-        headers: {
-          'Content-Type': contentType,
-          'Cache-Control': 'public, max-age=31536000, immutable', // Cache for 1 year
-        }
-      });
+    if (dataUrl.startsWith('data:')) {
+      const parts = dataUrl.split(',');
+      if (parts.length >= 2) {
+        const mimeMatch = parts[0].match(/data:(.*?);base64/);
+        const contentType = mimeMatch ? mimeMatch[1] : 'image/png';
+        const base64Data = parts[1].replace(/\s/g, ''); // strip any newlines or spaces
+        const buffer = Buffer.from(base64Data, 'base64');
+        return new Response(buffer, {
+          headers: {
+            'Content-Type': contentType,
+            'Cache-Control': 'public, max-age=31536000, immutable', // Cache for 1 year
+          }
+        });
+      }
     }
 
     // If it's already a relative path or absolute URL, redirect the client
