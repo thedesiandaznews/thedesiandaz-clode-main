@@ -20,7 +20,10 @@ export default function EpaperViewer({ activePaper, archives }: { activePaper: a
       alert('PDF currently unavailable for this date.');
       return;
     }
-    window.open(activePaper.pdfUrl, '_blank');
+    const viewUrl = activePaper.pdfUrl.startsWith('data:')
+      ? `/api/epaper/pdf?id=${activePaper.id}`
+      : activePaper.pdfUrl;
+    window.open(viewUrl, '_blank');
   };
 
   const handleShare = () => {
@@ -82,13 +85,18 @@ export default function EpaperViewer({ activePaper, archives }: { activePaper: a
                   <span style={{ fontWeight: 800, fontSize: '14px', color: 'var(--dark)', display: 'flex', alignItems: 'center', gap: '8px' }}>
                     <i className="fas fa-file-pdf" style={{ color: '#ef4444' }} /> {activePaper.title || 'दैनिक ई-पेपर अंक'} ({new Date(activePaper.date).toLocaleDateString('hi-IN', { timeZone: 'UTC', day: 'numeric', month: 'long', year: 'numeric' })})
                   </span>
-                  <a href={activePaper.pdfUrl} target="_blank" rel="noopener noreferrer" style={{ fontSize: '13px', color: 'var(--primary)', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <a 
+                    href={activePaper.pdfUrl.startsWith('data:') ? `/api/epaper/pdf?id=${activePaper.id}` : activePaper.pdfUrl} 
+                    target="_blank" 
+                    rel="noopener noreferrer" 
+                    style={{ fontSize: '13px', color: 'var(--primary)', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '6px' }}
+                  >
                     <i className="fas fa-external-link-alt" /> फुल स्क्रीन में खोलें
                   </a>
                 </div>
                 <div style={{ height: 'calc(100vh - 250px)', minHeight: '500px', borderRadius: '0 0 16px 16px', overflow: 'hidden', border: '1px solid var(--border)', background: '#525659', boxShadow: 'var(--shadow-md)', width: '100%' }}>
                   <iframe
-                    src={`${activePaper.pdfUrl}#toolbar=1&navpanes=0`}
+                    src={`${activePaper.pdfUrl.startsWith('data:') ? `/api/epaper/pdf?id=${activePaper.id}` : activePaper.pdfUrl}#toolbar=1&navpanes=0`}
                     width="100%"
                     height="100%"
                     style={{ border: 'none' }}
@@ -115,7 +123,7 @@ export default function EpaperViewer({ activePaper, archives }: { activePaper: a
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', width: '100%', maxWidth: '280px', marginTop: '10px' }}>
                   <a 
-                    href={activePaper.pdfUrl} 
+                    href={activePaper.pdfUrl.startsWith('data:') ? `/api/epaper/pdf?id=${activePaper.id}` : activePaper.pdfUrl} 
                     target="_blank" 
                     rel="noopener noreferrer" 
                     style={{ display: 'block', background: 'var(--primary)', color: '#fff', textAlign: 'center', padding: '12px 20px', borderRadius: '8px', fontWeight: 'bold', fontSize: '14px', textDecoration: 'none', transition: 'var(--transition)', boxShadow: '0 4px 10px rgba(204,34,0,0.2)' }}
