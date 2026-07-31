@@ -14,7 +14,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const settings = await getSiteSettings();
   const siteName = settings.siteName || 'The Desi Andaz';
   const version = settings.siteIcon ? settings.siteIcon.length : 'default';
-  const siteIcon = `/api/site/icon?v=${version}`;
+  const siteIcon = `/favicon.ico?v=${version}`;
 
   return {
     metadataBase: new URL('https://www.thedesiandaz.com'),
