@@ -92,7 +92,12 @@ export default function EpaperClient({ initialEpapers }: { initialEpapers: any[]
         });
 
         if (!compileResponse.ok) {
-          throw new Error(`Server compile failed with status ${compileResponse.status}`);
+          let errMsg = `Server compile failed with status ${compileResponse.status}`;
+          try {
+            const errData = await compileResponse.json();
+            if (errData && errData.message) errMsg = errData.message;
+          } catch {}
+          throw new Error(errMsg);
         }
 
         const compileResult = await compileResponse.json();

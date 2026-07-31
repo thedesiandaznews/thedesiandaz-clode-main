@@ -39,23 +39,33 @@ export async function POST(request: Request) {
     }
 
     const pdfUrl = `data:application/pdf;base64,${combinedBase64}`;
-    const date = new Date(dateStr);
+    const [year, month, day] = dateStr.split('-').map(Number);
+    const date = new Date(Date.UTC(year, month - 1, day, 0, 0, 0, 0));
 
-    // 3. Upsert E-paper
-    await prisma.epaper.upsert({
-      where: { date },
-      update: {
-        title,
-        pdfUrl
-      },
-      create: {
-        date,
-        title,
-        pdfUrl,
-        thumbnailUrl: '',
-        pages: '[]'
-      }
+    // 3. Upsert E-paper using proven findUnique + update/create logic
+    const existing = await prisma.epaper.findUnique({
+      where: { date }
     });
+
+    if (existing) {
+      await prisma.epaper.update({
+        where: { id: existing.id },
+        data: {
+          title,
+          pdfUrl
+        }
+      });
+    } else {
+      await prisma.epaper.create({
+        data: {
+          date,
+          title,
+          pdfUrl,
+          thumbnailUrl: '',
+          pages: '[]'
+        }
+      });
+    }
 
     // 4. Delete temp chunks from database
     await prisma.pageContent.deleteMany({
