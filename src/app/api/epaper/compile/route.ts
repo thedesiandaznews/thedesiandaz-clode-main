@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/db';
-import { revalidatePath, updateTag } from 'next/cache';
+import { revalidatePath, revalidateTag } from 'next/cache';
 import { connection } from 'next/server';
 
 export async function POST(request: Request) {
@@ -76,7 +76,7 @@ export async function POST(request: Request) {
 
     revalidatePath('/admin/epaper');
     revalidatePath('/epaper');
-    updateTag('epaper');
+    revalidateTag('epaper', 'default');
 
     return NextResponse.json({ success: true });
   } catch (error: any) {
