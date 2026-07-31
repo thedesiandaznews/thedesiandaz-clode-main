@@ -213,6 +213,8 @@ export default async function Home() {
                       src={topStory.imageUrl || `https://picsum.photos/800/500?random=${topStory.id}`}
                       alt={topStory.title}
                       className={styles.mainStoryImg}
+                      width={800}
+                      height={500}
                     />
                   </div>
                   <p className={styles.mainStoryCaption}>
@@ -241,6 +243,8 @@ export default async function Home() {
                         alt="" 
                         className={styles.superfastThumb} 
                         loading="lazy"
+                        width={100}
+                        height={75}
                       />
                       <div className={styles.superfastText}>{n.title}</div>
                     </Link>
@@ -289,6 +293,8 @@ export default async function Home() {
                       alt="" 
                       className={styles.bottomHeroThumb} 
                       loading="lazy"
+                      width={120}
+                      height={90}
                     />
                     <div className={styles.bottomHeroText}>{n.title}</div>
                   </Link>
@@ -355,6 +361,8 @@ export default async function Home() {
                                 alt={articles[0].title} 
                                 className={styles.splitFeaturedImg} 
                                 loading="lazy"
+                                width={600}
+                                height={350}
                               />
                             </div>
                             <div className={styles.splitFeaturedBody}>
@@ -381,6 +389,8 @@ export default async function Home() {
                               alt="" 
                               className={styles.splitListThumb} 
                               loading="lazy"
+                              width={100}
+                              height={75}
                             />
                             <div className={styles.splitListText}>{n.title}</div>
                           </Link>
@@ -402,7 +412,7 @@ export default async function Home() {
                       {articles.slice(0, 6).map((n: any) => (
                         <Link key={n.id} href={`/news/${n.slug || n.id}`} className={styles.newsCard}>
                           <div className={styles.cardImgWrap}>
-                            <img src={n.imageUrl || `https://picsum.photos/400/250?random=${n.id}`} alt={n.title} className={styles.cardImg} loading="lazy" />
+                            <img src={n.imageUrl || `https://picsum.photos/400/250?random=${n.id}`} alt={n.title} className={styles.cardImg} loading="lazy" width={400} height={250} />
                           </div>
                           <div className={styles.cardBody}>
                             <div className={styles.cardMeta}>{n.category?.name}</div>
@@ -433,6 +443,8 @@ export default async function Home() {
                               alt={n.title} 
                               className={styles.mediaImg} 
                               loading="lazy" 
+                              width={400}
+                              height={250}
                             />
                             {/* Visual Photo overlay badge */}
                             <div className={styles.mediaOverlayBadge}>

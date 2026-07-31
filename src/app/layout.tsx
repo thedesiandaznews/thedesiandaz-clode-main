@@ -7,6 +7,21 @@ import SiteMetadata from '@/components/SiteMetadata';
 import ReferralTracker from '@/components/ReferralTracker';
 import Script from 'next/script';
 import { Suspense } from 'react';
+import { Mukta, Poppins } from 'next/font/google';
+
+const mukta = Mukta({
+  subsets: ['latin', 'devanagari'],
+  weight: ['200', '300', '400', '500', '600', '700', '800'],
+  variable: '--font-mukta',
+  display: 'swap',
+});
+
+const poppins = Poppins({
+  subsets: ['latin'],
+  weight: ['300', '400', '500', '600', '700', '800', '900'],
+  variable: '--font-poppins',
+  display: 'swap',
+});
 
 import { getSiteSettings } from '@/actions/settings';
 
@@ -46,18 +61,24 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="hi" data-scroll-behavior="smooth">
+    <html lang="hi" data-scroll-behavior="smooth" className={`${mukta.variable} ${poppins.variable}`}>
       <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Mukta:wght@200;300;400;500;600;700;800&family=Poppins:wght@300;400;500;600;700;800;900&display=swap"
-          rel="stylesheet"
-        />
-        <link href="https://db.onlinewebfonts.com/c/aaba86b816ab0ba63ce0a0b74ef16072?family=Munshi+Devanagari+Semibold" rel="stylesheet" />
-        <link
-          rel="stylesheet"
-          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                var fa = document.createElement('link');
+                fa.rel = 'stylesheet';
+                fa.href = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css';
+                document.head.appendChild(fa);
+
+                var wf = document.createElement('link');
+                wf.rel = 'stylesheet';
+                wf.href = 'https://db.onlinewebfonts.com/c/aaba86b816ab0ba63ce0a0b74ef16072?family=Munshi+Devanagari+Semibold';
+                document.head.appendChild(wf);
+              })();
+            `
+          }}
         />
       </head>
       <body suppressHydrationWarning>
