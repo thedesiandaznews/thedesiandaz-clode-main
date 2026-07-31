@@ -6,8 +6,6 @@ import ViewCounter from '@/components/ViewCounter';
 import ResponsiveBanner from '@/components/ResponsiveBanner';
 import { Metadata } from 'next';
 
-export const dynamic = 'force-dynamic';
-
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
   const resolvedParams = await params;
   const id = decodeURIComponent(resolvedParams.id);
