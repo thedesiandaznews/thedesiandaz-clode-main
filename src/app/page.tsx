@@ -1,6 +1,5 @@
 import LocationBar from '@/components/LocationBar';
 import Link from 'next/link';
-import Image from 'next/image';
 import styles from './page.module.css';
 import { getNewsArticles } from '@/actions/news';
 import ResponsiveBanner from '@/components/ResponsiveBanner';
@@ -210,13 +209,12 @@ export default async function Home() {
                     {topStory.title}
                   </h1>
                   <div className={styles.mainStoryImgWrap}>
-                    <Image
+                    <img
                       src={topStory.imageUrl || `https://picsum.photos/800/500?random=${topStory.id}`}
                       alt={topStory.title || "Top Story"}
                       className={styles.mainStoryImg}
                       width={800}
                       height={500}
-                      priority
                     />
                   </div>
                   <p className={styles.mainStoryCaption}>
@@ -240,7 +238,7 @@ export default async function Home() {
                 {latestNews.slice(1, 6).length > 0 ? (
                   latestNews.slice(1, 6).map((n: any) => (
                     <Link key={n.id} href={`/news/${n.slug || n.id}`} className={styles.superfastItem}>
-                      <Image 
+                      <img 
                         src={n.imageUrl || `https://picsum.photos/100/75?random=${n.id}`} 
                         alt={n.title || "News"} 
                         className={styles.superfastThumb} 
@@ -289,7 +287,7 @@ export default async function Home() {
               <div className={styles.bottomHeroGrid}>
                 {latestNews.slice(6, 15).map((n: any) => (
                   <Link key={n.id} href={`/news/${n.slug || n.id}`} className={styles.bottomHeroItem}>
-                    <Image 
+                    <img 
                       src={n.imageUrl || `https://picsum.photos/120/90?random=${n.id}`} 
                       alt={n.title || "News"} 
                       className={styles.bottomHeroThumb} 
@@ -356,7 +354,7 @@ export default async function Home() {
                         {articles[0] && (
                           <Link href={`/news/${articles[0].slug || articles[0].id}`} className={styles.splitFeaturedCard}>
                             <div className={styles.splitFeaturedImgWrap}>
-                              <Image 
+                              <img 
                                 src={articles[0].imageUrl || `https://picsum.photos/600/350?random=${articles[0].id}`} 
                                 alt={articles[0].title || "Featured"} 
                                 className={styles.splitFeaturedImg} 
@@ -383,7 +381,7 @@ export default async function Home() {
                       <div className={styles.sectionSplitRight}>
                         {articles.slice(1, 5).map((n: any) => (
                           <Link key={n.id} href={`/news/${n.slug || n.id}`} className={styles.splitListItem}>
-                            <Image 
+                            <img 
                               src={n.imageUrl || `https://picsum.photos/100/75?random=${n.id}`} 
                               alt={n.title || "News"} 
                               className={styles.splitListThumb} 
@@ -410,7 +408,7 @@ export default async function Home() {
                       {articles.slice(0, 6).map((n: any) => (
                         <Link key={n.id} href={`/news/${n.slug || n.id}`} className={styles.newsCard}>
                           <div className={styles.cardImgWrap}>
-                            <Image src={n.imageUrl || `https://picsum.photos/400/250?random=${n.id}`} alt={n.title || "News"} className={styles.cardImg} width={400} height={250} />
+                            <img src={n.imageUrl || `https://picsum.photos/400/250?random=${n.id}`} alt={n.title || "News"} className={styles.cardImg} width={400} height={250} />
                           </div>
                           <div className={styles.cardBody}>
                             <div className={styles.cardMeta}>{n.category?.name}</div>
@@ -436,7 +434,7 @@ export default async function Home() {
                       {articles.slice(0, 4).map((n: any) => (
                         <Link key={n.id} href={`/news/${n.slug || n.id}`} className={styles.mediaCard}>
                           <div className={styles.mediaImgWrap}>
-                            <Image 
+                            <img 
                               src={n.imageUrl || `https://picsum.photos/400/250?random=${n.id}`} 
                               alt={n.title || "Media"} 
                               className={styles.mediaImg} 
