@@ -117,11 +117,28 @@ export async function getNewsArticles(filters?: {
 }
 
 export async function getArticleById(identifier: string) {
-  'use cache';
-  try {
-    // 1️⃣ Try finding by slug first (SEO-friendly URL)
-    let article = await prisma.article.findUnique({
-      where: { slug: identifier },
+  // 1️⃣ Try finding by slug first (SEO-friendly URL)
+  let article = await prisma.article.findUnique({
+    where: { slug: identifier },
+    include: {
+      category: true,
+      additionalCategories: true,
+      reporterRel: {
+        select: {
+          id: true,
+          reporterCode: true,
+          fullName: true,
+          photoUrl: true,
+          status: true
+        }
+      }
+    }
+  });
+
+  // 2️⃣ Fallback: try the raw CUID id (backward compatibility)
+  if (!article) {
+    article = await prisma.article.findUnique({
+      where: { id: identifier },
       include: {
         category: true,
         additionalCategories: true,
@@ -136,45 +153,19 @@ export async function getArticleById(identifier: string) {
         }
       }
     });
-
-    // 2️⃣ Fallback: try the raw CUID id (backward compatibility)
-    if (!article) {
-      article = await prisma.article.findUnique({
-        where: { id: identifier },
-        include: {
-          category: true,
-          additionalCategories: true,
-          reporterRel: {
-            select: {
-              id: true,
-              reporterCode: true,
-              fullName: true,
-              photoUrl: true,
-              status: true
-            }
-          }
-        }
-      });
-    }
-
-    if (!article) return null;
-
-    // Backfill slug if missing
-    const finalArticle = await backfillSlug(article);
-    cacheTag('news-articles', `article-${finalArticle.id}`);
-    if (finalArticle.slug) {
-      cacheTag(`article-${finalArticle.slug}`);
-    }
-    return {
-      ...finalArticle,
-      imageUrl: finalArticle.imageUrl && finalArticle.imageUrl.startsWith('data:')
-        ? `/api/news/image?id=${finalArticle.id}`
-        : finalArticle.imageUrl
-    };
-  } catch (error) {
-    console.error('Error fetching exact article:', error);
-    return null;
   }
+
+  if (!article) return null;
+
+  // Backfill slug if missing
+  const finalArticle = await backfillSlug(article);
+  
+  return {
+    ...finalArticle,
+    imageUrl: finalArticle.imageUrl && finalArticle.imageUrl.startsWith('data:')
+      ? `/api/news/image?id=${finalArticle.id}`
+      : finalArticle.imageUrl
+  };
 }
 
 export async function getDashboardStats() {

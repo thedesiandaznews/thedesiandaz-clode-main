@@ -6,8 +6,11 @@ import ViewCounter from '@/components/ViewCounter';
 import ResponsiveBanner from '@/components/ResponsiveBanner';
 import { Metadata } from 'next';
 
+export const dynamic = 'force-dynamic';
+
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
-  const { id } = await params;
+  const resolvedParams = await params;
+  const id = decodeURIComponent(resolvedParams.id);
   const article = await getArticleById(id);
   if (!article) return {};
 
@@ -52,7 +55,8 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
 }
 
 export default async function NewsDetailPage({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = await params;
+  const resolvedParams = await params;
+  const id = decodeURIComponent(resolvedParams.id);
   console.log("NewsDetailPage dynamic id:", id);
   const article = await getArticleById(id);
   console.log("NewsDetailPage article found:", article ? article.title : "NULL");
