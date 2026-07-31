@@ -5,8 +5,10 @@ import { notFound } from 'next/navigation';
 import ViewCounter from '@/components/ViewCounter';
 import ResponsiveBanner from '@/components/ResponsiveBanner';
 import { Metadata } from 'next';
+import { connection } from 'next/server';
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
+  await connection();
   const resolvedParams = await params;
   const id = decodeURIComponent(resolvedParams.id);
   const article = await getArticleById(id);
@@ -53,6 +55,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
 }
 
 export default async function NewsDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  await connection();
   const resolvedParams = await params;
   const id = decodeURIComponent(resolvedParams.id);
   console.log("NewsDetailPage dynamic id:", id);
