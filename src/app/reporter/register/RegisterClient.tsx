@@ -17,7 +17,10 @@ export default function RegisterClient({ defaultRole }: { defaultRole?: string }
   const initialRole = (roleParam && [
     'BLOCK_CORRESPONDENT',
     'DISTRICT_CORRESPONDENT',
-    'STATE_CORRESPONDENT'
+    'STATE_CORRESPONDENT',
+    'DISTRICT_AD_INCHARGE',
+    'SANTHAL_PARGANA_AD_INCHARGE',
+    'STATE_AD_INCHARGE'
   ].includes(roleParam)) ? roleParam : (defaultRole || 'BLOCK_CORRESPONDENT');
 
   const [step, setStep] = useState(1);
@@ -322,6 +325,12 @@ function compressImage(file: File, maxWidth = 1000, maxHeight = 1000, quality = 
             <>जिला संवाददाता Onboarding <span className={styles.highlightText}>Wizard</span></>
           ) : role === 'STATE_CORRESPONDENT' ? (
             <>राज्य संवाददाता Onboarding <span className={styles.highlightText}>Wizard</span></>
+          ) : role === 'DISTRICT_AD_INCHARGE' ? (
+            <>जिला विज्ञापन प्रभारी Onboarding <span className={styles.highlightText}>Wizard</span></>
+          ) : role === 'SANTHAL_PARGANA_AD_INCHARGE' ? (
+            <>संताल परगना विज्ञापन प्रभारी Onboarding <span className={styles.highlightText}>Wizard</span></>
+          ) : role === 'STATE_AD_INCHARGE' ? (
+            <>राज्य विज्ञापन प्रभारी Onboarding <span className={styles.highlightText}>Wizard</span></>
           ) : (
             <>संवाददाता Onboarding <span className={styles.highlightText}>Wizard</span></>
           )}
@@ -365,6 +374,9 @@ function compressImage(file: File, maxWidth = 1000, maxHeight = 1000, quality = 
                     <option value="BLOCK_CORRESPONDENT">Block Correspondent (ब्लॉक संवाददाता)</option>
                     <option value="DISTRICT_CORRESPONDENT">District Correspondent (जिला संवाददाता)</option>
                     <option value="STATE_CORRESPONDENT">State Correspondent (राज्य संवाददाता)</option>
+                    <option value="DISTRICT_AD_INCHARGE">District Advertisement In-charge (जिला विज्ञापन प्रभारी)</option>
+                    <option value="SANTHAL_PARGANA_AD_INCHARGE">Santhal Pargana Advertisement In-charge (संताल परगना विज्ञापन प्रभारी)</option>
+                    <option value="STATE_AD_INCHARGE">State Advertisement In-charge (राज्य विज्ञापन प्रभारी)</option>
                   </select>
                 </div>
               )}

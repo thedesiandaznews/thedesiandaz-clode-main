@@ -96,7 +96,7 @@ model Reporter {
   updatedAt     DateTime  @updatedAt
 
   // New hierarchy & KYC fields
-  role                  String    @default("BLOCK_CORRESPONDENT") // BLOCK_CORRESPONDENT, DISTRICT_CORRESPONDENT, STATE_CORRESPONDENT, COMPANY_ADMIN, PRINT_ADMIN, SUPER_ADMIN
+  role                  String    @default("BLOCK_CORRESPONDENT") // BLOCK_CORRESPONDENT, DISTRICT_CORRESPONDENT, STATE_CORRESPONDENT, DISTRICT_AD_INCHARGE, SANTHAL_PARGANA_AD_INCHARGE, STATE_AD_INCHARGE, COMPANY_ADMIN, PRINT_ADMIN, SUPER_ADMIN
   signatureUrl          String?
   addressProofUrl       String?
   experienceUrl         String?

@@ -2023,7 +2023,11 @@ export default function DashboardClient() {
                     <div style={{ fontSize: '10px', fontWeight: 700, color: '#f59e0b' }}>
                       {reporter.role === 'BLOCK_CORRESPONDENT' ? 'Block Correspondent' : 
                        reporter.role === 'DISTRICT_CORRESPONDENT' ? 'District Correspondent' : 
-                       reporter.role === 'STATE_CORRESPONDENT' ? 'State Correspondent' : reporter.role}
+                       reporter.role === 'STATE_CORRESPONDENT' ? 'State Correspondent' : 
+                       reporter.role === 'DISTRICT_AD_INCHARGE' ? 'District Ad In-charge' : 
+                       reporter.role === 'SANTHAL_PARGANA_AD_INCHARGE' ? 'Santhal Pargana Ad In-charge' : 
+                       reporter.role === 'STATE_AD_INCHARGE' ? 'State Ad In-charge' : 
+                       reporter.role}
                     </div>
                   </div>
                   <div>
@@ -2037,7 +2041,7 @@ export default function DashboardClient() {
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '8px', gap: '10px' }}>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', fontSize: '9px', color: '#cbd5e1', flex: 1 }}>
                   <div><span style={{ fontWeight: 600, color: '#94a3b8' }}>State:</span> {reporter.state}</div>
-                  {reporter.role !== 'STATE_CORRESPONDENT' && <div><span style={{ fontWeight: 600, color: '#94a3b8' }}>District:</span> {reporter.district}</div>}
+                  {reporter.role !== 'STATE_CORRESPONDENT' && reporter.role !== 'STATE_AD_INCHARGE' && reporter.role !== 'SANTHAL_PARGANA_AD_INCHARGE' && <div><span style={{ fontWeight: 600, color: '#94a3b8' }}>District:</span> {reporter.district}</div>}
                   {reporter.role === 'BLOCK_CORRESPONDENT' && <div><span style={{ fontWeight: 600, color: '#94a3b8' }}>Block:</span> {reporter.block}</div>}
                   <div style={{ fontSize: '8px', color: '#94a3b8', marginTop: '2px' }}>Blood: <span style={{ color: '#ef4444', fontWeight: 700 }}>{reporter.bloodGroup || 'N/A'}</span></div>
                 </div>

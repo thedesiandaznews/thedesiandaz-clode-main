@@ -297,6 +297,18 @@ export default function ReportersClient({ initialList }: { initialList: any[] })
       designationHi = 'राज्य संवाददाता (State Correspondent)';
       designationEn = 'State Correspondent';
       assignedArea = `${reporter.state} राज्य (State)`;
+    } else if (reporter.role === 'DISTRICT_AD_INCHARGE') {
+      designationHi = 'जिला विज्ञापन प्रभारी (District Advertisement In-charge)';
+      designationEn = 'District Advertisement In-charge';
+      assignedArea = `${reporter.district} जिला (District)`;
+    } else if (reporter.role === 'SANTHAL_PARGANA_AD_INCHARGE') {
+      designationHi = 'संताल परगना विज्ञापन प्रभारी (Santhal Pargana Advertisement In-charge)';
+      designationEn = 'Santhal Pargana Advertisement In-charge';
+      assignedArea = 'संताल परगना प्रमंडल (Santhal Pargana Division)';
+    } else if (reporter.role === 'STATE_AD_INCHARGE') {
+      designationHi = 'राज्य विज्ञापन प्रभारी (State Advertisement In-charge)';
+      designationEn = 'State Advertisement In-charge';
+      assignedArea = `${reporter.state} राज्य (State)`;
     } else if (reporter.role === 'COMPANY_ADMIN') {
       designationHi = 'कंपनी एडमिन (Company Admin)';
       designationEn = 'Company Admin';
@@ -1813,13 +1825,41 @@ export default function ReportersClient({ initialList }: { initialList: any[] })
                             {/* Designation/Role Badge */}
                             <div style={{ marginTop: '5px', marginBottom: '2px' }}>
                               <span style={{
-                                background: rep.role === 'SUPER_ADMIN' ? '#fdf2f8' : rep.role === 'COMPANY_ADMIN' ? '#f0fdfa' : rep.role === 'PRINT_ADMIN' ? '#f5f3ff' : rep.role === 'STATE_CORRESPONDENT' ? '#eff6ff' : rep.role === 'DISTRICT_CORRESPONDENT' ? '#f0fdf4' : '#f8fafc',
-                                color: rep.role === 'SUPER_ADMIN' ? '#db2777' : rep.role === 'COMPANY_ADMIN' ? '#0d9488' : rep.role === 'PRINT_ADMIN' ? '#7c3aed' : rep.role === 'STATE_CORRESPONDENT' ? '#2563eb' : rep.role === 'DISTRICT_CORRESPONDENT' ? '#16a34a' : '#64748b',
+                                background: 
+                                  rep.role === 'SUPER_ADMIN' ? '#fdf2f8' : 
+                                  rep.role === 'COMPANY_ADMIN' ? '#f0fdfa' : 
+                                  rep.role === 'PRINT_ADMIN' ? '#f5f3ff' : 
+                                  rep.role === 'STATE_CORRESPONDENT' ? '#eff6ff' : 
+                                  rep.role === 'DISTRICT_CORRESPONDENT' ? '#f0fdf4' : 
+                                  rep.role === 'DISTRICT_AD_INCHARGE' ? '#fef3c7' : 
+                                  rep.role === 'SANTHAL_PARGANA_AD_INCHARGE' ? '#ffedd5' : 
+                                  rep.role === 'STATE_AD_INCHARGE' ? '#fef9c3' : 
+                                  '#f8fafc',
+                                color: 
+                                  rep.role === 'SUPER_ADMIN' ? '#db2777' : 
+                                  rep.role === 'COMPANY_ADMIN' ? '#0d9488' : 
+                                  rep.role === 'PRINT_ADMIN' ? '#7c3aed' : 
+                                  rep.role === 'STATE_CORRESPONDENT' ? '#2563eb' : 
+                                  rep.role === 'DISTRICT_CORRESPONDENT' ? '#16a34a' : 
+                                  rep.role === 'DISTRICT_AD_INCHARGE' ? '#d97706' : 
+                                  rep.role === 'SANTHAL_PARGANA_AD_INCHARGE' ? '#ea580c' : 
+                                  rep.role === 'STATE_AD_INCHARGE' ? '#ca8a04' : 
+                                  '#64748b',
                                 fontSize: '10.5px',
                                 fontWeight: 800,
                                 padding: '2px 8px',
                                 borderRadius: '6px',
-                                border: `1px solid ${rep.role === 'SUPER_ADMIN' ? '#fbcfe8' : rep.role === 'COMPANY_ADMIN' ? '#99f6e4' : rep.role === 'PRINT_ADMIN' ? '#ddd6fe' : rep.role === 'STATE_CORRESPONDENT' ? '#bfdbfe' : rep.role === 'DISTRICT_CORRESPONDENT' ? '#bbf7d0' : '#e2e8f0'}`,
+                                border: `1px solid ${
+                                  rep.role === 'SUPER_ADMIN' ? '#fbcfe8' : 
+                                  rep.role === 'COMPANY_ADMIN' ? '#99f6e4' : 
+                                  rep.role === 'PRINT_ADMIN' ? '#ddd6fe' : 
+                                  rep.role === 'STATE_CORRESPONDENT' ? '#bfdbfe' : 
+                                  rep.role === 'DISTRICT_CORRESPONDENT' ? '#bbf7d0' : 
+                                  rep.role === 'DISTRICT_AD_INCHARGE' ? '#fde68a' : 
+                                  rep.role === 'SANTHAL_PARGANA_AD_INCHARGE' ? '#fed7aa' : 
+                                  rep.role === 'STATE_AD_INCHARGE' ? '#fef08a' : 
+                                  '#e2e8f0'
+                                }`,
                                 display: 'inline-flex',
                                 alignItems: 'center',
                                 gap: '4px',
@@ -1827,14 +1867,24 @@ export default function ReportersClient({ initialList }: { initialList: any[] })
                                 letterSpacing: '0.5px',
                                 lineHeight: '1.2'
                               }}>
-                                <i className={`fas ${rep.role === 'SUPER_ADMIN' ? 'fa-crown' : rep.role === 'COMPANY_ADMIN' ? 'fa-user-tie' : rep.role === 'PRINT_ADMIN' ? 'fa-print' : 'fa-user-edit'}`} style={{ fontSize: '9px' }}></i>
+                                <i className={`fas ${
+                                  rep.role === 'SUPER_ADMIN' ? 'fa-crown' : 
+                                  rep.role === 'COMPANY_ADMIN' ? 'fa-user-tie' : 
+                                  rep.role === 'PRINT_ADMIN' ? 'fa-print' : 
+                                  ['DISTRICT_AD_INCHARGE', 'SANTHAL_PARGANA_AD_INCHARGE', 'STATE_AD_INCHARGE'].includes(rep.role) ? 'fa-bullhorn' : 
+                                  'fa-user-edit'
+                                }`} style={{ fontSize: '9px' }}></i>
                                 <span>
                                   {rep.role === 'BLOCK_CORRESPONDENT' ? 'Block Correspondent' :
                                    rep.role === 'DISTRICT_CORRESPONDENT' ? 'District Correspondent' :
                                    rep.role === 'STATE_CORRESPONDENT' ? 'State Correspondent' :
                                    rep.role === 'COMPANY_ADMIN' ? 'Company Admin' :
                                    rep.role === 'PRINT_ADMIN' ? 'Print Admin' :
-                                   rep.role === 'SUPER_ADMIN' ? 'Super Admin' : (rep.role || 'Block Correspondent')}
+                                   rep.role === 'SUPER_ADMIN' ? 'Super Admin' : 
+                                   rep.role === 'DISTRICT_AD_INCHARGE' ? 'District Ad In-charge' : 
+                                   rep.role === 'SANTHAL_PARGANA_AD_INCHARGE' ? 'Santhal Pargana Ad In-charge' : 
+                                   rep.role === 'STATE_AD_INCHARGE' ? 'State Ad In-charge' : 
+                                   (rep.role || 'Block Correspondent')}
                                 </span>
                               </span>
                             </div>
@@ -2833,6 +2883,9 @@ export default function ReportersClient({ initialList }: { initialList: any[] })
                       <option value="BLOCK_CORRESPONDENT">Block Correspondent (ब्लॉक संवाददाता)</option>
                       <option value="DISTRICT_CORRESPONDENT">District Correspondent (जिला संवाददाता)</option>
                       <option value="STATE_CORRESPONDENT">State Correspondent (राज्य संवाददाता)</option>
+                      <option value="DISTRICT_AD_INCHARGE">District Advertisement In-charge (जिला विज्ञापन प्रभारी)</option>
+                      <option value="SANTHAL_PARGANA_AD_INCHARGE">Santhal Pargana Advertisement In-charge (संताल परगना विज्ञापन प्रभारी)</option>
+                      <option value="STATE_AD_INCHARGE">State Advertisement In-charge (राज्य विज्ञापन प्रभारी)</option>
                       <option value="COMPANY_ADMIN">Company Admin (कंपनी एडमिन)</option>
                       <option value="PRINT_ADMIN">Print Admin (प्रिंट एडमिन)</option>
                       <option value="SUPER_ADMIN">Super Admin (सुपर एडमिन)</option>
@@ -4626,7 +4679,11 @@ export default function ReportersClient({ initialList }: { initialList: any[] })
                   <div style={{ fontSize: '10px', fontWeight: 700, color: '#f59e0b' }}>
                     {selectedReporter.role === 'BLOCK_CORRESPONDENT' ? 'Block Correspondent' : 
                      selectedReporter.role === 'DISTRICT_CORRESPONDENT' ? 'District Correspondent' : 
-                     selectedReporter.role === 'STATE_CORRESPONDENT' ? 'State Correspondent' : selectedReporter.role}
+                     selectedReporter.role === 'STATE_CORRESPONDENT' ? 'State Correspondent' : 
+                     selectedReporter.role === 'DISTRICT_AD_INCHARGE' ? 'District Ad In-charge' : 
+                     selectedReporter.role === 'SANTHAL_PARGANA_AD_INCHARGE' ? 'Santhal Pargana Ad In-charge' : 
+                     selectedReporter.role === 'STATE_AD_INCHARGE' ? 'State Ad In-charge' : 
+                     selectedReporter.role}
                   </div>
                 </div>
                 <div>
@@ -4640,7 +4697,7 @@ export default function ReportersClient({ initialList }: { initialList: any[] })
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '8px', gap: '10px' }}>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', fontSize: '9px', color: '#cbd5e1', flex: 1 }}>
                 <div><span style={{ fontWeight: 600, color: '#94a3b8' }}>State:</span> {selectedReporter.state}</div>
-                {selectedReporter.role !== 'STATE_CORRESPONDENT' && <div><span style={{ fontWeight: 600, color: '#94a3b8' }}>District:</span> {selectedReporter.district}</div>}
+                {selectedReporter.role !== 'STATE_CORRESPONDENT' && selectedReporter.role !== 'STATE_AD_INCHARGE' && selectedReporter.role !== 'SANTHAL_PARGANA_AD_INCHARGE' && <div><span style={{ fontWeight: 600, color: '#94a3b8' }}>District:</span> {selectedReporter.district}</div>}
                 {selectedReporter.role === 'BLOCK_CORRESPONDENT' && <div><span style={{ fontWeight: 600, color: '#94a3b8' }}>Block:</span> {selectedReporter.block}</div>}
                 <div style={{ fontSize: '8px', color: '#94a3b8', marginTop: '2px' }}>Blood: <span style={{ color: '#ef4444', fontWeight: 700 }}>{selectedReporter.bloodGroup || 'N/A'}</span></div>
               </div>
