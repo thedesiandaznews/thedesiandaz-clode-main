@@ -319,7 +319,7 @@ export default function DashboardClient() {
         localStorage.setItem('reporterStatus', profile.status);
 
         // Fetch if there is already an active reporter in their block
-        const activeRep = await getActiveReporterInBlock(profile.block, profile.district, profile.state, profile.id);
+        const activeRep = await getActiveReporterInBlock(profile.block, profile.district, profile.state, profile.id, profile.role);
         setActiveBlockReporter(activeRep);
 
         if (profile.status === 'Approved') {
@@ -692,25 +692,61 @@ export default function DashboardClient() {
       {/* Main Container */}
       <main className={styles.dashboardContent}>
         
-        {activeBlockReporter && (
-          <div className={`${styles.statusAlert}`} style={{ borderLeft: '5px solid #ea580c', background: '#fff7ed', display: 'flex', alignItems: 'start', gap: '16px', padding: '20px', borderRadius: '16px', marginBottom: '24px', boxShadow: '0 4px 12px rgba(234, 88, 12, 0.05)', border: '1px solid #ffedd5' }}>
-            <i className="fas fa-exclamation-triangle" style={{ fontSize: '22px', color: '#ea580c', marginTop: '3px' }}></i>
-            <div style={{ flex: 1, textAlign: 'left' }}>
-              <h4 style={{ fontWeight: 800, margin: 0, fontSize: '15px', color: '#c2410c' }}>आपके प्रखंड में संवाददाता पहले से सक्रिय हैं!</h4>
-              <p style={{ margin: '6px 0 0 0', fontSize: '13.5px', color: '#475569', lineHeight: '1.5' }}>
-                There is already an active (Approved) correspondent registered for block <strong style={{ color: '#1e293b' }}>{reporter.block}</strong> (District: {reporter.district}, {reporter.state}).
-              </p>
-              <div style={{ marginTop: '12px', padding: '12px 16px', background: '#ffedd5', borderRadius: '10px', fontSize: '13px', display: 'flex', flexDirection: 'column', gap: '6px', color: '#7c2d12', border: '1px solid #fed7aa' }}>
-                <div><strong style={{ fontWeight: 700 }}>Name:</strong> {activeBlockReporter.fullName} ({activeBlockReporter.reporterCode || 'No Code Assigned'})</div>
-                <div><strong style={{ fontWeight: 700 }}>Email:</strong> {activeBlockReporter.email}</div>
-                <div><strong style={{ fontWeight: 700 }}>Mobile:</strong> {activeBlockReporter.mobile}</div>
+        {activeBlockReporter && (() => {
+          let hindiTitle = 'आपके प्रखंड में संवाददाता पहले से सक्रिय हैं!';
+          let englishDesc = `There is already an active (Approved) correspondent registered for block ${reporter.block} (District: ${reporter.district}, ${reporter.state}).`;
+          let policyDesc = `Desi Andaz policy restricts registrations to exactly 1 correspondent per block. Since your block has an active correspondent, your profile cannot be approved at this time.`;
+          
+          const roleLabel = 
+            reporter.role === 'DISTRICT_CORRESPONDENT' ? 'District Correspondent' : 
+            reporter.role === 'STATE_CORRESPONDENT' ? 'State Correspondent' : 
+            reporter.role === 'DISTRICT_AD_INCHARGE' ? 'District Advertisement In-charge' : 
+            reporter.role === 'SANTHAL_PARGANA_AD_INCHARGE' ? 'Santhal Pargana Advertisement In-charge' : 
+            reporter.role === 'STATE_AD_INCHARGE' ? 'State Advertisement In-charge' : 
+            'Correspondent';
+
+          const roleLabelHi = 
+            reporter.role === 'DISTRICT_CORRESPONDENT' ? 'जिला संवाददाता' : 
+            reporter.role === 'STATE_CORRESPONDENT' ? 'राज्य संवाददाता' : 
+            reporter.role === 'DISTRICT_AD_INCHARGE' ? 'जिला विज्ञापन प्रभारी' : 
+            reporter.role === 'SANTHAL_PARGANA_AD_INCHARGE' ? 'संताल परगना विज्ञापन प्रभारी' : 
+            reporter.role === 'STATE_AD_INCHARGE' ? 'राज्य विज्ञापन प्रभारी' : 
+            'संवाददाता';
+
+          if (['DISTRICT_CORRESPONDENT', 'DISTRICT_AD_INCHARGE'].includes(reporter.role)) {
+            hindiTitle = `आपके जिला में इस पद (${roleLabelHi}) पर पहले से नियुक्ति है!`;
+            englishDesc = `There is already an active (Approved) ${roleLabel} registered for district ${reporter.district} (${reporter.state}).`;
+            policyDesc = `Desi Andaz policy restricts registrations to exactly 1 ${roleLabel} per district. Since your district has an active appointment for this role, your profile cannot be approved at this time.`;
+          } else if (reporter.role === 'SANTHAL_PARGANA_AD_INCHARGE') {
+            hindiTitle = `प्रमंडल स्तर पर इस पद (${roleLabelHi}) पर पहले से नियुक्ति है!`;
+            englishDesc = `There is already an active (Approved) ${roleLabel} registered in this state.`;
+            policyDesc = `Desi Andaz policy restricts registrations to exactly 1 ${roleLabel}. Since there is already an active assignment, your profile cannot be approved at this time.`;
+          } else if (['STATE_CORRESPONDENT', 'STATE_AD_INCHARGE'].includes(reporter.role)) {
+            hindiTitle = `आपके राज्य में इस पद (${roleLabelHi}) पर पहले से नियुक्ति है!`;
+            englishDesc = `There is already an active (Approved) ${roleLabel} registered for state ${reporter.state}.`;
+            policyDesc = `Desi Andaz policy restricts registrations to exactly 1 ${roleLabel} per state. Since your state has an active appointment for this role, your profile cannot be approved at this time.`;
+          }
+
+          return (
+            <div className={`${styles.statusAlert}`} style={{ borderLeft: '5px solid #ea580c', background: '#fff7ed', display: 'flex', alignItems: 'start', gap: '16px', padding: '20px', borderRadius: '16px', marginBottom: '24px', boxShadow: '0 4px 12px rgba(234, 88, 12, 0.05)', border: '1px solid #ffedd5' }}>
+              <i className="fas fa-exclamation-triangle" style={{ fontSize: '22px', color: '#ea580c', marginTop: '3px' }}></i>
+              <div style={{ flex: 1, textAlign: 'left' }}>
+                <h4 style={{ fontWeight: 800, margin: 0, fontSize: '15px', color: '#c2410c' }}>{hindiTitle}</h4>
+                <p style={{ margin: '6px 0 0 0', fontSize: '13.5px', color: '#475569', lineHeight: '1.5' }}>
+                  {englishDesc}
+                </p>
+                <div style={{ marginTop: '12px', padding: '12px 16px', background: '#ffedd5', borderRadius: '10px', fontSize: '13px', display: 'flex', flexDirection: 'column', gap: '6px', color: '#7c2d12', border: '1px solid #fed7aa' }}>
+                  <div><strong style={{ fontWeight: 700 }}>Name:</strong> {activeBlockReporter.fullName} ({activeBlockReporter.reporterCode || 'No Code Assigned'})</div>
+                  <div><strong style={{ fontWeight: 700 }}>Email:</strong> {activeBlockReporter.email}</div>
+                  <div><strong style={{ fontWeight: 700 }}>Mobile:</strong> {activeBlockReporter.mobile}</div>
+                </div>
+                <p style={{ margin: '12px 0 0 0', fontSize: '13px', color: '#7c2d12', fontWeight: 600, lineHeight: '1.4' }}>
+                  {policyDesc} Please contact support/administration for help.
+                </p>
               </div>
-              <p style={{ margin: '12px 0 0 0', fontSize: '13px', color: '#7c2d12', fontWeight: 600, lineHeight: '1.4' }}>
-                Desi Andaz policy restricts registrations to exactly <strong>1 correspondent per block</strong>. Since your block has an active correspondent, your profile cannot be approved at this time. Please contact support/administration for help.
-              </p>
             </div>
-          </div>
-        )}
+          );
+        })()}
 
         {/* Verification Context Alert */}
         {reporter.status === 'Pending' && (

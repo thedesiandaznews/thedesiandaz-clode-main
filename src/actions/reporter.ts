@@ -924,23 +924,49 @@ export async function verifyReporterByCode(code: string) {
   }
 }
 
-export async function getActiveReporterInBlock(block: string, district: string, state: string, excludeReporterId?: string) {
+export async function getActiveReporterInBlock(
+  block: string, 
+  district: string, 
+  state: string, 
+  excludeReporterId?: string,
+  role?: string
+) {
   try {
-    if (!block || !district || !state) return null;
+    if (!state) return null;
+    const activeRole = role || 'BLOCK_CORRESPONDENT';
+
+    // Administrative roles have no geographical collision restrictions
+    if (['COMPANY_ADMIN', 'PRINT_ADMIN', 'SUPER_ADMIN'].includes(activeRole)) {
+      return null;
+    }
+
+    const where: any = {
+      role: activeRole,
+      status: 'Approved',
+      state: state.trim(),
+      ...(excludeReporterId ? { id: { not: excludeReporterId } } : {})
+    };
+
+    if (activeRole === 'BLOCK_CORRESPONDENT') {
+      if (!block || !district) return null;
+      where.block = block.trim();
+      where.district = district.trim();
+    } else if (['DISTRICT_CORRESPONDENT', 'DISTRICT_AD_INCHARGE'].includes(activeRole)) {
+      if (!district) return null;
+      where.district = district.trim();
+    } else if (['STATE_CORRESPONDENT', 'STATE_AD_INCHARGE', 'SANTHAL_PARGANA_AD_INCHARGE'].includes(activeRole)) {
+      // Checked at state level (no district/block filters needed)
+    }
+
     const activeReporter = await prisma.reporter.findFirst({
-      where: {
-        block: block.trim(),
-        district: district.trim(),
-        state: state.trim(),
-        status: 'Approved',
-        ...(excludeReporterId ? { id: { not: excludeReporterId } } : {})
-      },
+      where,
       select: {
         id: true,
         fullName: true,
         reporterCode: true,
         email: true,
-        mobile: true
+        mobile: true,
+        role: true
       }
     });
     return activeReporter;
